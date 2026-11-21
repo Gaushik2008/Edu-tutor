@@ -1,4 +1,4 @@
-# AdaptiveLearn AI (`edu-tutor`)
+# Learnova (`edu-tutor`)
 
 > **Learn Smarter. Understand Deeper. Remember Longer.**
 
