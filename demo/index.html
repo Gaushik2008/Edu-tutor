@@ -436,7 +436,7 @@ function vClass(){
   const attn=rows.filter(r=>{const a=sAvg(r);return a!==null&&a<.45;});
   const done=rows.filter(r=>r.ps.every(x=>x!==null)).length;
   return `<h2>Class overview</h2><div class="grid g4">
-   <div class="card stat"><b>${n}</b><span>Students (5 sample + you)</span></div>
+   <div class="card stat"><b>${n}</b><span>Students (6 sample + you)</span></div>
    <div class="card stat"><b>${Math.round(classAvg*100)}%</b><span>Average mastery</span></div>
    <div class="card stat"><b>${attn.length}</b><span>Need attention (avg under 45%)</span></div>
    <div class="card stat"><b>${Math.round(done/n*100)}%</b><span>Fully assessed</span></div></div>
