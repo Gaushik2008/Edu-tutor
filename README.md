@@ -12,6 +12,10 @@ Adaptive exam-prep platform (Class 10 Physics: Electricity).
 - [ ] FastAPI app, SQLAlchemy/PostgreSQL models, auth, LLM provider integration (not started)
 - [ ] React + TypeScript + Tailwind + React Flow frontend (not started; the demo is vanilla JS)
 
+- [x] **Syllabus tab + Electric Charge video lesson**: 8 animated scenes (~2 min) with captions, optional browser voice, seek/speed controls, 3 checkpoint questions that update the learner model, and an interactive charge lab. It is an in-page animation, not an MP4. Narration is original and aligned to the NCERT Class 10 Science Electricity chapter; no book text is reproduced.
+
+Demo source: `demo/index.src.html` + `demo/src/lesson.{js,css}`; run `python demo/build.py` to regenerate the single-file `demo/index.html`.
+
 The Teacher class in the demo is **sample data**; only the "You" row is live.
 
 ## Run tests

@@ -1,0 +1,492 @@
+<title>AdaptiveLearn AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: sticky top bar, tabbed workspace; graph and heatmap scroll inside their own panels. */
+:root{--bg:#F7F8FC;--card:#fff;--fg:#202238;--muted:#8990A5;--line:#E6E8F2;--pri:#6256D9;--sec:#8B7CF6;--acc:#36BFA6;--ok:#27AE80;--warn:#F2A541;--bad:#E56B70;--grey:#C5CAD8;--blue:#4C8DF6;--soft:#EEECFC;--ink-on:#fff;
+--fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14162A;--card:#1D2038;--fg:#ECEEF8;--muted:#9AA1BC;--line:#2C3050;--soft:#2A2850;--grey:#4A5070;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14162A;--card:#1D2038;--fg:#ECEEF8;--muted:#9AA1BC;--line:#2C3050;--soft:#2A2850;--grey:#4A5070;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
+.wrap{max-width:1120px;margin:0 auto}
+h1,h2,h3{font-family:var(--fd);margin:0;text-wrap:balance}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;max-width:1120px;margin:0 auto}
+.brand{font:700 18px var(--fd);color:var(--pri);margin-right:auto}
+.brand small{display:block;font:400 11px var(--fb);color:var(--muted)}
+.seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:8px;font:500 13px var(--fb);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--pri);box-shadow:0 1px 3px #0002}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+.btn{border:0;background:var(--pri);color:var(--ink-on);padding:9px 16px;border-radius:10px;font:600 13px var(--fb);cursor:pointer}
+.btn.ghost{background:var(--soft);color:var(--pri)}
+.btn:disabled{opacity:.5;cursor:default}
+.notice{background:var(--soft);color:var(--fg);border-radius:10px;padding:8px 12px;font-size:12px;margin:12px 0}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.stat b{display:block;font:700 26px var(--fd)}
+.stat span{color:var(--muted);font-size:12px}
+h2{font-size:20px;margin:22px 0 10px}h3{font-size:15px;margin-bottom:8px}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;color:#fff}
+.mastered{background:var(--ok)}.developing{background:var(--warn)}.weak{background:var(--bad)}.not_assessed{background:var(--grey)}
+.muted{color:var(--muted)}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--fb)}
+.node{cursor:pointer}.node rect{stroke-width:2}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{padding:5px 6px;text-align:center;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+.cell{display:block;width:46px;height:28px;border-radius:6px;margin:auto;line-height:28px;color:#fff;font-weight:600;font-size:11px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer;color:var(--fg);font:14px var(--fb)}
+.opt.sel{border-color:var(--pri);background:var(--soft)}
+input[type=text],input[type=number],textarea,input[type=date]{width:100%;background:var(--bg);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:9px 11px;font:14px var(--fb)}
+textarea{min-height:70px;resize:vertical}
+label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin:10px 0 4px}
+.fb{border-left:4px solid var(--acc);padding:4px 0 4px 12px;margin:10px 0}
+.fb.bad{border-color:var(--bad)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spark{display:block}
+ul.plain{list-style:none;padding:0;margin:0}
+ul.plain li{padding:7px 0;border-bottom:1px solid var(--line)}
+ul.plain li:last-child{border:0}
+.bar2{height:8px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--pri)}
+@media (prefers-reduced-motion:no-preference){.bar2 i{transition:width .4s}}
+/*@@LESSON_CSS@@*/
+</style>
+<header><div class="bar">
+ <div class="brand">AdaptiveLearn AI<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
+ <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
+ <div class="seg" id="tabs"></div>
+</div></header>
+<div class="wrap" id="app"></div>
+
+<script>
+"use strict";
+/* ============ Engine (port of backend/app/core/*.py) ============ */
+const P_INIT=.30,P_LEARN=.15,P_GUESS=.20,P_SLIP=.10;
+const bandOf=(p,att)=>!att?'not_assessed':p>=.8?'mastered':p>=.5?'developing':'weak';
+function bktUpdate(st,ok,d,rq,nov=1){
+  const g=P_GUESS*(1.25-.125*(d-1)),s=P_SLIP*(1.4-.2*(d-1));
+  const p=Math.min(Math.max(st.p,.001),.999);
+  const num=ok?p*(1-s):p*s, den=ok?num+(1-p)*g:num+(1-p)*(1-g);
+  let w=Math.max(0,Math.min(1,rq))*Math.max(0,Math.min(1,nov)); if(!ok) w=Math.max(w,.35);
+  const wt=p+w*(num/den-p), np=wt+(1-wt)*(ok?P_LEARN*nov:0), att=st.att+1;
+  return {p:Math.min(.98,Math.max(0,np)),att,cor:st.cor+(ok?1:0),conf:1-Math.exp(-att/3)};
+}
+const decayed=(p,last,now,hl=30)=>last?P_INIT+(p-P_INIT)*Math.pow(.5,Math.max(0,(now-last)/864e5)/hl):p;
+const BASE=[1,3,7,14,30];
+function srsSchedule(r,q,now,diff,misOpen){
+  q=Math.max(0,Math.min(1,q));
+  const ease=Math.max(1.3,r.ease+(.1-(1-q)*(.8+(1-q)*.4)));
+  if(q<.6) return {rev:{reps:0,ease,interval:1},due:now+864e5};
+  const reps=r.reps+1; let iv=BASE[Math.min(reps-1,4)]*(ease/2.3);
+  if(reps>5) iv=r.interval*ease;
+  iv*=1-.05*(diff-3); if(misOpen) iv=Math.min(iv,3);
+  iv=Math.max(1,Math.round(iv*10)/10);
+  return {rev:{reps,ease,interval:iv},due:now+iv*864e5};
+}
+function targetDifficulty(p,recent){
+  let b=1+Math.floor(p*4.999); const l=recent.slice(-3);
+  if(l.length>=2&&!l.slice(-2).some(Boolean)) b--;
+  if(l.length===3&&l.every(Boolean)) b++;
+  return Math.max(1,Math.min(5,b));
+}
+const MIS={
+ R_UP_I_UP:{c:'ohms_law',label:'Believes current rises when resistance rises',fix:'Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A.'},
+ CURRENT_USED_UP:{c:'electric_current',label:'Thinks current is used up as it passes through a component',fix:'Show ammeters before and after a bulb reading equal; energy, not charge, is transferred.'},
+ PARALLEL_ADDS:{c:'parallel_combination',label:'Adds resistances directly in a parallel combination',fix:'Derive 1/Rp = 1/R1 + 1/R2; Rp is smaller than the smallest branch.'},
+ SERIES_SPLITS_I:{c:'series_combination',label:'Thinks current divides between resistors in series',fix:'Current is identical in a series loop; the voltage divides.'},
+ POWER_I_ONLY:{c:'electric_power',label:'Uses an incorrect relation for electric power',fix:'Start from P = VI, then combine with Ohm’s law to get I²R and V²/R.'},
+ RESIST_LENGTH_INV:{c:'resistance_factors',label:'Believes longer wires have lower resistance',fix:'R = ρL/A: doubling the length doubles R. Use a long narrow pipe as an analogy.'},
+ PD_IS_CURRENT:{c:'electric_current',label:'Confuses potential difference with current',fix:'Current is charge per second; potential difference is energy per coulomb.'},
+ CONV_CURRENT_DIR:{c:'electric_circuit',label:'Reverses the direction of conventional current',fix:'Conventional current runs from the positive terminal round to the negative; electrons drift the other way.'},
+ HEAT_I_LINEAR:{c:'heating_effect',label:'Thinks heat is proportional to current instead of current squared',fix:'H = I²Rt: doubling I gives four times the heat. Try I = 1 A and 2 A.'},
+};
+const RULES=[
+ ['R_UP_I_UP','ohms_law',/(resistance|\br\b).*\b(increase|higher|more)\b.*\bcurrent\b.*\b(increase|higher|more|rise)|current\b.*\b(increase|rise)s?\b.*(because|as)\b.*resist/],
+ ['CURRENT_USED_UP','electric_current',/current\b.*\b(used up|consumed|gets less|reduces after|lost)\b|used up by the (bulb|resistor)/],
+ ['PARALLEL_ADDS','parallel_combination',/parallel\b.*\b(add|sum)\b.*resist|resistances? (are )?added in parallel/],
+ ['SERIES_SPLITS_I','series_combination',/series\b.*current\b.*(divide|split|share)/],
+ ['POWER_I_ONLY','electric_power',/power\b.*(=|is)\s*(v\s*\/\s*i|i\s*\/\s*v)|power depends only on/],
+ ['RESIST_LENGTH_INV','resistance_factors',/(longer|length)\b.*\b(less|lower|decreas)\w*\b.*resist/],
+];
+function analyse(cid,ok,reasoning){
+  const t=(reasoning||'').trim().toLowerCase(), words=(t.match(/\w+/g)||[]).length;
+  for(const [tag,c,re] of RULES) if(c===cid&&re.test(t)) return {cat:'conceptual_misunderstanding',tag,conf:ok?.7:.85,rq:.2};
+  if(words<4) return {cat:'insufficient_evidence',tag:null,conf:.3,rq:ok?.6:.3};
+  const f=/[ivrpqwt]\s*=|v\s*\/\s*r|i²|\bohm/.test(t);
+  if(ok) return {cat:f?'sound_reasoning':'correct_light_reasoning',tag:null,conf:.6,rq:f?.9:.7};
+  return f?{cat:'calculation_error',tag:null,conf:.45,rq:.6}:{cat:'incomplete_reasoning',tag:null,conf:.4,rq:.4};
+}
+const CAT_TEXT={conceptual_misunderstanding:'Your reasoning suggests a concept mix-up (a prediction, not a certainty).',
+ insufficient_evidence:'Not enough written reasoning to judge how you got there. Add your steps next time.',
+ sound_reasoning:'Your reasoning names the relationship and follows it correctly.',
+ correct_light_reasoning:'Correct, but the reasoning is thin. Name the law or formula you used.',
+ calculation_error:'The method looks reasonable, so check the arithmetic and units.',
+ incomplete_reasoning:'The reasoning does not state the law or formula. Name it before calculating.'};
+
+/* ============ Syllabus: Class 10 Physics, Electricity ============ */
+const CONCEPTS=[
+ {id:'electric_charge',n:'Electric Charge',d:1,x:20,y:170,pre:[],desc:'Charge is a property of matter. Like charges repel and unlike charges attract. It is measured in coulombs (C); the electron carries 1.6×10⁻¹⁹ C.',obj:['State the SI unit of charge','Relate charge to number of electrons']},
+ {id:'electric_current',n:'Electric Current',d:2,x:200,y:170,pre:['electric_charge'],desc:'Current is the rate of flow of charge, I = Q/t, measured in amperes. Conventional current is taken from the positive to the negative terminal.',obj:['Define current and use I = Q/t','Explain how an ammeter is connected']},
+ {id:'electric_circuit',n:'Electric Circuit',d:2,x:380,y:40,pre:['electric_current'],desc:'A circuit is a closed conducting path with a source. Current flows only when the path is complete.',obj:['Identify circuit components','Give the direction of conventional current']},
+ {id:'potential_difference',n:'Potential Difference',d:2,x:380,y:170,pre:['electric_current'],desc:'Potential difference is the work done per unit charge, V = W/Q, measured in volts. A voltmeter is connected in parallel.',obj:['Use V = W/Q','Explain how a voltmeter is connected']},
+ {id:'ohms_law',n:'Ohm’s Law',d:3,x:560,y:170,pre:['potential_difference'],desc:'At constant temperature the current through a conductor is proportional to the potential difference across it: V = IR.',obj:['Use V = IR','Predict how current changes with V or R']},
+ {id:'resistance',n:'Resistance',d:3,x:740,y:170,pre:['ohms_law'],desc:'Resistance is the opposition a conductor offers to current, R = V/I, measured in ohms.',obj:['Calculate R from V and I','State the unit of resistance']},
+ {id:'resistance_factors',n:'Factors Affecting Resistance',d:3,x:920,y:60,pre:['resistance'],desc:'R = ρL/A. Resistance grows with length and falls with cross-sectional area; it also depends on material and temperature.',obj:['Apply R = ρL/A','Compare wires of different dimensions']},
+ {id:'series_combination',n:'Series Combination',d:3,x:920,y:170,pre:['resistance'],desc:'In series the same current flows through every resistor, the voltages add, and Rs = R1 + R2 + R3.',obj:['Find equivalent resistance in series','State current and voltage rules']},
+ {id:'parallel_combination',n:'Parallel Combination',d:4,x:920,y:280,pre:['resistance'],desc:'In parallel each branch has the same voltage, currents add, and 1/Rp = 1/R1 + 1/R2 + … so Rp is smaller than any branch.',obj:['Find equivalent resistance in parallel','State current and voltage rules']},
+ {id:'heating_effect',n:'Heating Effect of Current',d:3,x:380,y:300,pre:['electric_current'],desc:'A current in a resistor produces heat, H = I²Rt (Joule’s law).',obj:['Apply H = I²Rt','Predict how heat scales with I']},
+ {id:'electric_power',n:'Electric Power',d:3,x:560,y:300,pre:['heating_effect'],desc:'Power is the rate of energy transfer, P = VI = I²R = V²/R, measured in watts.',obj:['Use P = VI','Choose between P = I²R and V²/R']},
+ {id:'electrical_energy',n:'Electrical Energy',d:3,x:740,y:300,pre:['electric_power'],desc:'Energy used is E = P×t. The commercial unit is the kilowatt-hour: 1 kWh = 3.6×10⁶ J.',obj:['Compute energy in kWh','Convert kWh to joules']},
+];
+const CBY=Object.fromEntries(CONCEPTS.map(c=>[c.id,c]));
+/* t: mcq (a = index, m = wrong index -> misconception tag), num (a, tol, mw = wrong value -> tag), short (a = keyword list) */
+const QS=[
+ {id:38,c:'electric_charge',d:1,t:'mcq',q:'Two small balls both carry negative charge and are brought close together. They…',o:['Repel each other','Attract each other','Do not interact','Become neutral'],a:0,ex:'Like charges repel. Only unlike charges attract.'},
+ {id:39,c:'electric_charge',d:2,t:'mcq',q:'A glass rod rubbed with silk becomes positively charged. This is because the glass rod…',o:['Loses electrons','Gains protons','Gains electrons','Loses protons'],a:0,ex:'Only electrons move between the solids. Losing electrons leaves more protons than electrons, so the rod is positive.'},
+ {id:1,c:'electric_charge',d:1,t:'mcq',q:'What is the SI unit of electric charge?',o:['Ampere','Coulomb','Volt','Ohm'],a:1,ex:'Charge is measured in coulombs. The ampere is a coulomb per second.'},
+ {id:2,c:'electric_charge',d:2,t:'num',q:'What is the charge, in coulombs, on 1000 electrons? (e = 1.6×10⁻¹⁹ C; enter like 1.6e-16)',a:1.6e-16,tol:.02,ex:'Q = ne = 1000 × 1.6×10⁻¹⁹ = 1.6×10⁻¹⁶ C.'},
+ {id:3,c:'electric_current',d:1,t:'mcq',q:'Electric current is best defined as…',o:['Rate of flow of electric charge','Energy per unit charge','Opposition to the flow of charge','Work done per second'],a:0,m:{1:'PD_IS_CURRENT'},ex:'I = Q/t: charge per second. Energy per unit charge is potential difference.'},
+ {id:4,c:'electric_current',d:2,t:'num',q:'12 C of charge passes a point in 4 s. What is the current in amperes?',a:3,tol:.01,ex:'I = Q/t = 12/4 = 3 A.'},
+ {id:5,c:'electric_current',d:3,t:'mcq',q:'An ammeter before a bulb reads 0.5 A. What does an identical ammeter placed after the bulb read?',o:['0.5 A','Less than 0.5 A','Zero','More than 0.5 A'],a:0,m:{1:'CURRENT_USED_UP'},ex:'Charge is not used up. The same current leaves the bulb; the electrical energy is what is transferred.'},
+ {id:6,c:'electric_current',d:3,t:'short',q:'Why must an ammeter be connected in series with the component being measured?',a:['same current','all the current','flow through','in the path','series'],ex:'It has to carry the whole current of that branch, so it sits in the path of the current.'},
+ {id:7,c:'potential_difference',d:1,t:'mcq',q:'Potential difference between two points is…',o:['Work done per unit charge','Charge per unit time','Resistance per unit length','Power per ampere'],a:0,ex:'V = W/Q, in joules per coulomb (volts).'},
+ {id:8,c:'potential_difference',d:2,t:'num',q:'36 J of work is done moving 6 C between two points. What is the potential difference in volts?',a:6,tol:.01,ex:'V = W/Q = 36/6 = 6 V.'},
+ {id:9,c:'potential_difference',d:3,t:'mcq',q:'How is a voltmeter connected to measure the potential difference across a bulb?',o:['In parallel with the bulb','In series with the bulb','In parallel with the battery only','It does not matter'],a:0,ex:'A voltmeter has very high resistance and sits across the component.'},
+ {id:10,c:'electric_circuit',d:1,t:'mcq',q:'What must be true for a current to flow in a circuit?',o:['A complete closed conducting path','An open switch','Only a bulb','Two batteries'],a:0,ex:'Charge needs a closed loop with a source.'},
+ {id:11,c:'electric_circuit',d:2,t:'mcq',q:'Outside the cell, conventional current flows…',o:['From the positive terminal to the negative terminal','From the negative terminal to the positive terminal','Both ways at once','Only inside the wires’ insulation'],a:0,m:{1:'CONV_CURRENT_DIR'},ex:'By convention current runs positive to negative externally; electrons drift the opposite way.'},
+ {id:12,c:'electric_circuit',d:3,t:'short',q:'What happens to the current in a series circuit when the switch is opened? Say why.',a:['no current','zero','stops','breaks','incomplete','open circuit'],ex:'Opening the switch breaks the closed path, so the current falls to zero everywhere in the series loop.'},
+ {id:13,c:'ohms_law',d:1,t:'mcq',q:'Which expression is Ohm’s law?',o:['V = IR','V = I/R','I = VR','R = VI'],a:0,ex:'V = IR, or I = V/R.'},
+ {id:14,c:'ohms_law',d:2,t:'num',q:'A 12 V supply is across a 4 Ω resistor. What current flows, in amperes?',a:3,tol:.01,ex:'I = V/R = 12/4 = 3 A.'},
+ {id:15,c:'ohms_law',d:3,t:'mcq',q:'The voltage across a resistor stays constant while its resistance increases. The current…',o:['Increases','Decreases','Stays the same','Becomes zero'],a:1,m:{0:'R_UP_I_UP'},ex:'I = V/R. With V fixed, a larger R gives a smaller I.'},
+ {id:37,c:'ohms_law',d:2,t:'mcq',q:'A 10 V supply is connected across a resistor. The resistor is changed from 2 Ω to 5 Ω. What happens to the current?',o:['It decreases from 5 A to 2 A','It increases from 2 A to 5 A','It stays at 5 A','It increases to 10 A'],a:0,m:{1:'R_UP_I_UP'},ex:'I = V/R. At 2 Ω the current is 5 A; at 5 Ω it is 2 A, so more resistance means less current.'},
+ {id:16,c:'ohms_law',d:4,t:'num',q:'A conductor carries 0.5 A at 2 V. At the same temperature, what current flows at 6 V (in amperes)?',a:1.5,tol:.01,ex:'R = 2/0.5 = 4 Ω. I = 6/4 = 1.5 A. Current is proportional to V.'},
+ {id:17,c:'resistance',d:1,t:'mcq',q:'What is the SI unit of resistance?',o:['Ohm','Watt','Coulomb','Joule'],a:0,ex:'One ohm is one volt per ampere.'},
+ {id:18,c:'resistance',d:2,t:'num',q:'A component has 9 V across it and carries 0.3 A. What is its resistance in ohms?',a:30,tol:.01,ex:'R = V/I = 9/0.3 = 30 Ω.'},
+ {id:19,c:'resistance_factors',d:2,t:'mcq',q:'The length of a uniform wire is doubled. Its resistance…',o:['Halves','Doubles','Is unchanged','Quadruples'],a:1,m:{0:'RESIST_LENGTH_INV'},ex:'R = ρL/A is proportional to L.'},
+ {id:20,c:'resistance_factors',d:3,t:'mcq',q:'The cross-sectional area of a wire is doubled, length unchanged. Its resistance…',o:['Doubles','Halves','Is unchanged','Quadruples'],a:1,ex:'R is inversely proportional to A.'},
+ {id:21,c:'resistance_factors',d:4,t:'num',q:'A wire has resistance 8 Ω. It is replaced by one of the same material with twice the length and twice the cross-sectional area. What is the new resistance in ohms?',a:8,tol:.01,ex:'Doubling L doubles R and doubling A halves it, so R stays 8 Ω.'},
+ {id:22,c:'series_combination',d:1,t:'num',q:'Resistors of 2 Ω, 3 Ω and 5 Ω are in series. What is the equivalent resistance in ohms?',a:10,tol:.01,ex:'Rs = 2 + 3 + 5 = 10 Ω.'},
+ {id:23,c:'series_combination',d:2,t:'mcq',q:'Three bulbs are connected in series. The current through each bulb is…',o:['The same','Divided equally','Largest in the first bulb','Zero in the middle one'],a:0,m:{1:'SERIES_SPLITS_I'},ex:'There is only one path, so the current is the same everywhere in a series loop.'},
+ {id:24,c:'series_combination',d:3,t:'num',q:'A 6 V battery is connected across 2 Ω and 4 Ω resistors in series. What is the current in amperes?',a:1,tol:.01,ex:'Rs = 6 Ω, so I = 6/6 = 1 A.'},
+ {id:25,c:'parallel_combination',d:1,t:'mcq',q:'Resistors connected in parallel across a battery all have…',o:['The same potential difference','The same current','Zero resistance','Different voltages'],a:0,ex:'Each branch is connected directly across the same two points.'},
+ {id:26,c:'parallel_combination',d:2,t:'num',q:'6 Ω and 3 Ω resistors are in parallel. What is the equivalent resistance in ohms?',a:2,tol:.01,mw:{9:'PARALLEL_ADDS'},ex:'1/Rp = 1/6 + 1/3 = 1/2, so Rp = 2 Ω.'},
+ {id:27,c:'parallel_combination',d:3,t:'mcq',q:'Compared with the smallest resistor in a parallel group, the equivalent resistance is…',o:['Greater than it','Equal to it','Smaller than it','Impossible to say'],a:2,m:{0:'PARALLEL_ADDS'},ex:'Every extra branch gives the current another path, so the total resistance drops below the smallest branch.'},
+ {id:28,c:'heating_effect',d:2,t:'mcq',q:'Which device mainly uses the heating effect of current?',o:['Electric heater','Voltmeter','Compass','Capacitor'],a:0,ex:'A heater’s element converts electrical energy to heat as current passes through its resistance.'},
+ {id:29,c:'heating_effect',d:3,t:'num',q:'A 5 Ω resistor carries 2 A for 10 s. How much heat is produced in joules?',a:200,tol:.01,ex:'H = I²Rt = 4 × 5 × 10 = 200 J.'},
+ {id:30,c:'heating_effect',d:4,t:'mcq',q:'The current in a resistor is doubled for the same time. The heat produced…',o:['Doubles','Halves','Becomes four times','Is unchanged'],a:2,m:{0:'HEAT_I_LINEAR'},ex:'H = I²Rt, so doubling I multiplies the heat by 4.'},
+ {id:31,c:'electric_power',d:1,t:'mcq',q:'Which expression gives electric power?',o:['P = VI','P = V/I','P = I/V','P = R/V'],a:0,m:{1:'POWER_I_ONLY',2:'POWER_I_ONLY'},ex:'P = VI. Combined with V = IR it gives I²R and V²/R.'},
+ {id:32,c:'electric_power',d:2,t:'num',q:'An appliance runs on 220 V and draws 5 A. What is its power in watts?',a:1100,tol:.01,ex:'P = VI = 220 × 5 = 1100 W.'},
+ {id:33,c:'electric_power',d:3,t:'num',q:'A 60 W lamp runs on 120 V. What current does it draw, in amperes?',a:.5,tol:.02,ex:'I = P/V = 60/120 = 0.5 A.'},
+ {id:34,c:'electrical_energy',d:2,t:'num',q:'A 2 kW heater runs for 3 hours. How much energy is used, in kWh?',a:6,tol:.01,ex:'E = P × t = 2 × 3 = 6 kWh.'},
+ {id:35,c:'electrical_energy',d:3,t:'mcq',q:'1 kilowatt-hour equals…',o:['3.6×10³ J','3.6×10⁶ J','1000 J','60 J'],a:1,ex:'1 kWh = 1000 W × 3600 s = 3.6×10⁶ J.'},
+ {id:36,c:'electrical_energy',d:4,t:'mcq',q:'A 40 W and a 100 W bulb are rated for the same voltage. Which has the greater resistance?',o:['The 40 W bulb','The 100 W bulb','Both are equal','Cannot be told'],a:0,ex:'R = V²/P. For the same V, a smaller P means a larger R.'},
+];
+
+/* ============ State ============ */
+const KEY='adaptivelearn-demo-v1';
+const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[]});
+let S=fresh();
+try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
+const now=()=>Date.now()+S.skew*864e5;
+const cs=id=>S.concepts[id]||(S.concepts[id]={p:P_INIT,att:0,cor:0,conf:0,last:null,hist:[],rev:{reps:0,ease:2.3,interval:0},due:null,recent:[]});
+const curP=id=>{const c=cs(id);return c.att?decayed(c.p,c.last,now()):c.p;};
+const openMis=id=>S.mis.filter(m=>!m.resolved&&(!id||m.c===id));
+const fmtDay=t=>new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ============ Sample class (clearly labelled, not real students) ============ */
+const SAMPLE=[
+ ['Sample student A',[.9,.85,.8,.85,.75,.7,.6,.55,.5,.45,.4,.3],['HEAT_I_LINEAR']],
+ ['Sample student B',[.7,.6,.5,.65,.35,.3,.25,.3,.2,.2,null,null],['R_UP_I_UP','CURRENT_USED_UP']],
+ ['Sample student C',[.85,.8,.7,.75,.6,.55,.5,.25,.2,.55,.5,.45],['PARALLEL_ADDS']],
+ ['Sample student D',[.5,.4,.45,.5,.2,.25,.3,null,null,null,null,null],['R_UP_I_UP','CURRENT_USED_UP','PD_IS_CURRENT']],
+ ['Sample student E',[.95,.9,.9,.9,.85,.8,.75,.7,.65,.7,.6,.55],[]],
+ ['Sample student F',[.6,.55,.4,.5,.3,.35,.4,.3,.25,.25,.2,.15],['PARALLEL_ADDS','R_UP_I_UP','HEAT_I_LINEAR']],
+];
+const EXAMPLE_REASON={R_UP_I_UP:'“Resistance blocks the voltage so more resistance means more current.”',CURRENT_USED_UP:'“The bulb uses up some current, so less comes out the other side.”',PARALLEL_ADDS:'“Just add the resistors, like in series.”',PD_IS_CURRENT:'“Voltage is how much current there is.”',HEAT_I_LINEAR:'“Double the current, double the heat.”'};
+/* concept order in SAMPLE arrays follows CONCEPTS order */
+
+/* ============ Question selection and evaluation ============ */
+let ses=null; // {mode, q, cid, queue, t0, chosen, fb}
+function pickQuestion(cid){
+  const p=curP(cid),rec=cs(cid).recent,d=targetDifficulty(p,rec);
+  const tags=openMis(cid).map(m=>m.tag);
+  const askedRecent=S.log.slice(-8).map(l=>l.qid);
+  let pool=QS.filter(q=>q.c===cid&&!askedRecent.includes(q.id)); if(!pool.length) pool=QS.filter(q=>q.c===cid);
+  const targeted=pool.filter(q=>tags.some(t=>Object.values(q.m||{}).includes(t)||Object.values(q.mw||{}).includes(t)));
+  if(targeted.length) pool=targeted;
+  pool.sort((a,b)=>Math.abs(a.d-d)-Math.abs(b.d-d)); return {q:pool[0],d,targeted:!!targeted.length};
+}
+function nextConceptId(){
+  const m=id=>cs(id).att?curP(id):P_INIT;
+  let cand=CONCEPTS.filter(c=>c.pre.every(p=>m(p)>=.5));
+  if(!cand.length) cand=CONCEPTS.filter(c=>!c.pre.length);
+  const pend=cand.filter(c=>m(c.id)<.8); if(pend.length) cand=pend;
+  return cand.sort((a,b)=>m(a.id)-m(b.id)||a.id.localeCompare(b.id))[0].id;
+}
+function evaluate(q,val,reasoning){
+  let ok=false,tag=null;
+  if(q.t==='mcq'){ok=Number(val)===q.a;tag=(q.m||{})[val]||null;}
+  else if(q.t==='num'){const x=parseFloat(val);ok=isFinite(x)&&Math.abs(x-q.a)<=q.tol*Math.abs(q.a);if(!ok&&q.mw)for(const k in q.mw)if(Math.abs(x-Number(k))<1e-9)tag=q.mw[k];}
+  else{const v=String(val).toLowerCase();ok=q.a.some(k=>v.includes(k));}
+  const an=analyse(q.c,ok,reasoning);
+  let mtag=an.tag, conf=an.conf;
+  if(!mtag&&tag&&!ok){mtag=tag;conf=.75;}
+  return {ok,an,mtag,conf};
+}
+function applyResult(q,r,secs){
+  const c=cs(q.c),before=curP(q.c);
+  const seen=S.log.slice(-8).some(l=>l.qid===q.id);
+  const nxt=bktUpdate({p:before,att:c.att,cor:c.cor,conf:c.conf},r.ok,q.d,r.an.rq,seen?.5:1);
+  Object.assign(c,nxt,{last:now()}); c.hist.push([now(),c.p]); c.recent=[...c.recent,r.ok].slice(-6);
+  let rec=null;
+  if(r.mtag&&MIS[r.mtag]){
+    const m=MIS[r.mtag]; rec=S.mis.find(x=>!x.resolved&&x.tag===r.mtag&&x.c===q.c);
+    if(rec){rec.count++;rec.t=now();} else{rec={id:Date.now()+Math.random(),c:q.c,tag:r.mtag,label:m.label,fix:m.fix,reasoning:r.reasoning||'(no written reasoning)',sev:r.ok?'low':'medium',conf:r.conf,count:1,t:now(),resolved:false};S.mis.push(rec);}
+  }else if(r.ok&&c.recent.slice(-2).length===2&&c.recent.slice(-2).every(Boolean)) openMis(q.c).forEach(m=>m.resolved=true);
+  const quality=(r.ok?1:0)*.6+r.an.rq*.4;
+  const s=srsSchedule(c.rev,quality,now(),CBY[q.c].d,openMis(q.c).length>0);
+  c.rev=s.rev;c.due=s.due;
+  S.secs+=secs; S.log.push({t:now(),c:q.c,qid:q.id,ok:r.ok,delta:(c.p-before)*100,mis:rec?rec.label:null});
+  save(); return {delta:(c.p-before)*100,rec};
+}
+
+/* ============ Rendering ============ */
+let role='student',tab='dashboard',selNode=null;
+const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['assign','Assignments']]};
+function renderChrome(){
+  document.querySelectorAll('#role button').forEach(b=>b.classList.toggle('on',b.dataset.role===role));
+  document.getElementById('tabs').innerHTML=TABS[role].map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('');
+}
+function render(){
+  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,assign:vAssign}[tab];
+  document.getElementById('app').innerHTML=`<div class="notice">Demo build. Progress is stored in this browser only. The Teacher class below is <b>sample data</b>; the “You” row is your own live activity. Sign-in, the database and the AI provider live in the backend (see the repository).</div>`+f();
+  if(tab==='learn'||tab==='diag') bindQuestion();
+  if(tab==='syllabus'&&syl.open==='electric_charge') initPlayer();
+}
+const spark=(vals,w=120,h=32,col='var(--pri)')=>{
+  if(vals.length<2) return `<span class="muted">not enough data</span>`;
+  const pts=vals.map((v,i)=>`${(i/(vals.length-1)*(w-6)+3).toFixed(1)},${(h-3-v*(h-6)).toFixed(1)}`).join(' ');
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2"/></svg>`;
+};
+function overall(){const a=CONCEPTS.filter(c=>cs(c.id).att);return a.length?a.reduce((s,c)=>s+curP(c.id),0)/a.length:null;}
+function streak(){const days=new Set(S.log.map(l=>new Date(l.t).toDateString()));let n=0,d=new Date(now());if(!days.has(d.toDateString()))d=new Date(d-864e5);while(days.has(d.toDateString())){n++;d=new Date(d-864e5);}return n;}
+function dueList(){return CONCEPTS.filter(c=>cs(c.id).due).map(c=>({c,due:cs(c.id).due})).sort((a,b)=>a.due-b.due);}
+
+function vDash(){
+  const bands={mastered:0,developing:0,weak:0,not_assessed:0};
+  CONCEPTS.forEach(c=>bands[bandOf(curP(c.id),cs(c.id).att)]++);
+  const att=S.log.length,acc=att?S.log.filter(l=>l.ok).length/att:null,o=overall();
+  const roll=S.log.map((_,i)=>{const w=S.log.slice(Math.max(0,i-4),i+1);return w.filter(l=>l.ok).length/w.length;});
+  const due=dueList().filter(x=>x.due<=now()),nc=CBY[nextConceptId()];
+  const total=CONCEPTS.length;
+  return `<h2>Welcome back</h2>
+  <div class="grid g4">
+   <div class="card stat"><b>${o===null?'—':Math.round(o*100)+'%'}</b><span>Overall mastery (assessed concepts)</span></div>
+   <div class="card stat"><b>${bands.mastered}/${total}</b><span>Concepts mastered</span></div>
+   <div class="card stat"><b>${bands.weak}</b><span>Need improvement</span></div>
+   <div class="card stat"><b>${att}</b><span>Questions attempted</span></div>
+   <div class="card stat"><b>${acc===null?'—':Math.round(acc*100)+'%'}</b><span>Accuracy ${spark(roll,90,24)}</span></div>
+   <div class="card stat"><b>${Math.round(S.secs/60)} min</b><span>Time spent answering</span></div>
+   <div class="card stat"><b>${streak()} d</b><span>Learning streak</span></div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+   <div class="card"><h3>Concept mastery</h3>
+    ${[['mastered','Strong'],['developing','Developing'],['weak','Weak'],['not_assessed','Not assessed']].map(([k,l])=>`<div class="row" style="margin:6px 0"><span style="width:96px">${l}</span><div class="bar2" style="flex:1"><i style="width:${bands[k]/total*100}%;background:var(--${k==='mastered'?'ok':k==='developing'?'warn':k==='weak'?'bad':'grey'})"></i></div><b>${bands[k]}</b></div>`).join('')}
+    ${!S.diagDone?`<p class="muted">Take the diagnostic to build your starting profile.</p><button class="btn" data-go="diag">Start diagnostic</button>`:''}
+   </div>
+   <div class="card"><h3>Today’s learning plan</h3>
+    <ul class="plain">
+     <li><b>Revision due:</b> ${due.length?due.map(x=>esc(x.c.n)).join(', '):'nothing due'}</li>
+     <li><b>Recommended next:</b> ${esc(nc.n)} <button class="btn ghost" data-learn="${nc.id}">Practise</button></li>
+     <li><b>Open misconceptions:</b> ${openMis().length?openMis().map(m=>esc(m.label)).join('; '):'none recorded'}</li>
+    </ul></div>
+  </div>
+  <h2>Recent activity</h2><div class="card">${S.log.length?`<ul class="plain">${S.log.slice(-8).reverse().map(l=>`<li>${fmtDay(l.t)} · ${esc(CBY[l.c].n)} · ${l.ok?'correct':'incorrect'} · mastery ${l.delta>=0?'+':''}${l.delta.toFixed(1)} pts${l.mis?` · <span class="muted">possible misconception: ${esc(l.mis)}</span>`:''}</li>`).join('')}</ul>`:'<p class="muted">No activity yet. Your answers will appear here.</p>'}</div>
+  <p><button class="btn ghost" data-reset>Reset my demo data</button></p>`;
+}
+
+function vGraph(){
+  const W=1090,H=370,nw=140,nh=46;
+  const edges=CONCEPTS.flatMap(c=>c.pre.map(p=>[CBY[p],c]));
+  const col=id=>{const b=bandOf(curP(id),cs(id).att);return b==='mastered'?'var(--ok)':b==='developing'?'var(--warn)':b==='weak'?'var(--bad)':'var(--grey)';};
+  const cur=ses&&ses.cid;
+  let svg=`<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Concept prerequisite graph"><defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--muted)"/></marker></defs>`;
+  edges.forEach(([a,b])=>{svg+=`<line x1="${a.x+nw}" y1="${a.y+nh/2}" x2="${b.x-2}" y2="${b.y+nh/2}" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#ar)"/>`;});
+  CONCEPTS.forEach(c=>{const sel=selNode===c.id;svg+=`<g class="node" data-node="${c.id}" tabindex="0"><rect x="${c.x}" y="${c.y}" width="${nw}" height="${nh}" rx="12" fill="${col(c.id)}" stroke="${cur===c.id?'var(--blue)':sel?'var(--fg)':'transparent'}" stroke-width="${cur===c.id?4:3}"/><text x="${c.x+nw/2}" y="${c.y+nh/2+4}" text-anchor="middle" font-size="12" font-weight="600" fill="#fff">${esc(c.n.length>20?c.n.slice(0,19)+'…':c.n)}</text></g>`;});
+  svg+='</svg>';
+  const legend=[['ok','Mastered'],['warn','Developing'],['bad','Weak'],['grey','Not assessed'],['blue','Currently learning']].map(([c,l])=>`<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--${c});margin-right:4px"></i>${l}</span>`).join(' &nbsp; ');
+  return `<h2>Class 10 Physics · Electricity</h2><div class="card"><div class="scroll">${svg}</div><div class="muted" style="margin-top:8px;font-size:12px">${legend}</div></div>${selNode?conceptPanel(selNode):'<p class="muted">Select a concept to see its explanation, your mastery and recommended questions.</p>'}`;
+}
+function conceptPanel(id){
+  const c=CBY[id],st=cs(id),p=curP(id),b=bandOf(p,st.att);
+  const ms=openMis(id);
+  return `<div class="card" style="margin-top:14px"><div class="row"><h3 style="margin:0">${esc(c.n)}</h3><span class="pill ${b}">${b.replace('_',' ')}${st.att?' · '+Math.round(p*100)+'%':''}</span><span class="muted">difficulty ${c.d}/5</span></div>
+  <p>${esc(c.desc)}</p>
+  <div class="grid g2"><div><b>Learning objectives</b><ul>${c.obj.map(o=>`<li>${esc(o)}</li>`).join('')}</ul>
+  <b>Prerequisites</b><p>${c.pre.length?c.pre.map(p=>{const pc=CBY[p];return `${esc(pc.n)} (${Math.round(curP(p)*100)}%)`;}).join(', '):'None'}</p></div>
+  <div><b>Recent performance</b><p>${st.att?`${st.cor}/${st.att} correct · confidence ${Math.round(st.conf*100)}%<br>${spark(st.hist.map(h=>h[1]),160,36)}`:'Not assessed yet.'}</p>
+  <b>Detected misconceptions</b><p>${ms.length?ms.map(m=>esc(m.label)).join('; '):'None recorded.'}</p></div></div>
+  <button class="btn" data-learn="${id}">Practise this concept</button></div>`;
+}
+
+function qHTML(){
+  const q=ses.q,c=CBY[q.c];
+  const prog=ses.mode==='diag'?`<div class="row"><span class="muted">Question ${ses.idx+1} of ${ses.queue.length}</span><div class="bar2" style="flex:1;min-width:80px"><i style="width:${(ses.idx)/ses.queue.length*100}%"></i></div></div>`:'';
+  const hdr=`<div class="row" style="margin-bottom:8px"><span class="pill" style="background:var(--blue)">${esc(c.n)}</span><span class="muted">Level ${q.d} of 5</span>${ses.targeted?'<span class="pill" style="background:var(--sec)">targets a misconception</span>':''}</div>`;
+  let inp='';
+  if(q.t==='mcq') inp=q.o.map((o,i)=>`<button class="opt ${ses.chosen===String(i)?'sel':''}" data-opt="${i}">${esc(o)}</button>`).join('');
+  else if(q.t==='num') inp=`<label for="ans">Your answer</label><input type="text" id="ans" inputmode="decimal" value="${esc(ses.chosen||'')}">`;
+  else inp=`<label for="ans">Your answer</label><textarea id="ans">${esc(ses.chosen||'')}</textarea>`;
+  return `${prog}<div class="card" style="margin-top:10px">${hdr}<h3 style="font-size:17px">${esc(q.q)}</h3>${inp}
+   <label for="why">Explain your reasoning${q.t==='short'?' (optional)':''}</label><textarea id="why" placeholder="Which law or formula did you use, and why?"></textarea>
+   <p><button class="btn" data-submit>Submit answer</button></p></div>`;
+}
+function fbHTML(){
+  const f=ses.fb,q=ses.q;
+  return `<div class="card" style="margin-top:10px"><div class="fb ${f.r.ok?'':'bad'}"><b>${f.r.ok?'That’s right.':'Not quite.'}</b> ${esc(q.ex)}</div>
+  <div class="fb ${f.r.an.cat==='conceptual_misunderstanding'?'bad':''}"><b>Reasoning check:</b> ${esc(CAT_TEXT[f.r.an.cat])}</div>
+  ${f.res.rec?`<div class="fb bad"><b>Possible misconception</b> (confidence ${Math.round(f.res.rec.conf*100)}%): ${esc(f.res.rec.label)}<br><span class="muted">Suggested fix: ${esc(f.res.rec.fix)}</span><br><span class="muted">This is a prediction from your answer, so a teacher can review it.</span></div>`:''}
+  <p><b>Mastery of ${esc(CBY[q.c].n)}:</b> ${Math.round(f.before*100)}% → ${Math.round(curP(q.c)*100)}% (${f.res.delta>=0?'+':''}${f.res.delta.toFixed(1)} pts)</p>
+  <div class="row"><button class="btn" data-next>${ses.mode==='diag'&&ses.idx+1>=ses.queue.length?'See my report':'Next question'}</button></div>
+  ${tutorHTML(q.c)}</div>`;
+}
+function tutorHTML(cid){
+  return `<h3 style="margin-top:16px">Ask the tutor about ${esc(CBY[cid].n)}</h3><div class="row"><input type="text" id="ask" placeholder="e.g. Why does current fall when resistance rises?" style="flex:1;min-width:180px"><button class="btn ghost" data-ask>Ask</button></div><div id="tutor">${S.ask.length?esc(S.ask[S.ask.length-1]):''}</div><p class="muted" style="font-size:12px">Offline tutor: answers come from the syllabus notes and your history. Connect an AI provider on the backend for open-ended answers.</p>`;
+}
+function vLearn(){
+  if(!ses||ses.mode==='diag') startPractice();
+  return `<h2>Practice</h2>${ses.fb?fbHTML():qHTML()}`;
+}
+function startPractice(cid){
+  cid=cid||nextConceptId(); const p=pickQuestion(cid);
+  ses={mode:'practice',cid,q:p.q,d:p.d,targeted:p.targeted,t0:Date.now(),chosen:null,fb:null};
+}
+function vDiag(){
+  if(S.diagDone&&!(ses&&ses.mode==='diag')) return diagReport();
+  if(!ses||ses.mode!=='diag'){
+    const queue=CONCEPTS.map(c=>{const pool=QS.filter(q=>q.c===c.id).sort((a,b)=>Math.abs(a.d-2)-Math.abs(b.d-2));return pool[0];});
+    ses={mode:'diag',idx:0,queue,q:queue[0],cid:queue[0].c,t0:Date.now(),chosen:null,fb:null,wrongs:0};
+    return `<h2>Diagnostic</h2><div class="card"><p>One question per concept (${queue.length} in total) to estimate where you are starting from. A single miss never marks a concept as “not understood”; mastery is updated gradually.</p><button class="btn" data-go="diag">Begin</button></div>`;
+  }
+  return `<h2>Diagnostic</h2>${ses.fb?fbHTML():qHTML()}`;
+}
+function diagReport(){
+  const rows=CONCEPTS.map(c=>({c,p:curP(c.id),att:cs(c.id).att,b:bandOf(curP(c.id),cs(c.id).att)}));
+  const strong=rows.filter(r=>r.b==='mastered'),dev=rows.filter(r=>r.b==='developing'),weak=rows.filter(r=>r.b==='weak');
+  const avg=rows.reduce((s,r)=>s+r.p,0)/rows.length, lvl=Math.max(1,Math.min(5,1+Math.floor(avg*4.99)));
+  const path=[...weak,...dev].sort((a,b)=>a.p-b.p).slice(0,5);
+  const L=a=>a.length?a.map(r=>esc(r.c.n)).join(', '):'None';
+  return `<h2>Diagnostic report</h2><div class="card"><ul class="plain">
+   <li><b>Strong:</b> ${L(strong)}</li><li><b>Developing:</b> ${L(dev)}</li><li><b>Weak:</b> ${L(weak)}</li>
+   <li><b>Possible misconceptions:</b> ${openMis().length?openMis().map(m=>esc(m.label)).join('; '):'None detected from your answers'}</li>
+   <li><b>Recommended starting difficulty:</b> Level ${lvl} of 5</li>
+   <li><b>Learning path:</b> ${path.length?path.map(r=>esc(r.c.n)).join(' → '):'Keep practising to extend your strengths'}</li></ul>
+   <p class="muted">With one question per concept, these are first estimates. They sharpen as you practise.</p>
+   <button class="btn" data-go="graph">View concept graph</button> <button class="btn ghost" data-rediag>Retake diagnostic</button></div>`;
+}
+
+function vRev(){
+  const list=dueList(),n=now();
+  const st=d=>d<=n-864e5?['overdue','weak']:d<=n?['due today','developing']:['upcoming','not_assessed'];
+  const rows=list.length?list.map(x=>{const [l,k]=st(x.due);const c=cs(x.c.id);return `<li class="row"><b style="flex:1;min-width:150px">${esc(x.c.n)}</b><span class="pill ${k}">${l}</span><span class="muted">${fmtDay(x.due)} · interval ${c.rev.interval}d · review #${c.rev.reps}</span>${x.due<=n?`<button class="btn ghost" data-learn="${x.c.id}">Review now</button>`:''}</li>`;}).join(''):'<li class="muted">Nothing scheduled yet. Each answered question schedules its concept for revision.</li>';
+  const days=[...Array(14)].map((_,i)=>{const t=new Date(n+i*864e5),k=t.toDateString();const cnt=list.filter(x=>(i===0?x.due<=n+864e5-1&&x.due<=new Date(k).getTime()+864e5:new Date(x.due).toDateString()===k)).length;return `<div class="card" style="padding:8px;text-align:center;min-width:56px"><div class="muted" style="font-size:11px">${t.toLocaleDateString(undefined,{weekday:'short'})}</div><div style="font:700 15px var(--fd)">${t.getDate()}</div><div style="color:${cnt?'var(--pri)':'var(--muted)'};font-weight:600">${cnt||'·'}</div></div>`;}).join('');
+  return `<h2>Revision schedule</h2><div class="scroll"><div class="row" style="flex-wrap:nowrap">${days}</div></div>
+  <div class="card" style="margin-top:14px"><ul class="plain">${rows}</ul></div>
+  <div class="card" style="margin-top:14px"><b>Demo clock</b> <span class="muted">(today is shifted by ${S.skew} day${S.skew===1?'':'s'}). Jump ahead to see revisions fall due and mastery decay.</span><p><button class="btn ghost" data-skew="1">+1 day</button> <button class="btn ghost" data-skew="7">+7 days</button> <button class="btn ghost" data-skew="-999">Reset clock</button></p></div>`;
+}
+
+function classRows(){
+  const rows=SAMPLE.map(([n,ps,mt])=>({n,ps,mt,sample:true}));
+  rows.push({n:'You (live)',ps:CONCEPTS.map(c=>cs(c.id).att?curP(c.id):null),mt:openMis().map(m=>m.tag),sample:false});
+  return rows;
+}
+function cellCol(p){return p===null?'var(--grey)':p>=.8?'var(--ok)':p>=.5?'var(--warn)':'var(--bad)';}
+function vClass(){
+  const rows=classRows(),n=rows.length;
+  const colAvg=CONCEPTS.map((c,i)=>{const v=rows.map(r=>r.ps[i]).filter(x=>x!==null);return {avg:v.length?v.reduce((a,b)=>a+b,0)/v.length:null,weak:v.filter(x=>x<.5).length,n:v.length};});
+  const sAvg=r=>{const v=r.ps.filter(x=>x!==null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null;};
+  const all=rows.flatMap(r=>r.ps).filter(x=>x!==null);
+  const classAvg=all.reduce((a,b)=>a+b,0)/all.length;
+  const hard=colAvg.map((c,i)=>({c:CONCEPTS[i],...c})).filter(x=>x.avg!==null).sort((a,b)=>a.avg-b.avg).slice(0,3);
+  const attn=rows.filter(r=>{const a=sAvg(r);return a!==null&&a<.45;});
+  const done=rows.filter(r=>r.ps.every(x=>x!==null)).length;
+  return `<h2>Class overview</h2><div class="grid g4">
+   <div class="card stat"><b>${n}</b><span>Students (5 sample + you)</span></div>
+   <div class="card stat"><b>${Math.round(classAvg*100)}%</b><span>Average mastery</span></div>
+   <div class="card stat"><b>${attn.length}</b><span>Need attention (avg under 45%)</span></div>
+   <div class="card stat"><b>${Math.round(done/n*100)}%</b><span>Fully assessed</span></div></div>
+   <p><b>Hardest concepts:</b> ${hard.map(h=>`${esc(h.c.n)} (${Math.round(h.avg*100)}%, ${h.weak} weak)`).join(' · ')}</p>
+   <p><b>Students requiring attention:</b> ${attn.length?attn.map(r=>esc(r.n)).join(', '):'none'}</p>
+   <div class="card"><div class="scroll"><table><thead><tr><th>Student</th>${CONCEPTS.map(c=>`<th style="white-space:normal;min-width:62px;font-size:10px">${esc(c.n)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>
+   ${rows.map(r=>`<tr><td>${esc(r.n)}${r.sample?' <span class="muted">(sample)</span>':''}</td>${r.ps.map(p=>`<td><span class="cell" style="background:${cellCol(p)}" title="${p===null?'not assessed':Math.round(p*100)+'%'}">${p===null?'–':Math.round(p*100)}</span></td>`).join('')}<td><b>${sAvg(r)===null?'–':Math.round(sAvg(r)*100)}</b></td></tr>`).join('')}
+   <tr><td><b>Class average</b></td>${colAvg.map(c=>`<td><b>${c.avg===null?'–':Math.round(c.avg*100)}</b></td>`).join('')}<td></td></tr></tbody></table></div>
+   <p class="muted" style="font-size:12px">Green 80+ strong · Yellow 50–79 developing · Red under 50 weak · Grey not assessed.</p></div>`;
+}
+function vMiscon(){
+  const rows=classRows(),map={};
+  rows.forEach(r=>r.mt.forEach(t=>{(map[t]=map[t]||[]).push(r);}));
+  const list=Object.entries(map).sort((a,b)=>b[1].length-a[1].length);
+  const mine=Object.fromEntries(S.mis.map(m=>[m.tag,m]));
+  return `<h2>Common misconceptions</h2><p class="muted">Predictions from reasoning with confidence scores. Review before acting.</p>
+  <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} students · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
+}
+function vAssign(){
+  return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
+  <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
+  <label for="adue">Deadline</label><input type="date" id="adue">
+  <p><button class="btn" data-assign>Assign to whole class</button></p></div>
+  <h2>Assigned</h2><div class="card">${S.assign.length?`<ul class="plain">${S.assign.map(a=>`<li>${a.cs.map(x=>esc(CBY[x].n)).join(', ')} · level ${a.d} · due ${esc(a.due||'no deadline')}</li>`).join('')}</ul>`:'<p class="muted">No assignments yet.</p>'}<p class="muted" style="font-size:12px">In this demo assignments are recorded locally. Student delivery and completion tracking are part of the backend.</p></div>`;
+}
+
+/*@@LESSON_JS@@*/
+/* ============ Events ============ */
+function bindQuestion(){}
+const App=document.addEventListener('click',e=>{
+  const t=e.target.closest('button,[data-node]'); if(!t) return;
+  const D=t.dataset;
+  if(D.role){role=D.role;tab=TABS[role][0][0];ses=null;render();return;}
+  if(D.tab){tab=D.tab;if(tab!=='learn'&&tab!=='diag'&&ses&&ses.fb)ses=null;render();return;}
+  if(D.go){tab=D.go;render();return;}
+  if(D.node){selNode=D.node;render();return;}
+  if(D.learn){tab='learn';startPractice(D.learn);render();return;}
+  if(D.opt!==undefined){ses.chosen=D.opt;render();return;}
+  if(D.reset!==undefined){S=fresh();save();ses=null;selNode=null;render();return;}
+  if(D.rediag!==undefined){S.diagDone=false;ses=null;render();return;}
+  if(D.skew){S.skew=D.skew==='-999'?0:S.skew+Number(D.skew);save();render();return;}
+  if(D.submit!==undefined){
+    const q=ses.q; let val=ses.chosen; const a=document.getElementById('ans'); if(a) val=a.value;
+    if(val===null||String(val).trim()===''){ses.err=1;alert_(q);return;}
+    const why=document.getElementById('why').value, r=evaluate(q,val,why); r.reasoning=why;
+    const before=curP(q.c),res=applyResult(q,r,Math.round((Date.now()-ses.t0)/1000));
+    ses.fb={r,res,before}; render();return;
+  }
+  if(D.next!==undefined){
+    if(ses.mode==='diag'){ses.idx++; if(ses.idx>=ses.queue.length){S.diagDone=true;save();ses=null;render();return;}
+      ses.q=ses.queue[ses.idx];ses.cid=ses.q.c;ses.chosen=null;ses.fb=null;ses.t0=Date.now();}
+    else{ const wasMis=ses.fb.res.rec; startPractice(wasMis?ses.q.c:undefined);}
+    render();return;
+  }
+  if(D.ask!==undefined){
+    const v=(document.getElementById('ask').value||'').toLowerCase(),c=CBY[ses.q.c];
+    let r=`${c.desc} `; const ms=openMis(c.id); if(ms.length) r+=`Because you have a possible mix-up here (${ms[0].label.toLowerCase()}), try this: ${ms[0].fix} `;
+    else if(cs(c.id).att) r+=`You are at ${Math.round(curP(c.id)*100)}% on this concept. `;
+    if(/why|how/.test(v)&&c.id==='ohms_law') r+='Think of resistance as narrowing a pipe: the same push (voltage) moves less flow (current) through it.';
+    S.ask.push(r); save(); document.getElementById('tutor').textContent=r; return;
+  }
+  if(D.assign!==undefined){
+    const cs_=[...document.querySelectorAll('input[name=ac]:checked')].map(x=>x.value); if(!cs_.length){return;}
+    S.assign.push({cs:cs_,d:+document.getElementById('adif').value||2,due:document.getElementById('adue').value}); save(); render();return;
+  }
+});
+function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
+render();
+</script>
