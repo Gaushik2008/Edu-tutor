@@ -289,4 +289,4 @@ Worked solutions for that chapter, for further reading:
 - **Video lessons:** all 12 concepts now have an animated in-page lesson with checkpoint questions (`demo/src/lessons2.js`). They are canvas animations, not MP4 files. Ohm's Law also has a small lab.
 - **Roll numbers:** the teacher heatmap shows roll numbers (Roll 101 to 106 are sample data). Students set their own on the Dashboard.
 - **New look:** light "paper and teal" theme with a left sidebar on desktop.
-- **OpenAI tutor:** paste your own API key on the Dashboard. It is stored only in your browser's localStorage and sent only to api.openai.com. Never commit a key; this is a public static page, so anything embedded in it would be exposed.
+- **AI tutor:** the page has no API key and no key field. A key in a public static page would be exposed to everyone, so AI answers need a small backend proxy that holds the key. The tutor currently answers from the syllabus notes.

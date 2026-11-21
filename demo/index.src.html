@@ -298,7 +298,7 @@ function renderChrome(){
 }
 function render(){
   renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,assign:vAssign}[tab];
-  document.getElementById('app').innerHTML=`<div class="notice">Demo build. Progress is stored in this browser only. The Teacher class below is <b>sample data</b>; your own row uses the roll number you set on the Dashboard. Sign-in, the database and the AI provider live in the backend (see the repository).</div>`+f();
+  document.getElementById('app').innerHTML=``+f();
   if(tab==='learn'||tab==='diag') bindQuestion();
   if(tab==='syllabus'&&syl.open&&LESSONS[syl.open]) initPlayer();
 }
@@ -342,7 +342,6 @@ function vDash(){
     </ul></div>
   </div>
   <h2>Recent activity</h2><div class="card">${S.log.length?`<ul class="plain">${S.log.slice(-8).reverse().map(l=>`<li>${fmtDay(l.t)} · ${esc(CBY[l.c].n)} · ${l.ok?'correct':'incorrect'} · mastery ${l.delta>=0?'+':''}${l.delta.toFixed(1)} pts${l.mis?` · <span class="muted">possible misconception: ${esc(l.mis)}</span>`:''}</li>`).join('')}</ul>`:'<p class="muted">No activity yet. Your answers will appear here.</p>'}</div>
-  <h2>AI tutor (OpenAI)</h2><div class="card">${aiCard()}</div>
   <p><button class="btn ghost" data-reset>Reset my demo data</button></p>`;
 }
 
@@ -393,15 +392,12 @@ function fbHTML(){
 }
 const AIK='adaptivelearn-openai';
 const aiGet=()=>{try{return JSON.parse(localStorage.getItem(AIK))||{};}catch(e){return {};}};
-function aiCard(){const a=aiGet();return `<p style="margin-top:0">Paste your own OpenAI API key to get open-ended tutor answers. The key is kept <b>only in this browser</b> and sent <b>only to api.openai.com</b>. It is never stored in the repository or the page.</p>
-  <div class="grid g2"><div><label for="aik">API key</label><input type="password" id="aik" autocomplete="off" placeholder="${a.key?'Key saved (hidden)':'sk-…'}"></div><div><label for="aim">Model</label><input type="text" id="aim" value="${esc(a.model||'gpt-4o-mini')}"></div></div>
-  <p class="row"><button class="btn" data-aisave>Save</button><button class="btn ghost" data-aiclear>Remove key</button><span class="muted">${a.key?'AI tutor is on':'AI tutor is off (offline tutor in use)'}</span></p>`;}
 async function aiAsk(cid,q){const a=aiGet(),c=CBY[cid],ms=openMis(cid);
   const sys=`You are a patient Class 10 physics tutor (NCERT Electricity). Answer in under 120 words, simply, with one worked number if useful. Concept: ${c.n}. Notes: ${c.desc}. ${ms.length?'The student may hold this misconception: '+ms[0].label+'. Gently address it.':''}`;
   const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+a.key},body:JSON.stringify({model:a.model||'gpt-4o-mini',temperature:.3,max_tokens:300,messages:[{role:'system',content:sys},{role:'user',content:q}]})});
   const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));return j.choices[0].message.content.trim();}
 function tutorHTML(cid){
-  return `<h3 style="margin-top:16px">Ask the tutor about ${esc(CBY[cid].n)}</h3><div class="row"><input type="text" id="ask" placeholder="e.g. Why does current fall when resistance rises?" style="flex:1;min-width:180px"><button class="btn ghost" data-ask>Ask</button></div><div id="tutor">${S.ask.length?esc(S.ask[S.ask.length-1]):''}</div><p class="muted" style="font-size:12px">Without an OpenAI key the tutor answers from the syllabus notes and your history. Add a key on the Dashboard for open-ended answers.</p>`;
+  return `<h3 style="margin-top:16px">Ask the tutor about ${esc(CBY[cid].n)}</h3><div class="row"><input type="text" id="ask" placeholder="e.g. Why does current fall when resistance rises?" style="flex:1;min-width:180px"><button class="btn ghost" data-ask>Ask</button></div><div id="tutor">${S.ask.length?esc(S.ask[S.ask.length-1]):''}</div><p class="muted" style="font-size:12px">The tutor answers from the syllabus notes and your history.</p>`;
 }
 function vLearn(){
   if(!ses||ses.mode==='diag') startPractice();
@@ -461,16 +457,16 @@ function vClass(){
   const attn=rows.filter(r=>{const a=sAvg(r);return a!==null&&a<.45;});
   const done=rows.filter(r=>r.ps.every(x=>x!==null)).length;
   return `<h2>Class overview</h2><div class="grid g4">
-   <div class="card stat"><b>${n}</b><span>Roll numbers (6 sample + you)</span></div>
+   <div class="card stat"><b>${n}</b><span>Roll numbers in class</span></div>
    <div class="card stat"><b>${Math.round(classAvg*100)}%</b><span>Average mastery</span></div>
    <div class="card stat"><b>${attn.length}</b><span>Need attention (avg under 45%)</span></div>
    <div class="card stat"><b>${Math.round(done/n*100)}%</b><span>Fully assessed</span></div></div>
    <p><b>Hardest concepts:</b> ${hard.map(h=>`${esc(h.c.n)} (${Math.round(h.avg*100)}%, ${h.weak} weak)`).join(' · ')}</p>
    <p><b>Roll numbers needing attention:</b> ${attn.length?attn.map(r=>esc(r.n)).join(', '):'none'}</p>
    <div class="card"><div class="scroll"><table><thead><tr><th>Roll no.</th>${CONCEPTS.map(c=>`<th style="white-space:normal;min-width:62px;font-size:10px">${esc(c.n)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>
-   ${rows.map(r=>`<tr><td>${esc(r.n)}${r.sample?' <span class="muted">(sample)</span>':''}</td>${r.ps.map(p=>`<td><span class="cell" style="background:${cellCol(p)}" title="${p===null?'not assessed':Math.round(p*100)+'%'}">${p===null?'–':Math.round(p*100)}</span></td>`).join('')}<td><b>${sAvg(r)===null?'–':Math.round(sAvg(r)*100)}</b></td></tr>`).join('')}
+   ${rows.map(r=>`<tr><td>${esc(r.n)}</td>${r.ps.map(p=>`<td><span class="cell" style="background:${cellCol(p)}" title="${p===null?'not assessed':Math.round(p*100)+'%'}">${p===null?'–':Math.round(p*100)}</span></td>`).join('')}<td><b>${sAvg(r)===null?'–':Math.round(sAvg(r)*100)}</b></td></tr>`).join('')}
    <tr><td><b>Class average</b></td>${colAvg.map(c=>`<td><b>${c.avg===null?'–':Math.round(c.avg*100)}</b></td>`).join('')}<td></td></tr></tbody></table></div>
-   <p class="muted" style="font-size:12px">Green 80+ strong · Amber 50–79 developing · Red under 50 weak · Grey not assessed.</p></div>`;
+   <p class="row" style="font-size:12px;gap:16px">${[['ok','Green 80+ strong'],['warn','Amber 50–79 developing'],['bad','Red under 50 weak'],['grey','Grey not assessed']].map(([c,l])=>`<span><i style="display:inline-block;width:12px;height:12px;border-radius:4px;background:var(--${c});margin-right:6px;vertical-align:-1px"></i>${l}</span>`).join('')}</p></div>`;
 }
 function vMiscon(){
   const rows=classRows(),map={};
@@ -484,7 +480,7 @@ function vAssign(){
   return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
   <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
   <label for="adue">Deadline</label><input type="date" id="adue">
-  <p><button class="btn" data-assign>Assign to whole class</button></p></div>
+  <p class="row"><button class="btn" data-assign>Assign to whole class</button><button class="btn ghost" data-autoassign>Suggest from class weak spots</button></p></div>
   <h2>Assigned</h2><div class="card">${S.assign.length?`<ul class="plain">${S.assign.map(a=>`<li>${a.cs.map(x=>esc(CBY[x].n)).join(', ')} · level ${a.d} · due ${esc(a.due||'no deadline')}</li>`).join('')}</ul>`:'<p class="muted">No assignments yet.</p>'}<p class="muted" style="font-size:12px">In this demo assignments are recorded locally. Student delivery and completion tracking are part of the backend.</p></div>`;
 }
 
@@ -516,8 +512,6 @@ const App=document.addEventListener('click',e=>{
     else{ const wasMis=ses.fb.res.rec; startPractice(wasMis?ses.q.c:undefined);}
     render();return;
   }
-  if(D.aisave!==undefined){const k=document.getElementById('aik').value.trim(),o=aiGet();localStorage.setItem(AIK,JSON.stringify({key:k||o.key||'',model:document.getElementById('aim').value.trim()||'gpt-4o-mini'}));render();return;}
-  if(D.aiclear!==undefined){localStorage.removeItem(AIK);render();return;}
   if(D.ask!==undefined){
     const v=(document.getElementById('ask').value||'').toLowerCase(),c=CBY[ses.q.c];
     if(aiGet().key){const box=document.getElementById('tutor');box.textContent='Thinking…';aiAsk(c.id,document.getElementById('ask').value||('Explain '+c.n)).then(t=>{S.ask.push(t);save();box.textContent=t;}).catch(e=>{box.textContent='OpenAI error: '+e.message+'. Check your key on the Dashboard.';});return;}
@@ -526,6 +520,8 @@ const App=document.addEventListener('click',e=>{
     if(/why|how/.test(v)&&c.id==='ohms_law') r+='Think of resistance as narrowing a pipe: the same push (voltage) moves less flow (current) through it.';
     S.ask.push(r); save(); document.getElementById('tutor').textContent=r; return;
   }
+  if(D.autoassign!==undefined){const rows=classRows();const w=CONCEPTS.map((c,i)=>({c,n:rows.filter(r=>r.ps[i]!==null&&r.ps[i]<.5).length})).filter(x=>x.n).sort((a,b)=>b.n-a.n).slice(0,3);
+    if(w.length){const d=new Date(Date.now()+7*864e5).toISOString().slice(0,10);S.assign.push({cs:w.map(x=>x.c.id),d:2,due:d});save();render();}return;}
   if(D.assign!==undefined){
     const cs_=[...document.querySelectorAll('input[name=ac]:checked')].map(x=>x.value); if(!cs_.length){return;}
     S.assign.push({cs:cs_,d:+document.getElementById('adif').value||2,due:document.getElementById('adue').value}); save(); render();return;
