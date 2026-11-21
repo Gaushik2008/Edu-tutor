@@ -1,22 +1,22 @@
 <title>AdaptiveLearn AI</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* "Paper & teal": light classroom look. Desktop: fixed left sidebar. Mobile: sticky top bar. Canvas lessons read these variables, keep the names. */
-:root{--bg:#F5F2EA;--card:#FFFFFF;--fg:#1B2433;--muted:#5F6B7E;--line:#E4DFD2;--pri:#0F766E;--sec:#0B5F59;--acc:#E8590C;--ok:#15803D;--warn:#B45309;--bad:#C62828;--grey:#7B8499;--blue:#2563EB;--soft:#DDF1EE;--ink-on:#fff;color-scheme:light;
---fd:'Fraunces',Georgia,serif;--fb:'Plus Jakarta Sans',system-ui,sans-serif}
+/* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
+:root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
+--fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
 .wrap{max-width:1120px;margin:0 auto}
 h1,h2,h3{font-family:var(--fd);margin:0;text-wrap:balance}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
 .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;max-width:1120px;margin:0 auto}
-.brand{font:700 20px var(--fd);color:var(--sec);margin-right:auto}
+.brand{font:700 18px var(--fd);color:var(--sec);margin-right:auto}
 .brand small{display:block;font:400 11px var(--fb);color:var(--muted)}
-.seg{display:flex;background:#EFEBDF;border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
 .seg button{border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:8px;font:500 13px var(--fb);cursor:pointer}
-.seg button.on{background:var(--pri);color:#fff}
+.seg button.on{background:var(--card);color:var(--sec);box-shadow:0 1px 3px #0002}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
 .btn{border:0;background:var(--pri);color:var(--ink-on);padding:9px 16px;border-radius:10px;font:600 13px var(--fb);cursor:pointer}
 .btn.ghost{background:var(--soft);color:var(--sec)}
@@ -25,9 +25,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .grid{display:grid;gap:14px}
 .g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0;box-shadow:0 1px 2px #1b24330d,0 6px 18px -10px #1b243326}
-.stat b{display:block;font:700 28px var(--fd);color:var(--sec)}
-.hero{display:flex;gap:18px;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;background:linear-gradient(120deg,#0F766E,#115E59 60%,#134E4A);color:#fff;border-radius:22px;padding:22px 24px;margin:16px 0 14px}.hero h2,.hero .muted,.hero label{color:#fff}.hero input{width:150px;background:#fff;border-color:#fff;color:#1B2433}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0;}
+.stat b{display:block;font:700 26px var(--fd)}
+.hero{display:flex;gap:18px;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;background:linear-gradient(120deg,#1B3FCC,#13286b 70%,#0D1019);border:1px solid var(--line);color:#fff;border-radius:22px;padding:22px 24px;margin:16px 0 14px}.hero h2,.hero .muted,.hero label{color:#fff}.hero input{width:150px;background:var(--bg);border-color:#ffffff40;color:var(--fg)}
 .stat span{color:var(--muted);font-size:12px}
 h2{font-size:20px;margin:22px 0 10px}h3{font-size:15px;margin-bottom:8px}
 .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;color:#fff}
@@ -57,14 +57,36 @@ ul.plain li:last-child{border:0}
 .bar2 i{display:block;height:100%;background:var(--pri)}
 @media (prefers-reduced-motion:no-preference){.bar2 i{transition:width .4s}}
 /*@@LESSON_CSS@@*/
-@media (min-width:980px){
- body{padding-left:272px;padding-right:28px}
- body::before{display:none}
- header{position:fixed;left:0;top:0;bottom:0;width:244px;margin:0;padding:22px 16px;border-right:1px solid var(--line);border-bottom:0;overflow-y:auto}
- .bar{flex-direction:column;align-items:stretch;gap:18px;max-width:none}
- .brand{margin:0 0 4px}.seg{flex-direction:column}.seg button{text-align:left;padding:9px 12px}
- .wrap{max-width:1040px;margin:0}
+/* mobile */
+@media (max-width:979px){
+ .bar{gap:8px}.brand small{display:none}
+ .seg#tabs{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;order:3;width:100%}
+ .seg#tabs button{white-space:nowrap;flex:none}
 }
+@media (max-width:640px){
+ body{font-size:13.5px}h2{font-size:18px}
+ .g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}
+ .hero{padding:16px}.hero input{width:100%}.hero>div:last-child{width:100%}
+ .card{padding:14px}.stat b{font-size:22px}
+ .course{padding:12px}.row{gap:8px}
+}
+/* laptop 980-1279: compact sidebar */
+@media (min-width:980px){
+ body{padding-left:236px;padding-right:20px}
+ body::before{display:none}
+ header{position:fixed;left:0;top:0;bottom:0;width:212px;margin:0;padding:20px 12px;border-right:1px solid var(--line);border-bottom:0;overflow-y:auto}
+ .bar{flex-direction:column;align-items:stretch;gap:16px;max-width:none}
+ .brand{margin:0}.seg{flex-direction:column}.seg button{text-align:left;padding:8px 11px}
+ .wrap{max-width:none;margin:0}
+}
+/* desktop 1280+: wide sidebar, roomier content */
+@media (min-width:1280px){
+ body{padding-left:292px;padding-right:36px}
+ header{width:256px;padding:26px 16px}
+ .wrap{max-width:1180px;margin:0 auto}
+ .g4{grid-template-columns:repeat(4,1fr)}
+}
+@media (min-width:1700px){.wrap{max-width:1360px}}
 </style>
 <header><div class="bar">
  <div class="brand">AdaptiveLearn AI<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
