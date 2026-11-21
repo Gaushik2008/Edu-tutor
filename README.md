@@ -4,7 +4,7 @@
 
 An adaptive exam-preparation platform that models what each student *understands*, not just whether they got a question right. It tracks mastery per concept, reads the student's written reasoning to spot likely misconceptions, adapts question difficulty, schedules spaced-repetition revision, and gives teachers a class-wide view of knowledge gaps.
 
-The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questions, one video lesson).
+The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questions, 12 animated video lessons).
 
 **Live demo:** https://gaushik2008.github.io/Edu-tutor/ (GitHub Pages; the page is `index.html` at the repo root).
 
@@ -280,3 +280,13 @@ The syllabus is aligned to the Electricity chapter of **NCERT Class 10 Science**
 Worked solutions for that chapter, for further reading:
 [Careers360](https://school.careers360.com/ncert/ncert-solutions-class-10-science-chapter-12-electricity) ·
 [Vedantu](https://vedantu.com/ncert-solutions/ncert-solutions-class-10-science-chapter-12-electricity)
+
+
+---
+
+## Update: all-concept video lessons, roll numbers, new UI, OpenAI tutor
+
+- **Video lessons:** all 12 concepts now have an animated in-page lesson with checkpoint questions (`demo/src/lessons2.js`). They are canvas animations, not MP4 files. Ohm's Law also has a small lab.
+- **Roll numbers:** the teacher heatmap shows roll numbers (Roll 101 to 106 are sample data). Students set their own on the Dashboard.
+- **New look:** light "paper and teal" theme with a left sidebar on desktop.
+- **OpenAI tutor:** paste your own API key on the Dashboard. It is stored only in your browser's localStorage and sent only to api.openai.com. Never commit a key; this is a public static page, so anything embedded in it would be exposed.
