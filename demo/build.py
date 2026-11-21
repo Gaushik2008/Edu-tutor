@@ -5,4 +5,6 @@ s = (d / "index.src.html").read_text()
 s = s.replace("/*@@LESSON_CSS@@*/", (d / "src/lesson.css").read_text())
 s = s.replace("/*@@LESSON_JS@@*/", (d / "src/lesson.js").read_text())
 (d / "index.html").write_text(s)
+(d.parent / "docs").mkdir(exist_ok=True)
+(d.parent / "docs" / "index.html").write_text(s)  # served by GitHub Pages
 print("built", len(s), "bytes")
