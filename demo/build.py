@@ -6,5 +6,6 @@ s = s.replace("/*@@LESSON_CSS@@*/", (d / "src/lesson.css").read_text())
 s = s.replace("/*@@LESSON_JS@@*/", (d / "src/lesson.js").read_text())
 (d / "index.html").write_text(s)
 (d.parent / "docs").mkdir(exist_ok=True)
-(d.parent / "docs" / "index.html").write_text(s)  # served by GitHub Pages
+(d.parent / "docs" / "index.html").write_text(s)
+(d.parent / "index.html").write_text(s)  # root copy: Pages serving the repo root
 print("built", len(s), "bytes")
