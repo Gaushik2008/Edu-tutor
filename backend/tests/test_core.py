@@ -30,6 +30,26 @@ def test_poor_reasoning_dampens_correct_answer():
     assert weak < full
 
 
+def test_wrong_answer_never_raises_mastery():
+    for p0 in (0.05, 0.3, 0.6, 0.9):
+        s = bkt.MasteryState(p_mastery=p0, attempts=2)
+        for d in range(1, 6):
+            for rq in (0.0, 0.5, 1.0):
+                assert bkt.update(s, False, d, rq).p_mastery <= p0
+
+
+def test_repeated_question_is_weaker_evidence():
+    s = bkt.MasteryState(p_mastery=0.4)
+    assert bkt.update(s, True, novelty=0.5).p_mastery < bkt.update(s, True).p_mastery
+
+
+def test_mastery_is_capped_below_certainty():
+    s = bkt.MasteryState(p_mastery=0.97)
+    for _ in range(20):
+        s = bkt.update(s, True, difficulty=5)
+    assert s.p_mastery <= 0.98
+
+
 def test_one_wrong_answer_does_not_zero_mastery():
     s = bkt.MasteryState(p_mastery=0.7, attempts=6, correct=5)
     assert bkt.update(s, False).p_mastery > 0.2

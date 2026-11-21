@@ -46,8 +46,13 @@ def update(
     correct: bool,
     difficulty: int = 2,
     reasoning_quality: float = 1.0,
+    novelty: float = 1.0,
 ) -> MasteryState:
-    """Return the new state after one evaluated answer (pure function)."""
+    """Return the new state after one evaluated answer (pure function).
+
+    `novelty` in [0,1] discounts evidence from a question the student has seen
+    recently (a repeat shows recall, not understanding).
+    """
     guess, slip = difficulty_adjusted(difficulty)
     p = min(max(state.p_mastery, 0.001), 0.999)
 
@@ -60,12 +65,15 @@ def update(
     posterior = num / den
 
     # Shrink the update toward the prior when the reasoning evidence is weak.
-    w = max(0.0, min(1.0, reasoning_quality))
+    w = max(0.0, min(1.0, reasoning_quality)) * max(0.0, min(1.0, novelty))
     if not correct:
         w = max(w, 0.35)  # a wrong answer is never ignored entirely
     weighted = p + w * (posterior - p)
 
-    new_p = weighted + (1 - weighted) * P_LEARN
+    # Learning only happens on a successful attempt; otherwise a wrong answer
+    # on a low-mastery concept could raise mastery.
+    new_p = weighted + (1 - weighted) * (P_LEARN * novelty if correct else 0.0)
+    new_p = min(new_p, 0.98)
     attempts = state.attempts + 1
     return MasteryState(
         p_mastery=min(max(new_p, 0.0), 1.0),
