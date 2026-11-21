@@ -2,26 +2,24 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* Layout: sticky top bar, tabbed workspace; graph and heatmap scroll inside their own panels. */
-:root{--bg:#F7F8FC;--card:#fff;--fg:#202238;--muted:#8990A5;--line:#E6E8F2;--pri:#6256D9;--sec:#8B7CF6;--acc:#36BFA6;--ok:#27AE80;--warn:#F2A541;--bad:#E56B70;--grey:#C5CAD8;--blue:#4C8DF6;--soft:#EEECFC;--ink-on:#fff;
+/* Midnight black + electric cobalt, one committed dark look. Layout: sticky top bar, tabbed workspace; graph and heatmap scroll inside their own panels. */
+:root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
 --fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14162A;--card:#1D2038;--fg:#ECEEF8;--muted:#9AA1BC;--line:#2C3050;--soft:#2A2850;--grey:#4A5070;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#14162A;--card:#1D2038;--fg:#ECEEF8;--muted:#9AA1BC;--line:#2C3050;--soft:#2A2850;--grey:#4A5070;color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
 .wrap{max-width:1120px;margin:0 auto}
 h1,h2,h3{font-family:var(--fd);margin:0;text-wrap:balance}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--card);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--line)}
 .bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;max-width:1120px;margin:0 auto}
-.brand{font:700 18px var(--fd);color:var(--pri);margin-right:auto}
+.brand{font:700 18px var(--fd);color:var(--sec);margin-right:auto}
 .brand small{display:block;font:400 11px var(--fb);color:var(--muted)}
 .seg{display:flex;background:var(--bg);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
 .seg button{border:0;background:none;color:var(--muted);padding:6px 12px;border-radius:8px;font:500 13px var(--fb);cursor:pointer}
-.seg button.on{background:var(--card);color:var(--pri);box-shadow:0 1px 3px #0002}
+.seg button.on{background:var(--card);color:var(--sec);box-shadow:0 1px 3px #0002}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
 .btn{border:0;background:var(--pri);color:var(--ink-on);padding:9px 16px;border-radius:10px;font:600 13px var(--fb);cursor:pointer}
-.btn.ghost{background:var(--soft);color:var(--pri)}
+.btn.ghost{background:var(--soft);color:var(--sec)}
 .btn:disabled{opacity:.5;cursor:default}
 .notice{background:var(--soft);color:var(--fg);border-radius:10px;padding:8px 12px;font-size:12px;margin:12px 0}
 .grid{display:grid;gap:14px}
@@ -42,7 +40,7 @@ th,td{padding:5px 6px;text-align:center;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
 .cell{display:block;width:46px;height:28px;border-radius:6px;margin:auto;line-height:28px;color:#fff;font-weight:600;font-size:11px}
 .opt{display:block;width:100%;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer;color:var(--fg);font:14px var(--fb)}
-.opt.sel{border-color:var(--pri);background:var(--soft)}
+.opt.sel{border-color:var(--sec);background:var(--soft)}
 input[type=text],input[type=number],textarea,input[type=date]{width:100%;background:var(--bg);color:var(--fg);border:2px solid var(--line);border-radius:10px;padding:9px 11px;font:14px var(--fb)}
 textarea{min-height:70px;resize:vertical}
 label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin:10px 0 4px}

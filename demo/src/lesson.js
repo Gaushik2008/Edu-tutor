@@ -3,7 +3,7 @@ S.lessons=S.lessons||{};
 const syl={open:null,filter:'all'};
 const ease=u=>u<=0?0:u>=1?1:u*u*(3-2*u), seg=(u,a,b)=>ease((u-a)/(b-a)), lerp=(a,b,t)=>a+(b-a)*t;
 const th=()=>{const s=getComputedStyle(document.documentElement),g=n=>s.getPropertyValue(n).trim();
-  return {card:g('--card'),fg:g('--fg'),muted:g('--muted'),pos:g('--bad'),neg:g('--blue'),acc:g('--acc'),pri:g('--pri'),line:g('--line'),warn:g('--warn'),grey:g('--grey'),t:0};};
+  return {card:g('--card'),fg:g('--fg'),muted:g('--muted'),pos:g('--bad'),neg:g('--blue'),acc:g('--acc'),pri:g('--sec'),line:g('--line'),warn:g('--warn'),grey:g('--grey'),t:0};};
 const TX=(c,s,x,y,sz,col,al,w)=>{c.fillStyle=col;c.font=`${w||600} ${sz}px Inter,system-ui,sans-serif`;c.textAlign=al||'center';c.textBaseline='middle';c.fillText(s,x,y);};
 const DOT=(c,x,y,r,fill,lab,lc)=>{c.beginPath();c.arc(x,y,r,0,6.2832);c.fillStyle=fill;c.fill();if(lab)TX(c,lab,x,y+1,r*1.35,lc||'#fff','center',700);};
 const ARR=(c,x1,y1,x2,y2,col,wd)=>{c.strokeStyle=col;c.fillStyle=col;c.lineWidth=wd||3;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();const a=Math.atan2(y2-y1,x2-x1);c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));c.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));c.closePath();c.fill();};
@@ -146,7 +146,7 @@ function initPlayer(){
   const openCheck=i=>{P.check=i;P.playing=false;try{speechSynthesis.cancel();}catch(e){}
     const q=QS.find(x=>x.id===CHECK[i]);let ch=null;
     const inp=q.t==='mcq'?q.o.map((o,j)=>`<button class="opt" data-copt="${j}">${esc(o)}</button>`).join(''):`<input type="text" id="cans" inputmode="decimal" placeholder="Your answer">`;
-    $('ck').innerHTML=`<div class="fb" style="border-color:var(--pri)"><b>Checkpoint</b><p style="margin:4px 0">${esc(q.q)}</p>${inp}<p><button class="btn" id="cks">Submit</button> <span id="cerr" style="color:var(--bad)"></span></p><div id="cfb"></div></div>`;
+    $('ck').innerHTML=`<div class="fb" style="border-color:var(--sec)"><b>Checkpoint</b><p style="margin:4px 0">${esc(q.q)}</p>${inp}<p><button class="btn" id="cks">Submit</button> <span id="cerr" style="color:var(--bad)"></span></p><div id="cfb"></div></div>`;
     $('ck').onclick=e=>{const b=e.target.closest('[data-copt]');if(b){ch=b.dataset.copt;$('ck').querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x===b));}};
     $('cks').onclick=()=>{const v=q.t==='mcq'?ch:$('cans').value;if(v===null||String(v).trim()===''){$('cerr').textContent='Choose or type an answer first.';return;}
       const r=evaluate(q,v,'');r.reasoning='';const before=curP(q.c),res=applyResult(q,r,15);P.checks[i]=true;list();
