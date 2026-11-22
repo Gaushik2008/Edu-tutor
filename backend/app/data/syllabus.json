@@ -1,0 +1,710 @@
+{
+ "concepts": [
+  {
+   "id": "electric_charge",
+   "name": "Electric Charge",
+   "difficulty": 1,
+   "prereqs": [],
+   "description": "Charge is a property of matter. Like charges repel and unlike charges attract. It is measured in coulombs (C); the electron carries 1.6×10⁻¹⁹ C.",
+   "objectives": [
+    "State the SI unit of charge",
+    "Relate charge to number of electrons"
+   ]
+  },
+  {
+   "id": "electric_current",
+   "name": "Electric Current",
+   "difficulty": 2,
+   "prereqs": [
+    "electric_charge"
+   ],
+   "description": "Current is the rate of flow of charge, I = Q/t, measured in amperes. Conventional current is taken from the positive to the negative terminal.",
+   "objectives": [
+    "Define current and use I = Q/t",
+    "Explain how an ammeter is connected"
+   ]
+  },
+  {
+   "id": "electric_circuit",
+   "name": "Electric Circuit",
+   "difficulty": 2,
+   "prereqs": [
+    "electric_current"
+   ],
+   "description": "A circuit is a closed conducting path with a source. Current flows only when the path is complete.",
+   "objectives": [
+    "Identify circuit components",
+    "Give the direction of conventional current"
+   ]
+  },
+  {
+   "id": "potential_difference",
+   "name": "Potential Difference",
+   "difficulty": 2,
+   "prereqs": [
+    "electric_current"
+   ],
+   "description": "Potential difference is the work done per unit charge, V = W/Q, measured in volts. A voltmeter is connected in parallel.",
+   "objectives": [
+    "Use V = W/Q",
+    "Explain how a voltmeter is connected"
+   ]
+  },
+  {
+   "id": "ohms_law",
+   "name": "Ohm’s Law",
+   "difficulty": 3,
+   "prereqs": [
+    "potential_difference"
+   ],
+   "description": "At constant temperature the current through a conductor is proportional to the potential difference across it: V = IR.",
+   "objectives": [
+    "Use V = IR",
+    "Predict how current changes with V or R"
+   ]
+  },
+  {
+   "id": "resistance",
+   "name": "Resistance",
+   "difficulty": 3,
+   "prereqs": [
+    "ohms_law"
+   ],
+   "description": "Resistance is the opposition a conductor offers to current, R = V/I, measured in ohms.",
+   "objectives": [
+    "Calculate R from V and I",
+    "State the unit of resistance"
+   ]
+  },
+  {
+   "id": "resistance_factors",
+   "name": "Factors Affecting Resistance",
+   "difficulty": 3,
+   "prereqs": [
+    "resistance"
+   ],
+   "description": "R = ρL/A. Resistance grows with length and falls with cross-sectional area; it also depends on material and temperature.",
+   "objectives": [
+    "Apply R = ρL/A",
+    "Compare wires of different dimensions"
+   ]
+  },
+  {
+   "id": "series_combination",
+   "name": "Series Combination",
+   "difficulty": 3,
+   "prereqs": [
+    "resistance"
+   ],
+   "description": "In series the same current flows through every resistor, the voltages add, and Rs = R1 + R2 + R3.",
+   "objectives": [
+    "Find equivalent resistance in series",
+    "State current and voltage rules"
+   ]
+  },
+  {
+   "id": "parallel_combination",
+   "name": "Parallel Combination",
+   "difficulty": 4,
+   "prereqs": [
+    "resistance"
+   ],
+   "description": "In parallel each branch has the same voltage, currents add, and 1/Rp = 1/R1 + 1/R2 + … so Rp is smaller than any branch.",
+   "objectives": [
+    "Find equivalent resistance in parallel",
+    "State current and voltage rules"
+   ]
+  },
+  {
+   "id": "heating_effect",
+   "name": "Heating Effect of Current",
+   "difficulty": 3,
+   "prereqs": [
+    "electric_current"
+   ],
+   "description": "A current in a resistor produces heat, H = I²Rt (Joule’s law).",
+   "objectives": [
+    "Apply H = I²Rt",
+    "Predict how heat scales with I"
+   ]
+  },
+  {
+   "id": "electric_power",
+   "name": "Electric Power",
+   "difficulty": 3,
+   "prereqs": [
+    "heating_effect"
+   ],
+   "description": "Power is the rate of energy transfer, P = VI = I²R = V²/R, measured in watts.",
+   "objectives": [
+    "Use P = VI",
+    "Choose between P = I²R and V²/R"
+   ]
+  },
+  {
+   "id": "electrical_energy",
+   "name": "Electrical Energy",
+   "difficulty": 3,
+   "prereqs": [
+    "electric_power"
+   ],
+   "description": "Energy used is E = P×t. The commercial unit is the kilowatt-hour: 1 kWh = 3.6×10⁶ J.",
+   "objectives": [
+    "Compute energy in kWh",
+    "Convert kWh to joules"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": 38,
+   "c": "electric_charge",
+   "d": 1,
+   "t": "mcq",
+   "q": "Two small balls both carry negative charge and are brought close together. They…",
+   "o": [
+    "Repel each other",
+    "Attract each other",
+    "Do not interact",
+    "Become neutral"
+   ],
+   "a": 0,
+   "ex": "Like charges repel. Only unlike charges attract."
+  },
+  {
+   "id": 39,
+   "c": "electric_charge",
+   "d": 2,
+   "t": "mcq",
+   "q": "A glass rod rubbed with silk becomes positively charged. This is because the glass rod…",
+   "o": [
+    "Loses electrons",
+    "Gains protons",
+    "Gains electrons",
+    "Loses protons"
+   ],
+   "a": 0,
+   "ex": "Only electrons move between the solids. Losing electrons leaves more protons than electrons, so the rod is positive."
+  },
+  {
+   "id": 1,
+   "c": "electric_charge",
+   "d": 1,
+   "t": "mcq",
+   "q": "What is the SI unit of electric charge?",
+   "o": [
+    "Ampere",
+    "Coulomb",
+    "Volt",
+    "Ohm"
+   ],
+   "a": 1,
+   "ex": "Charge is measured in coulombs. The ampere is a coulomb per second."
+  },
+  {
+   "id": 2,
+   "c": "electric_charge",
+   "d": 2,
+   "t": "num",
+   "q": "What is the charge, in coulombs, on 1000 electrons? (e = 1.6×10⁻¹⁹ C; enter like 1.6e-16)",
+   "a": 1.6e-16,
+   "tol": 0.02,
+   "ex": "Q = ne = 1000 × 1.6×10⁻¹⁹ = 1.6×10⁻¹⁶ C."
+  },
+  {
+   "id": 3,
+   "c": "electric_current",
+   "d": 1,
+   "t": "mcq",
+   "q": "Electric current is best defined as…",
+   "o": [
+    "Rate of flow of electric charge",
+    "Energy per unit charge",
+    "Opposition to the flow of charge",
+    "Work done per second"
+   ],
+   "a": 0,
+   "m": {
+    "1": "PD_IS_CURRENT"
+   },
+   "ex": "I = Q/t: charge per second. Energy per unit charge is potential difference."
+  },
+  {
+   "id": 4,
+   "c": "electric_current",
+   "d": 2,
+   "t": "num",
+   "q": "12 C of charge passes a point in 4 s. What is the current in amperes?",
+   "a": 3,
+   "tol": 0.01,
+   "ex": "I = Q/t = 12/4 = 3 A."
+  },
+  {
+   "id": 5,
+   "c": "electric_current",
+   "d": 3,
+   "t": "mcq",
+   "q": "An ammeter before a bulb reads 0.5 A. What does an identical ammeter placed after the bulb read?",
+   "o": [
+    "0.5 A",
+    "Less than 0.5 A",
+    "Zero",
+    "More than 0.5 A"
+   ],
+   "a": 0,
+   "m": {
+    "1": "CURRENT_USED_UP"
+   },
+   "ex": "Charge is not used up. The same current leaves the bulb; the electrical energy is what is transferred."
+  },
+  {
+   "id": 6,
+   "c": "electric_current",
+   "d": 3,
+   "t": "short",
+   "q": "Why must an ammeter be connected in series with the component being measured?",
+   "a": [
+    "same current",
+    "all the current",
+    "flow through",
+    "in the path",
+    "series"
+   ],
+   "ex": "It has to carry the whole current of that branch, so it sits in the path of the current."
+  },
+  {
+   "id": 7,
+   "c": "potential_difference",
+   "d": 1,
+   "t": "mcq",
+   "q": "Potential difference between two points is…",
+   "o": [
+    "Work done per unit charge",
+    "Charge per unit time",
+    "Resistance per unit length",
+    "Power per ampere"
+   ],
+   "a": 0,
+   "ex": "V = W/Q, in joules per coulomb (volts)."
+  },
+  {
+   "id": 8,
+   "c": "potential_difference",
+   "d": 2,
+   "t": "num",
+   "q": "36 J of work is done moving 6 C between two points. What is the potential difference in volts?",
+   "a": 6,
+   "tol": 0.01,
+   "ex": "V = W/Q = 36/6 = 6 V."
+  },
+  {
+   "id": 9,
+   "c": "potential_difference",
+   "d": 3,
+   "t": "mcq",
+   "q": "How is a voltmeter connected to measure the potential difference across a bulb?",
+   "o": [
+    "In parallel with the bulb",
+    "In series with the bulb",
+    "In parallel with the battery only",
+    "It does not matter"
+   ],
+   "a": 0,
+   "ex": "A voltmeter has very high resistance and sits across the component."
+  },
+  {
+   "id": 10,
+   "c": "electric_circuit",
+   "d": 1,
+   "t": "mcq",
+   "q": "What must be true for a current to flow in a circuit?",
+   "o": [
+    "A complete closed conducting path",
+    "An open switch",
+    "Only a bulb",
+    "Two batteries"
+   ],
+   "a": 0,
+   "ex": "Charge needs a closed loop with a source."
+  },
+  {
+   "id": 11,
+   "c": "electric_circuit",
+   "d": 2,
+   "t": "mcq",
+   "q": "Outside the cell, conventional current flows…",
+   "o": [
+    "From the positive terminal to the negative terminal",
+    "From the negative terminal to the positive terminal",
+    "Both ways at once",
+    "Only inside the wires’ insulation"
+   ],
+   "a": 0,
+   "m": {
+    "1": "CONV_CURRENT_DIR"
+   },
+   "ex": "By convention current runs positive to negative externally; electrons drift the opposite way."
+  },
+  {
+   "id": 12,
+   "c": "electric_circuit",
+   "d": 3,
+   "t": "short",
+   "q": "What happens to the current in a series circuit when the switch is opened? Say why.",
+   "a": [
+    "no current",
+    "zero",
+    "stops",
+    "breaks",
+    "incomplete",
+    "open circuit"
+   ],
+   "ex": "Opening the switch breaks the closed path, so the current falls to zero everywhere in the series loop."
+  },
+  {
+   "id": 13,
+   "c": "ohms_law",
+   "d": 1,
+   "t": "mcq",
+   "q": "Which expression is Ohm’s law?",
+   "o": [
+    "V = IR",
+    "V = I/R",
+    "I = VR",
+    "R = VI"
+   ],
+   "a": 0,
+   "ex": "V = IR, or I = V/R."
+  },
+  {
+   "id": 14,
+   "c": "ohms_law",
+   "d": 2,
+   "t": "num",
+   "q": "A 12 V supply is across a 4 Ω resistor. What current flows, in amperes?",
+   "a": 3,
+   "tol": 0.01,
+   "ex": "I = V/R = 12/4 = 3 A."
+  },
+  {
+   "id": 15,
+   "c": "ohms_law",
+   "d": 3,
+   "t": "mcq",
+   "q": "The voltage across a resistor stays constant while its resistance increases. The current…",
+   "o": [
+    "Increases",
+    "Decreases",
+    "Stays the same",
+    "Becomes zero"
+   ],
+   "a": 1,
+   "m": {
+    "0": "R_UP_I_UP"
+   },
+   "ex": "I = V/R. With V fixed, a larger R gives a smaller I."
+  },
+  {
+   "id": 37,
+   "c": "ohms_law",
+   "d": 2,
+   "t": "mcq",
+   "q": "A 10 V supply is connected across a resistor. The resistor is changed from 2 Ω to 5 Ω. What happens to the current?",
+   "o": [
+    "It decreases from 5 A to 2 A",
+    "It increases from 2 A to 5 A",
+    "It stays at 5 A",
+    "It increases to 10 A"
+   ],
+   "a": 0,
+   "m": {
+    "1": "R_UP_I_UP"
+   },
+   "ex": "I = V/R. At 2 Ω the current is 5 A; at 5 Ω it is 2 A, so more resistance means less current."
+  },
+  {
+   "id": 16,
+   "c": "ohms_law",
+   "d": 4,
+   "t": "num",
+   "q": "A conductor carries 0.5 A at 2 V. At the same temperature, what current flows at 6 V (in amperes)?",
+   "a": 1.5,
+   "tol": 0.01,
+   "ex": "R = 2/0.5 = 4 Ω. I = 6/4 = 1.5 A. Current is proportional to V."
+  },
+  {
+   "id": 17,
+   "c": "resistance",
+   "d": 1,
+   "t": "mcq",
+   "q": "What is the SI unit of resistance?",
+   "o": [
+    "Ohm",
+    "Watt",
+    "Coulomb",
+    "Joule"
+   ],
+   "a": 0,
+   "ex": "One ohm is one volt per ampere."
+  },
+  {
+   "id": 18,
+   "c": "resistance",
+   "d": 2,
+   "t": "num",
+   "q": "A component has 9 V across it and carries 0.3 A. What is its resistance in ohms?",
+   "a": 30,
+   "tol": 0.01,
+   "ex": "R = V/I = 9/0.3 = 30 Ω."
+  },
+  {
+   "id": 19,
+   "c": "resistance_factors",
+   "d": 2,
+   "t": "mcq",
+   "q": "The length of a uniform wire is doubled. Its resistance…",
+   "o": [
+    "Halves",
+    "Doubles",
+    "Is unchanged",
+    "Quadruples"
+   ],
+   "a": 1,
+   "m": {
+    "0": "RESIST_LENGTH_INV"
+   },
+   "ex": "R = ρL/A is proportional to L."
+  },
+  {
+   "id": 20,
+   "c": "resistance_factors",
+   "d": 3,
+   "t": "mcq",
+   "q": "The cross-sectional area of a wire is doubled, length unchanged. Its resistance…",
+   "o": [
+    "Doubles",
+    "Halves",
+    "Is unchanged",
+    "Quadruples"
+   ],
+   "a": 1,
+   "ex": "R is inversely proportional to A."
+  },
+  {
+   "id": 21,
+   "c": "resistance_factors",
+   "d": 4,
+   "t": "num",
+   "q": "A wire has resistance 8 Ω. It is replaced by one of the same material with twice the length and twice the cross-sectional area. What is the new resistance in ohms?",
+   "a": 8,
+   "tol": 0.01,
+   "ex": "Doubling L doubles R and doubling A halves it, so R stays 8 Ω."
+  },
+  {
+   "id": 22,
+   "c": "series_combination",
+   "d": 1,
+   "t": "num",
+   "q": "Resistors of 2 Ω, 3 Ω and 5 Ω are in series. What is the equivalent resistance in ohms?",
+   "a": 10,
+   "tol": 0.01,
+   "ex": "Rs = 2 + 3 + 5 = 10 Ω."
+  },
+  {
+   "id": 23,
+   "c": "series_combination",
+   "d": 2,
+   "t": "mcq",
+   "q": "Three bulbs are connected in series. The current through each bulb is…",
+   "o": [
+    "The same",
+    "Divided equally",
+    "Largest in the first bulb",
+    "Zero in the middle one"
+   ],
+   "a": 0,
+   "m": {
+    "1": "SERIES_SPLITS_I"
+   },
+   "ex": "There is only one path, so the current is the same everywhere in a series loop."
+  },
+  {
+   "id": 24,
+   "c": "series_combination",
+   "d": 3,
+   "t": "num",
+   "q": "A 6 V battery is connected across 2 Ω and 4 Ω resistors in series. What is the current in amperes?",
+   "a": 1,
+   "tol": 0.01,
+   "ex": "Rs = 6 Ω, so I = 6/6 = 1 A."
+  },
+  {
+   "id": 25,
+   "c": "parallel_combination",
+   "d": 1,
+   "t": "mcq",
+   "q": "Resistors connected in parallel across a battery all have…",
+   "o": [
+    "The same potential difference",
+    "The same current",
+    "Zero resistance",
+    "Different voltages"
+   ],
+   "a": 0,
+   "ex": "Each branch is connected directly across the same two points."
+  },
+  {
+   "id": 26,
+   "c": "parallel_combination",
+   "d": 2,
+   "t": "num",
+   "q": "6 Ω and 3 Ω resistors are in parallel. What is the equivalent resistance in ohms?",
+   "a": 2,
+   "tol": 0.01,
+   "mw": {
+    "9": "PARALLEL_ADDS"
+   },
+   "ex": "1/Rp = 1/6 + 1/3 = 1/2, so Rp = 2 Ω."
+  },
+  {
+   "id": 27,
+   "c": "parallel_combination",
+   "d": 3,
+   "t": "mcq",
+   "q": "Compared with the smallest resistor in a parallel group, the equivalent resistance is…",
+   "o": [
+    "Greater than it",
+    "Equal to it",
+    "Smaller than it",
+    "Impossible to say"
+   ],
+   "a": 2,
+   "m": {
+    "0": "PARALLEL_ADDS"
+   },
+   "ex": "Every extra branch gives the current another path, so the total resistance drops below the smallest branch."
+  },
+  {
+   "id": 28,
+   "c": "heating_effect",
+   "d": 2,
+   "t": "mcq",
+   "q": "Which device mainly uses the heating effect of current?",
+   "o": [
+    "Electric heater",
+    "Voltmeter",
+    "Compass",
+    "Capacitor"
+   ],
+   "a": 0,
+   "ex": "A heater’s element converts electrical energy to heat as current passes through its resistance."
+  },
+  {
+   "id": 29,
+   "c": "heating_effect",
+   "d": 3,
+   "t": "num",
+   "q": "A 5 Ω resistor carries 2 A for 10 s. How much heat is produced in joules?",
+   "a": 200,
+   "tol": 0.01,
+   "ex": "H = I²Rt = 4 × 5 × 10 = 200 J."
+  },
+  {
+   "id": 30,
+   "c": "heating_effect",
+   "d": 4,
+   "t": "mcq",
+   "q": "The current in a resistor is doubled for the same time. The heat produced…",
+   "o": [
+    "Doubles",
+    "Halves",
+    "Becomes four times",
+    "Is unchanged"
+   ],
+   "a": 2,
+   "m": {
+    "0": "HEAT_I_LINEAR"
+   },
+   "ex": "H = I²Rt, so doubling I multiplies the heat by 4."
+  },
+  {
+   "id": 31,
+   "c": "electric_power",
+   "d": 1,
+   "t": "mcq",
+   "q": "Which expression gives electric power?",
+   "o": [
+    "P = VI",
+    "P = V/I",
+    "P = I/V",
+    "P = R/V"
+   ],
+   "a": 0,
+   "m": {
+    "1": "POWER_I_ONLY",
+    "2": "POWER_I_ONLY"
+   },
+   "ex": "P = VI. Combined with V = IR it gives I²R and V²/R."
+  },
+  {
+   "id": 32,
+   "c": "electric_power",
+   "d": 2,
+   "t": "num",
+   "q": "An appliance runs on 220 V and draws 5 A. What is its power in watts?",
+   "a": 1100,
+   "tol": 0.01,
+   "ex": "P = VI = 220 × 5 = 1100 W."
+  },
+  {
+   "id": 33,
+   "c": "electric_power",
+   "d": 3,
+   "t": "num",
+   "q": "A 60 W lamp runs on 120 V. What current does it draw, in amperes?",
+   "a": 0.5,
+   "tol": 0.02,
+   "ex": "I = P/V = 60/120 = 0.5 A."
+  },
+  {
+   "id": 34,
+   "c": "electrical_energy",
+   "d": 2,
+   "t": "num",
+   "q": "A 2 kW heater runs for 3 hours. How much energy is used, in kWh?",
+   "a": 6,
+   "tol": 0.01,
+   "ex": "E = P × t = 2 × 3 = 6 kWh."
+  },
+  {
+   "id": 35,
+   "c": "electrical_energy",
+   "d": 3,
+   "t": "mcq",
+   "q": "1 kilowatt-hour equals…",
+   "o": [
+    "3.6×10³ J",
+    "3.6×10⁶ J",
+    "1000 J",
+    "60 J"
+   ],
+   "a": 1,
+   "ex": "1 kWh = 1000 W × 3600 s = 3.6×10⁶ J."
+  },
+  {
+   "id": 36,
+   "c": "electrical_energy",
+   "d": 4,
+   "t": "mcq",
+   "q": "A 40 W and a 100 W bulb are rated for the same voltage. Which has the greater resistance?",
+   "o": [
+    "The 40 W bulb",
+    "The 100 W bulb",
+    "Both are equal",
+    "Cannot be told"
+   ],
+   "a": 0,
+   "ex": "R = V²/P. For the same V, a smaller P means a larger R."
+  }
+ ]
+}
