@@ -196,7 +196,7 @@ const QS=[
 
 /* ============ State ============ */
 const KEY='adaptivelearn-demo-v1';
-const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[]});
+const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[],lessons:{},rv:{}});
 let S=fresh();
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
@@ -266,13 +266,13 @@ function applyResult(q,r,secs){
 
 /* ============ Rendering ============ */
 let role='student',tab='dashboard',selNode=null;
-const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['assign','Assignments']]};
+const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['review','Review queue'],['assign','Assignments']]};
 function renderChrome(){
   document.querySelectorAll('#role button').forEach(b=>b.classList.toggle('on',b.dataset.role===role));
   document.getElementById('tabs').innerHTML=TABS[role].map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('');
 }
 function render(){
-  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,assign:vAssign}[tab];
+  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,review:vReview,assign:vAssign}[tab];
   document.getElementById('app').innerHTML=`<div class="notice">Demo build. Progress is stored in this browser only. The Teacher class below is <b>sample data</b>; the “You” row is your own live activity. Sign-in, the database and the AI provider live in the backend (see the repository).</div>`+f();
   if(tab==='learn'||tab==='diag') bindQuestion();
   if(tab==='syllabus'&&syl.open==='electric_charge') initPlayer();
@@ -293,7 +293,7 @@ function vDash(){
   const roll=S.log.map((_,i)=>{const w=S.log.slice(Math.max(0,i-4),i+1);return w.filter(l=>l.ok).length/w.length;});
   const due=dueList().filter(x=>x.due<=now()),nc=CBY[nextConceptId()];
   const total=CONCEPTS.length;
-  return `<h2>Welcome back</h2>
+  return `<h2>Welcome back</h2>${S.demo?'<div class="notice">Demo student: ${S.log.length} answers across 8 concepts were simulated through the real engine so every screen has history. Reset to start fresh.</div>':''}
   <div class="grid g4">
    <div class="card stat"><b>${o===null?'—':Math.round(o*100)+'%'}</b><span>Overall mastery (assessed concepts)</span></div>
    <div class="card stat"><b>${bands.mastered}/${total}</b><span>Concepts mastered</span></div>
@@ -316,7 +316,7 @@ function vDash(){
     </ul></div>
   </div>
   <h2>Recent activity</h2><div class="card">${S.log.length?`<ul class="plain">${S.log.slice(-8).reverse().map(l=>`<li>${fmtDay(l.t)} · ${esc(CBY[l.c].n)} · ${l.ok?'correct':'incorrect'} · mastery ${l.delta>=0?'+':''}${l.delta.toFixed(1)} pts${l.mis?` · <span class="muted">possible misconception: ${esc(l.mis)}</span>`:''}</li>`).join('')}</ul>`:'<p class="muted">No activity yet. Your answers will appear here.</p>'}</div>
-  <p><button class="btn ghost" data-reset>Reset my demo data</button></p>`;
+  <p><button class="btn" data-demo>Load demo student</button> <button class="btn ghost" data-reset>Reset my demo data</button></p>`;
 }
 
 function vGraph(){
@@ -444,6 +444,33 @@ function vMiscon(){
   return `<h2>Common misconceptions</h2><p class="muted">Predictions from reasoning with confidence scores. Review before acting.</p>
   <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} students · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
 }
+const SAMPLE_REVIEW=[
+ {id:'s1',who:'Sample student B',c:'ohms_law',tag:'R_UP_I_UP',text:'bigger resistor means bigger current will go thru it',conf:.62},
+ {id:'s2',who:'Sample student D',c:'electric_current',tag:'CURRENT_USED_UP',text:'current is finished in the bulb that is why it glows',conf:.55},
+ {id:'s3',who:'Sample student F',c:'parallel_combination',tag:'PARALLEL_ADDS',text:'equivalent of resistors in parallel = R1 + R2',conf:.58}];
+function vReview(){
+  S.rv=S.rv||{};
+  const live=S.mis.filter(m=>!m.resolved&&!m.rev&&m.conf<.8).map(m=>({id:'m'+m.id,who:'You (live)',c:m.c,tag:m.tag,text:m.reasoning,conf:m.conf,live:true}));
+  const items=[...live,...SAMPLE_REVIEW.filter(x=>!S.rv[x.id])];
+  return `<h2>Review queue</h2><p class="muted">Predictions the system is not sure about. Confirm to keep the misconception on the student’s record, or dismiss it. The three sample items are phrasings the pattern rules cannot catch, which is where an AI model’s suggestion would be sent for your decision.</p>
+  <div class="grid g2">${items.length?items.map(x=>`<div class="card"><div class="row"><b>${esc(x.who)}</b><span class="muted">${esc(CBY[x.c].n)}</span>${x.live?'':'<span class="pill" style="background:var(--grey)">sample</span>'}</div>
+   <p>“${esc(x.text)}”</p><p><b>Suggested:</b> ${esc(MIS[x.tag].label)} <span class="muted">· confidence ${Math.round(x.conf*100)}%</span></p>
+   <div class="row"><button class="btn" data-rv="${x.id}" data-d="confirmed">Confirm</button><button class="btn ghost" data-rv="${x.id}" data-d="dismissed">Dismiss</button></div></div>`).join(''):'<p class="muted">Nothing waiting for review.</p>'}</div>
+  <p class="muted">Decided: ${Object.keys(S.rv).length} sample · confirmed ${Object.values(S.rv).filter(v=>v==='confirmed').length}, dismissed ${Object.values(S.rv).filter(v=>v==='dismissed').length}</p>`;
+}
+function loadDemo(){
+  S=fresh(); S.demo=true; S.skew=-14; let seed=7; const rnd=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+  const skill={electric_charge:.9,electric_current:.6,electric_circuit:.8,potential_difference:.7,ohms_law:.35,resistance:.4,series_combination:.6,parallel_combination:.3};
+  const reasons={R_UP_I_UP:'current increases because resistance increases and blocks the voltage',CURRENT_USED_UP:'the bulb uses up some of the current'};
+  for(const cid of Object.keys(skill)) for(const q of QS.filter(x=>x.c===cid).slice(0,3)){
+    const good=rnd()<skill[cid]; let val;
+    if(q.t==='mcq'){const w=Object.keys(q.m||{});val=good?String(q.a):(w.length?w[0]:String((q.a+1)%q.o.length));}
+    else if(q.t==='num') val=good?String(q.a):String(q.a*1.7+1); else val=good?q.a[0]:'not sure';
+    const why=good?'I = V/R':(reasons[Object.values(q.m||{})[0]]||'');
+    const r=evaluate(q,val,why); r.reasoning=why; applyResult(q,r,40); S.skew+=.4;
+  }
+  S.skew=0; save();
+}
 function vAssign(){
   return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
   <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
@@ -535,8 +562,18 @@ const SCENES=[
   ['Protons (+) and electrons (−) carry charge','Like charges repel, unlike charges attract','Rubbing transfers electrons; total charge is conserved','Unit: coulomb (C).  Q = n e,  e = 1.6 × 10⁻¹⁹ C','Moving charge is current:  I = Q / t'].forEach((s,i)=>{FADE(c,seg(u,i*.17,i*.17+.15));DOT(c,50,70+i*56,8,k.acc);TX(c,s,72,70+i*56,17,k.fg,'left');});FADE(c,1);
  }},
 ];
+const HI=[
+ ['एक गुब्बारे को ऊनी स्वेटर पर रगड़ने से वह दीवार से चिपक सकता है।','रगड़ने पर स्वेटर से इलेक्ट्रॉन, यानी सूक्ष्म आवेशित कण, गुब्बारे पर चले जाते हैं।','अब गुब्बारा आवेशित हो गया है और आवेशित वस्तु पास की उदासीन वस्तुओं को अपनी ओर खींचती है।'],
+ ['सब कुछ परमाणुओं से बना है। हर परमाणु के नाभिक में प्रोटॉन और न्यूट्रॉन होते हैं।','प्रोटॉन पर धनात्मक आवेश, इलेक्ट्रॉन पर ऋणात्मक आवेश होता है, और न्यूट्रॉन पर कोई आवेश नहीं होता।','सामान्य परमाणु में इलेक्ट्रॉन और प्रोटॉन की संख्या बराबर होती है, इसलिए वह कुल मिलाकर उदासीन होता है।'],
+ ['आवेश दो प्रकार के होते हैं: धनात्मक और ऋणात्मक।','समान प्रकार के आवेश एक-दूसरे को दूर धकेलते हैं।','विपरीत प्रकार के आवेश एक-दूसरे को अपनी ओर खींचते हैं।'],
+ ['काँच की छड़ को रेशम से रगड़ने पर इलेक्ट्रॉन काँच से रेशम पर चले जाते हैं।','काँच के इलेक्ट्रॉन कम हो गए, इसलिए वह धनात्मक हो जाती है। रेशम में इलेक्ट्रॉन बढ़ गए, इसलिए वह ऋणात्मक हो जाता है।','पहले और बाद में कुल आवेश समान रहता है। आवेश स्थानांतरित होता है, बनता या नष्ट नहीं होता।'],
+ ['आवेश को कूलॉम में मापा जाता है, जिसे C लिखते हैं।','एक इलेक्ट्रॉन पर आवेश लगभग 1.6 गुणा 10 की घात ऋण 19 कूलॉम होता है, जो बहुत छोटा है।','इसलिए एक कूलॉम लगभग 6.25 गुणा 10 की घात 18 इलेक्ट्रॉनों के आवेश के बराबर है।','n इलेक्ट्रॉनों का आवेश ज्ञात करने के लिए n को e से गुणा करें। 500 इलेक्ट्रॉनों के लिए यह 8 गुणा 10 की घात ऋण 17 कूलॉम आता है।'],
+ ['ताँबे जैसी धातु में कुछ इलेक्ट्रॉन स्वतंत्र होते हैं, इसलिए आवेश बह सकता है। यह चालक है।','प्लास्टिक या रबर में इलेक्ट्रॉन अपने परमाणुओं से बँधे रहते हैं, इसलिए आवेश आसानी से नहीं बहता। यह विद्युतरोधी है।'],
+ ['जब आवेश किसी बिंदु से होकर बहता है, तो उसे विद्युत धारा कहते हैं।','यदि 4 सेकंड में 12 कूलॉम आवेश गुज़रे, तो धारा Q भाग t यानी 3 ऐम्पियर होती है।','यही अगला अध्याय है: विद्युत धारा।'],
+ ['पदार्थ में आवेश होता है: प्रोटॉन धनात्मक और इलेक्ट्रॉन ऋणात्मक होते हैं।','समान आवेश एक-दूसरे को दूर धकेलते हैं और विपरीत आवेश आकर्षित करते हैं। रगड़ने से इलेक्ट्रॉन स्थानांतरित होते हैं और कुल आवेश संरक्षित रहता है।','आवेश को कूलॉम में मापते हैं, और बहता हुआ आवेश धारा है।']];
+const narr=i=>P.lang==='hi'?HI[i]:SCENES[i].n;
 const CHECK={2:38,3:39,4:2};
-const P={i:0,t:0,playing:false,speed:1,cap:true,voice:false,raf:0,last:0,clock:0,check:null,checks:{},shown:-1};
+const P={lang:'en',i:0,t:0,playing:false,speed:1,cap:true,voice:false,raf:0,last:0,clock:0,check:null,checks:{},shown:-1};
 const totalDur=()=>SCENES.reduce((a,s)=>a+s.d,0), startOf=i=>SCENES.slice(0,i).reduce((a,s)=>a+s.d,0);
 const mmss=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 function resetPlayer(){try{speechSynthesis.cancel();}catch(e){}Object.assign(P,{i:0,t:0,playing:false,check:null,checks:{},shown:-1,last:0});}
@@ -577,7 +614,7 @@ function vLesson(){
    <input type="range" id="scr" min="0" max="${totalDur()*10}" value="0" style="width:100%" aria-label="Seek">
    <div class="row" style="margin-top:8px"><button class="btn" id="pp">Play</button><button class="btn ghost" id="rs">Restart</button>
     <select id="spd" aria-label="Speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select>
-    <label class="chk"><input type="checkbox" id="cc" checked> Captions</label><label class="chk"><input type="checkbox" id="vc"> Voice</label>
+    <select id="lg" aria-label="Caption language"><option value="en">English</option><option value="hi">हिन्दी</option></select><label class="chk"><input type="checkbox" id="cc" checked> Captions</label><label class="chk"><input type="checkbox" id="vc"> Voice</label>
     <span id="tm" class="muted" style="margin-left:auto">0:00</span></div></div>
    <div class="card"><h3>Scenes</h3><div id="sl"></div></div></div>
   <h2>Try it: charge lab</h2><div class="card"><canvas id="lab" style="width:100%;display:block;background:var(--card);border-radius:12px"></canvas>
@@ -592,7 +629,7 @@ function initPlayer(){
   const W=640,H=360,dpr=window.devicePixelRatio||1,ctx=cv.getContext('2d'),$=id=>document.getElementById(id);
   const fit=()=>{const w=cv.clientWidth||640;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr*9/16);cv.style.height=(w*9/16)+'px';};
   fit();window.onresize=fit;
-  const speak=()=>{if(!P.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(SCENES[P.i].n.join(' '));u.rate=P.speed;speechSynthesis.speak(u);}catch(e){}};
+  const speak=()=>{if(!P.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(narr(P.i).join(' '));u.lang=P.lang==='hi'?'hi-IN':'en-IN';u.rate=P.speed;speechSynthesis.speak(u);}catch(e){}};
   const list=()=>{$('sl').innerHTML=SCENES.map((s,i)=>`<button class="scn ${i===P.i?'on':''}" data-scene="${i}"><span>${i+1}. ${esc(s.t)}</span><span class="muted">${mmss(startOf(i))}${CHECK[i]!==undefined?(P.checks[i]?' ✓':' ?'):''}</span></button>`).join('');};
   const seekTo=sec=>{sec=Math.max(0,Math.min(totalDur()-.01,sec));let i=0;while(i<SCENES.length-1&&sec>=startOf(i+1))i++;P.i=i;P.t=sec-startOf(i);P.check=null;$('ck').innerHTML='';P.shown=-1;speak();};
   const next=()=>{if(P.i<SCENES.length-1){P.i++;P.t=0;speak();}else{P.playing=false;try{speechSynthesis.cancel();}catch(e){}S.lessons.electric_charge={done:true,t:now()};save();
@@ -612,14 +649,14 @@ function initPlayer(){
     const dt=Math.min(.1,(ts-(P.last||ts))/1000);P.last=ts;P.clock+=dt;
     if(P.playing&&!P.check){P.t+=dt*P.speed;const s=SCENES[P.i];if(P.t>=s.d){P.t=s.d;if(CHECK[P.i]!==undefined&&!P.checks[P.i])openCheck(P.i);else next();}}
     draw();const tot=startOf(P.i)+P.t;$('scr').value=Math.round(tot*10);$('tm').textContent=`${mmss(tot)} / ${mmss(totalDur())}`;$('pp').textContent=P.playing?'Pause':(tot>=totalDur()-.1?'Replay':'Play');
-    const s=SCENES[P.i],n=s.n.length;$('cap').textContent=P.cap?s.n[Math.min(n-1,Math.floor(P.t/s.d*n))]:'';
+    const s=SCENES[P.i],nn=narr(P.i),n=nn.length;$('cap').textContent=P.cap?nn[Math.min(n-1,Math.floor(P.t/s.d*n))]:'';
     if(P.shown!==P.i){P.shown=P.i;list();}P.raf=requestAnimationFrame(tick);};
   $('pp').onclick=()=>{if(P.check)return;if(!P.playing&&startOf(P.i)+P.t>=totalDur()-.1){seekTo(0);P.checks={};}P.playing=!P.playing;if(P.playing)speak();else try{speechSynthesis.cancel();}catch(e){}};
   $('rs').onclick=()=>{seekTo(0);P.checks={};P.playing=false;list();};
-  $('spd').onchange=e=>{P.speed=+e.target.value;};$('cc').onchange=e=>{P.cap=e.target.checked;};$('vc').onchange=e=>{P.voice=e.target.checked;if(P.voice&&P.playing)speak();else try{speechSynthesis.cancel();}catch(x){}};
+  $('spd').onchange=e=>{P.speed=+e.target.value;};$('cc').onchange=e=>{P.cap=e.target.checked;};$('lg').onchange=e=>{P.lang=e.target.value;if(P.voice&&P.playing)speak();};$('vc').onchange=e=>{P.voice=e.target.checked;if(P.voice&&P.playing)speak();else try{speechSynthesis.cancel();}catch(x){}};
   $('scr').oninput=e=>seekTo(+e.target.value/10);
   $('sl').onclick=e=>{const b=e.target.closest('[data-scene]');if(b){seekTo(startOf(+b.dataset.scene));list();}};
-  $('spd').value=String(P.speed);$('cc').checked=P.cap;$('vc').checked=P.voice;
+  $('spd').value=String(P.speed);$('lg').value=P.lang;$('cc').checked=P.cap;$('vc').checked=P.voice;
   list();P.last=0;P.raf=requestAnimationFrame(tick);initLab();
 }
 function initLab(){
@@ -654,6 +691,8 @@ const App=document.addEventListener('click',e=>{
   if(D.node){selNode=D.node;render();return;}
   if(D.learn){tab='learn';startPractice(D.learn);render();return;}
   if(D.opt!==undefined){ses.chosen=D.opt;render();return;}
+  if(D.demo!==undefined){loadDemo();ses=null;selNode=null;render();return;}
+  if(D.rv){S.rv=S.rv||{};if(D.rv[0]==='m'){const m=S.mis.find(x=>'m'+x.id===D.rv);if(m){m.rev=D.d;if(D.d==='dismissed')m.resolved=true;}}else S.rv[D.rv]=D.d;save();render();return;}
   if(D.reset!==undefined){S=fresh();save();ses=null;selNode=null;render();return;}
   if(D.rediag!==undefined){S.diagDone=false;ses=null;render();return;}
   if(D.skew){S.skew=D.skew==='-999'?0:S.skew+Number(D.skew);save();render();return;}

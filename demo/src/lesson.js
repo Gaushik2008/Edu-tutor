@@ -81,8 +81,18 @@ const SCENES=[
   ['Protons (+) and electrons (−) carry charge','Like charges repel, unlike charges attract','Rubbing transfers electrons; total charge is conserved','Unit: coulomb (C).  Q = n e,  e = 1.6 × 10⁻¹⁹ C','Moving charge is current:  I = Q / t'].forEach((s,i)=>{FADE(c,seg(u,i*.17,i*.17+.15));DOT(c,50,70+i*56,8,k.acc);TX(c,s,72,70+i*56,17,k.fg,'left');});FADE(c,1);
  }},
 ];
+const HI=[
+ ['एक गुब्बारे को ऊनी स्वेटर पर रगड़ने से वह दीवार से चिपक सकता है।','रगड़ने पर स्वेटर से इलेक्ट्रॉन, यानी सूक्ष्म आवेशित कण, गुब्बारे पर चले जाते हैं।','अब गुब्बारा आवेशित हो गया है और आवेशित वस्तु पास की उदासीन वस्तुओं को अपनी ओर खींचती है।'],
+ ['सब कुछ परमाणुओं से बना है। हर परमाणु के नाभिक में प्रोटॉन और न्यूट्रॉन होते हैं।','प्रोटॉन पर धनात्मक आवेश, इलेक्ट्रॉन पर ऋणात्मक आवेश होता है, और न्यूट्रॉन पर कोई आवेश नहीं होता।','सामान्य परमाणु में इलेक्ट्रॉन और प्रोटॉन की संख्या बराबर होती है, इसलिए वह कुल मिलाकर उदासीन होता है।'],
+ ['आवेश दो प्रकार के होते हैं: धनात्मक और ऋणात्मक।','समान प्रकार के आवेश एक-दूसरे को दूर धकेलते हैं।','विपरीत प्रकार के आवेश एक-दूसरे को अपनी ओर खींचते हैं।'],
+ ['काँच की छड़ को रेशम से रगड़ने पर इलेक्ट्रॉन काँच से रेशम पर चले जाते हैं।','काँच के इलेक्ट्रॉन कम हो गए, इसलिए वह धनात्मक हो जाती है। रेशम में इलेक्ट्रॉन बढ़ गए, इसलिए वह ऋणात्मक हो जाता है।','पहले और बाद में कुल आवेश समान रहता है। आवेश स्थानांतरित होता है, बनता या नष्ट नहीं होता।'],
+ ['आवेश को कूलॉम में मापा जाता है, जिसे C लिखते हैं।','एक इलेक्ट्रॉन पर आवेश लगभग 1.6 गुणा 10 की घात ऋण 19 कूलॉम होता है, जो बहुत छोटा है।','इसलिए एक कूलॉम लगभग 6.25 गुणा 10 की घात 18 इलेक्ट्रॉनों के आवेश के बराबर है।','n इलेक्ट्रॉनों का आवेश ज्ञात करने के लिए n को e से गुणा करें। 500 इलेक्ट्रॉनों के लिए यह 8 गुणा 10 की घात ऋण 17 कूलॉम आता है।'],
+ ['ताँबे जैसी धातु में कुछ इलेक्ट्रॉन स्वतंत्र होते हैं, इसलिए आवेश बह सकता है। यह चालक है।','प्लास्टिक या रबर में इलेक्ट्रॉन अपने परमाणुओं से बँधे रहते हैं, इसलिए आवेश आसानी से नहीं बहता। यह विद्युतरोधी है।'],
+ ['जब आवेश किसी बिंदु से होकर बहता है, तो उसे विद्युत धारा कहते हैं।','यदि 4 सेकंड में 12 कूलॉम आवेश गुज़रे, तो धारा Q भाग t यानी 3 ऐम्पियर होती है।','यही अगला अध्याय है: विद्युत धारा।'],
+ ['पदार्थ में आवेश होता है: प्रोटॉन धनात्मक और इलेक्ट्रॉन ऋणात्मक होते हैं।','समान आवेश एक-दूसरे को दूर धकेलते हैं और विपरीत आवेश आकर्षित करते हैं। रगड़ने से इलेक्ट्रॉन स्थानांतरित होते हैं और कुल आवेश संरक्षित रहता है।','आवेश को कूलॉम में मापते हैं, और बहता हुआ आवेश धारा है।']];
+const narr=i=>P.lang==='hi'?HI[i]:SCENES[i].n;
 const CHECK={2:38,3:39,4:2};
-const P={i:0,t:0,playing:false,speed:1,cap:true,voice:false,raf:0,last:0,clock:0,check:null,checks:{},shown:-1};
+const P={lang:'en',i:0,t:0,playing:false,speed:1,cap:true,voice:false,raf:0,last:0,clock:0,check:null,checks:{},shown:-1};
 const totalDur=()=>SCENES.reduce((a,s)=>a+s.d,0), startOf=i=>SCENES.slice(0,i).reduce((a,s)=>a+s.d,0);
 const mmss=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
 function resetPlayer(){try{speechSynthesis.cancel();}catch(e){}Object.assign(P,{i:0,t:0,playing:false,check:null,checks:{},shown:-1,last:0});}
@@ -123,7 +133,7 @@ function vLesson(){
    <input type="range" id="scr" min="0" max="${totalDur()*10}" value="0" style="width:100%" aria-label="Seek">
    <div class="row" style="margin-top:8px"><button class="btn" id="pp">Play</button><button class="btn ghost" id="rs">Restart</button>
     <select id="spd" aria-label="Speed"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select>
-    <label class="chk"><input type="checkbox" id="cc" checked> Captions</label><label class="chk"><input type="checkbox" id="vc"> Voice</label>
+    <select id="lg" aria-label="Caption language"><option value="en">English</option><option value="hi">हिन्दी</option></select><label class="chk"><input type="checkbox" id="cc" checked> Captions</label><label class="chk"><input type="checkbox" id="vc"> Voice</label>
     <span id="tm" class="muted" style="margin-left:auto">0:00</span></div></div>
    <div class="card"><h3>Scenes</h3><div id="sl"></div></div></div>
   <h2>Try it: charge lab</h2><div class="card"><canvas id="lab" style="width:100%;display:block;background:var(--card);border-radius:12px"></canvas>
@@ -138,7 +148,7 @@ function initPlayer(){
   const W=640,H=360,dpr=window.devicePixelRatio||1,ctx=cv.getContext('2d'),$=id=>document.getElementById(id);
   const fit=()=>{const w=cv.clientWidth||640;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr*9/16);cv.style.height=(w*9/16)+'px';};
   fit();window.onresize=fit;
-  const speak=()=>{if(!P.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(SCENES[P.i].n.join(' '));u.rate=P.speed;speechSynthesis.speak(u);}catch(e){}};
+  const speak=()=>{if(!P.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(narr(P.i).join(' '));u.lang=P.lang==='hi'?'hi-IN':'en-IN';u.rate=P.speed;speechSynthesis.speak(u);}catch(e){}};
   const list=()=>{$('sl').innerHTML=SCENES.map((s,i)=>`<button class="scn ${i===P.i?'on':''}" data-scene="${i}"><span>${i+1}. ${esc(s.t)}</span><span class="muted">${mmss(startOf(i))}${CHECK[i]!==undefined?(P.checks[i]?' ✓':' ?'):''}</span></button>`).join('');};
   const seekTo=sec=>{sec=Math.max(0,Math.min(totalDur()-.01,sec));let i=0;while(i<SCENES.length-1&&sec>=startOf(i+1))i++;P.i=i;P.t=sec-startOf(i);P.check=null;$('ck').innerHTML='';P.shown=-1;speak();};
   const next=()=>{if(P.i<SCENES.length-1){P.i++;P.t=0;speak();}else{P.playing=false;try{speechSynthesis.cancel();}catch(e){}S.lessons.electric_charge={done:true,t:now()};save();
@@ -158,14 +168,14 @@ function initPlayer(){
     const dt=Math.min(.1,(ts-(P.last||ts))/1000);P.last=ts;P.clock+=dt;
     if(P.playing&&!P.check){P.t+=dt*P.speed;const s=SCENES[P.i];if(P.t>=s.d){P.t=s.d;if(CHECK[P.i]!==undefined&&!P.checks[P.i])openCheck(P.i);else next();}}
     draw();const tot=startOf(P.i)+P.t;$('scr').value=Math.round(tot*10);$('tm').textContent=`${mmss(tot)} / ${mmss(totalDur())}`;$('pp').textContent=P.playing?'Pause':(tot>=totalDur()-.1?'Replay':'Play');
-    const s=SCENES[P.i],n=s.n.length;$('cap').textContent=P.cap?s.n[Math.min(n-1,Math.floor(P.t/s.d*n))]:'';
+    const s=SCENES[P.i],nn=narr(P.i),n=nn.length;$('cap').textContent=P.cap?nn[Math.min(n-1,Math.floor(P.t/s.d*n))]:'';
     if(P.shown!==P.i){P.shown=P.i;list();}P.raf=requestAnimationFrame(tick);};
   $('pp').onclick=()=>{if(P.check)return;if(!P.playing&&startOf(P.i)+P.t>=totalDur()-.1){seekTo(0);P.checks={};}P.playing=!P.playing;if(P.playing)speak();else try{speechSynthesis.cancel();}catch(e){}};
   $('rs').onclick=()=>{seekTo(0);P.checks={};P.playing=false;list();};
-  $('spd').onchange=e=>{P.speed=+e.target.value;};$('cc').onchange=e=>{P.cap=e.target.checked;};$('vc').onchange=e=>{P.voice=e.target.checked;if(P.voice&&P.playing)speak();else try{speechSynthesis.cancel();}catch(x){}};
+  $('spd').onchange=e=>{P.speed=+e.target.value;};$('cc').onchange=e=>{P.cap=e.target.checked;};$('lg').onchange=e=>{P.lang=e.target.value;if(P.voice&&P.playing)speak();};$('vc').onchange=e=>{P.voice=e.target.checked;if(P.voice&&P.playing)speak();else try{speechSynthesis.cancel();}catch(x){}};
   $('scr').oninput=e=>seekTo(+e.target.value/10);
   $('sl').onclick=e=>{const b=e.target.closest('[data-scene]');if(b){seekTo(startOf(+b.dataset.scene));list();}};
-  $('spd').value=String(P.speed);$('cc').checked=P.cap;$('vc').checked=P.voice;
+  $('spd').value=String(P.speed);$('lg').value=P.lang;$('cc').checked=P.cap;$('vc').checked=P.voice;
   list();P.last=0;P.raf=requestAnimationFrame(tick);initLab();
 }
 function initLab(){

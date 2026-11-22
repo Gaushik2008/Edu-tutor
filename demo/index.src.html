@@ -178,7 +178,7 @@ const QS=[
 
 /* ============ State ============ */
 const KEY='adaptivelearn-demo-v1';
-const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[]});
+const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[],lessons:{},rv:{}});
 let S=fresh();
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
@@ -248,13 +248,13 @@ function applyResult(q,r,secs){
 
 /* ============ Rendering ============ */
 let role='student',tab='dashboard',selNode=null;
-const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['assign','Assignments']]};
+const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['review','Review queue'],['assign','Assignments']]};
 function renderChrome(){
   document.querySelectorAll('#role button').forEach(b=>b.classList.toggle('on',b.dataset.role===role));
   document.getElementById('tabs').innerHTML=TABS[role].map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('');
 }
 function render(){
-  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,assign:vAssign}[tab];
+  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,review:vReview,assign:vAssign}[tab];
   document.getElementById('app').innerHTML=`<div class="notice">Demo build. Progress is stored in this browser only. The Teacher class below is <b>sample data</b>; the “You” row is your own live activity. Sign-in, the database and the AI provider live in the backend (see the repository).</div>`+f();
   if(tab==='learn'||tab==='diag') bindQuestion();
   if(tab==='syllabus'&&syl.open==='electric_charge') initPlayer();
@@ -275,7 +275,7 @@ function vDash(){
   const roll=S.log.map((_,i)=>{const w=S.log.slice(Math.max(0,i-4),i+1);return w.filter(l=>l.ok).length/w.length;});
   const due=dueList().filter(x=>x.due<=now()),nc=CBY[nextConceptId()];
   const total=CONCEPTS.length;
-  return `<h2>Welcome back</h2>
+  return `<h2>Welcome back</h2>${S.demo?'<div class="notice">Demo student: ${S.log.length} answers across 8 concepts were simulated through the real engine so every screen has history. Reset to start fresh.</div>':''}
   <div class="grid g4">
    <div class="card stat"><b>${o===null?'—':Math.round(o*100)+'%'}</b><span>Overall mastery (assessed concepts)</span></div>
    <div class="card stat"><b>${bands.mastered}/${total}</b><span>Concepts mastered</span></div>
@@ -298,7 +298,7 @@ function vDash(){
     </ul></div>
   </div>
   <h2>Recent activity</h2><div class="card">${S.log.length?`<ul class="plain">${S.log.slice(-8).reverse().map(l=>`<li>${fmtDay(l.t)} · ${esc(CBY[l.c].n)} · ${l.ok?'correct':'incorrect'} · mastery ${l.delta>=0?'+':''}${l.delta.toFixed(1)} pts${l.mis?` · <span class="muted">possible misconception: ${esc(l.mis)}</span>`:''}</li>`).join('')}</ul>`:'<p class="muted">No activity yet. Your answers will appear here.</p>'}</div>
-  <p><button class="btn ghost" data-reset>Reset my demo data</button></p>`;
+  <p><button class="btn" data-demo>Load demo student</button> <button class="btn ghost" data-reset>Reset my demo data</button></p>`;
 }
 
 function vGraph(){
@@ -426,6 +426,33 @@ function vMiscon(){
   return `<h2>Common misconceptions</h2><p class="muted">Predictions from reasoning with confidence scores. Review before acting.</p>
   <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} students · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
 }
+const SAMPLE_REVIEW=[
+ {id:'s1',who:'Sample student B',c:'ohms_law',tag:'R_UP_I_UP',text:'bigger resistor means bigger current will go thru it',conf:.62},
+ {id:'s2',who:'Sample student D',c:'electric_current',tag:'CURRENT_USED_UP',text:'current is finished in the bulb that is why it glows',conf:.55},
+ {id:'s3',who:'Sample student F',c:'parallel_combination',tag:'PARALLEL_ADDS',text:'equivalent of resistors in parallel = R1 + R2',conf:.58}];
+function vReview(){
+  S.rv=S.rv||{};
+  const live=S.mis.filter(m=>!m.resolved&&!m.rev&&m.conf<.8).map(m=>({id:'m'+m.id,who:'You (live)',c:m.c,tag:m.tag,text:m.reasoning,conf:m.conf,live:true}));
+  const items=[...live,...SAMPLE_REVIEW.filter(x=>!S.rv[x.id])];
+  return `<h2>Review queue</h2><p class="muted">Predictions the system is not sure about. Confirm to keep the misconception on the student’s record, or dismiss it. The three sample items are phrasings the pattern rules cannot catch, which is where an AI model’s suggestion would be sent for your decision.</p>
+  <div class="grid g2">${items.length?items.map(x=>`<div class="card"><div class="row"><b>${esc(x.who)}</b><span class="muted">${esc(CBY[x.c].n)}</span>${x.live?'':'<span class="pill" style="background:var(--grey)">sample</span>'}</div>
+   <p>“${esc(x.text)}”</p><p><b>Suggested:</b> ${esc(MIS[x.tag].label)} <span class="muted">· confidence ${Math.round(x.conf*100)}%</span></p>
+   <div class="row"><button class="btn" data-rv="${x.id}" data-d="confirmed">Confirm</button><button class="btn ghost" data-rv="${x.id}" data-d="dismissed">Dismiss</button></div></div>`).join(''):'<p class="muted">Nothing waiting for review.</p>'}</div>
+  <p class="muted">Decided: ${Object.keys(S.rv).length} sample · confirmed ${Object.values(S.rv).filter(v=>v==='confirmed').length}, dismissed ${Object.values(S.rv).filter(v=>v==='dismissed').length}</p>`;
+}
+function loadDemo(){
+  S=fresh(); S.demo=true; S.skew=-14; let seed=7; const rnd=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+  const skill={electric_charge:.9,electric_current:.6,electric_circuit:.8,potential_difference:.7,ohms_law:.35,resistance:.4,series_combination:.6,parallel_combination:.3};
+  const reasons={R_UP_I_UP:'current increases because resistance increases and blocks the voltage',CURRENT_USED_UP:'the bulb uses up some of the current'};
+  for(const cid of Object.keys(skill)) for(const q of QS.filter(x=>x.c===cid).slice(0,3)){
+    const good=rnd()<skill[cid]; let val;
+    if(q.t==='mcq'){const w=Object.keys(q.m||{});val=good?String(q.a):(w.length?w[0]:String((q.a+1)%q.o.length));}
+    else if(q.t==='num') val=good?String(q.a):String(q.a*1.7+1); else val=good?q.a[0]:'not sure';
+    const why=good?'I = V/R':(reasons[Object.values(q.m||{})[0]]||'');
+    const r=evaluate(q,val,why); r.reasoning=why; applyResult(q,r,40); S.skew+=.4;
+  }
+  S.skew=0; save();
+}
 function vAssign(){
   return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
   <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
@@ -446,6 +473,8 @@ const App=document.addEventListener('click',e=>{
   if(D.node){selNode=D.node;render();return;}
   if(D.learn){tab='learn';startPractice(D.learn);render();return;}
   if(D.opt!==undefined){ses.chosen=D.opt;render();return;}
+  if(D.demo!==undefined){loadDemo();ses=null;selNode=null;render();return;}
+  if(D.rv){S.rv=S.rv||{};if(D.rv[0]==='m'){const m=S.mis.find(x=>'m'+x.id===D.rv);if(m){m.rev=D.d;if(D.d==='dismissed')m.resolved=true;}}else S.rv[D.rv]=D.d;save();render();return;}
   if(D.reset!==undefined){S=fresh();save();ses=null;selNode=null;render();return;}
   if(D.rediag!==undefined){S.diagDone=false;ses=null;render();return;}
   if(D.skew){S.skew=D.skew==='-999'?0:S.skew+Number(D.skew);save();render();return;}
