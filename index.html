@@ -1,10 +1,14 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Learnova</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <style>
 /* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
 :root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
---fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
+--fd:'Inter Tight','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
 body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
@@ -105,9 +109,102 @@ select{background:var(--bg);color:var(--fg);border:2px solid var(--line);border-
  .g4{grid-template-columns:repeat(4,1fr)}
 }
 @media (min-width:1700px){.wrap{max-width:1360px}}
+/* ===== Landing + refined app surfaces. Palette stays midnight black + electric cobalt. ===== */
+:root{--fd:'Inter Tight','Inter',system-ui,sans-serif;--fs:'Instrument Serif',Georgia,'Times New Roman',serif;--glass:rgba(255,255,255,.055);--glass-line:rgba(255,255,255,.12)}
+em{font-family:var(--fs);font-style:italic;font-weight:400}
+
+/* ---------- landing ---------- */
+#land{position:fixed;inset:0;z-index:100;overflow-y:auto;overflow-x:hidden;background:#05060B;color:#fff;scroll-behavior:smooth;overscroll-behavior:contain}
+#land *{box-sizing:border-box}
+#lcv{position:absolute;left:0;top:0;width:100%;height:100svh;display:block;pointer-events:none}
+.glass{background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid var(--glass-line);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);box-shadow:0 30px 60px -30px #000,inset 0 1px 0 rgba(255,255,255,.1)}
+.l-first{position:relative;min-height:100svh;padding:0 clamp(20px,5vw,72px);display:flex;flex-direction:column;background:radial-gradient(900px 520px at 78% 38%,#16308f55,transparent 70%),linear-gradient(90deg,#05060B 18%,#05060B00 70%)}
+.l-nav{position:sticky;top:16px;z-index:5;margin:16px auto 0;width:min(1040px,100%);display:flex;align-items:center;gap:12px;padding:8px 8px 8px 14px;border-radius:999px;background:rgba(10,13,24,.62);border:1px solid var(--glass-line);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.l-logo{display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font:700 18px var(--fd);letter-spacing:-.02em;cursor:pointer;margin-right:auto;padding:0}
+.l-links{display:flex;gap:2px}
+.l-links button{background:none;border:0;color:#B8C2E4;font:500 13.5px var(--fb);padding:9px 14px;border-radius:999px;cursor:pointer}
+.l-links button:hover{background:rgba(255,255,255,.08);color:#fff}
+.l-pill{display:inline-flex;align-items:center;gap:12px;background:#fff;color:#05060B;border:0;border-radius:999px;padding:8px 8px 8px 22px;font:600 15px var(--fb);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.l-pill .ar{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--pri);color:#fff}
+.l-pill.sm{padding:10px 16px;font-size:13.5px;gap:8px;background:var(--pri);color:#fff}
+.l-pill.full{width:100%;justify-content:center;margin-top:12px}
+.l-pill:hover{transform:translateY(-1px);box-shadow:0 10px 30px -8px #2F5CFFaa}
+.l-ghost{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);color:#fff;border:1px solid var(--glass-line);border-radius:999px;padding:12px 22px 12px 14px;font:500 15px var(--fb);cursor:pointer}
+.l-ghost .pl{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:1px solid #ffffff66;font-size:9px;padding-left:2px}
+.l-ghost:hover{background:rgba(255,255,255,.12)}
+#land button:focus-visible{outline:2px solid #9DB6FF;outline-offset:3px}
+.l-hero{position:relative;z-index:2;margin:auto 0;padding:clamp(40px,8vh,96px) 0 clamp(150px,22vh,220px);max-width:min(980px,100%)}
+.l-eye{display:flex;align-items:center;gap:12px;margin:0 0 clamp(18px,3vh,30px);font:600 12px var(--fb);letter-spacing:.2em;text-transform:uppercase;color:#C8D4FF}
+.l-eye i{width:44px;height:1px;background:#9DB6FF}.l-eye b{color:#5B7CFF;font-weight:600}
+.l-hero h1{margin:0;font:700 clamp(40px,6.3vw,96px)/.96 var(--fd);letter-spacing:-.045em}
+.l-hero h1 span{display:block;white-space:nowrap}
+.l-hero h1 em,.l-how h2 em{color:#7C9CFF;font-size:1.06em;letter-spacing:-.02em;font-weight:400}
+.l-sub{max-width:520px;margin:clamp(20px,3.4vh,32px) 0 0;font:400 clamp(15px,1.25vw,18px)/1.6 var(--fb);color:#B8C2E4}
+.l-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:clamp(24px,4vh,40px)}
+.l-card{position:absolute;z-index:3;right:clamp(20px,5vw,72px);bottom:clamp(120px,17vh,160px);width:268px;padding:18px;border-radius:24px}
+.l-card h3{font:700 20px var(--fd);letter-spacing:-.02em;margin:2px 0 12px;color:#fff}
+.l-k{margin:0;font:600 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:#9DB6FF}
+.l-m{margin:10px 0 0;font:400 13px/1.55 var(--fb);color:#B8C2E4}
+.l-card .bar2{background:rgba(255,255,255,.14)}
+.l-strip{position:absolute;z-index:3;left:clamp(20px,5vw,72px);right:clamp(20px,5vw,72px);bottom:clamp(20px,4vh,36px);display:grid;grid-template-columns:repeat(4,1fr);border-radius:22px;padding:6px}
+.l-strip>div{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:12px;align-items:center;padding:12px 18px;border-right:1px solid var(--glass-line)}
+.l-strip>div:last-child{border:0}
+.l-strip .ic{grid-row:1/3;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:rgba(47,92,255,.2);color:#9DB6FF}
+.l-strip b{font:700 24px/1 var(--fd);letter-spacing:-.03em;color:#fff}
+.l-strip small{font:400 12px var(--fb);color:#B8C2E4}
+/* how it works */
+.l-how{position:relative;padding:clamp(72px,12vh,140px) clamp(20px,5vw,72px) 56px;max-width:1240px;margin:0 auto}
+.l-how h2{font:700 clamp(34px,5.6vw,76px)/1 var(--fd);letter-spacing:-.04em;margin:0;max-width:900px;text-wrap:balance}
+.l-sub2{max-width:560px;margin:20px 0 0;font:400 16px/1.6 var(--fb);color:#B8C2E4}
+.l-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin-top:clamp(32px,5vh,56px)}
+.l-cards article{padding:22px;border-radius:26px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.big{font:700 clamp(54px,6vw,84px)/1 var(--fd);letter-spacing:-.05em;color:#fff}.big small{font-size:.38em;letter-spacing:-.02em;color:#9DB6FF;font-weight:600}
+.l-cards blockquote{margin:6px 0 0;font:400 22px/1.3 var(--fs);font-style:italic;color:#fff}
+.chipl{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:16px;background:rgba(255,92,108,.12);border:1px solid rgba(255,92,108,.35)}
+.chipl b{font:600 14px var(--fb);color:#FFB3BB}.chipl span{font:400 12px var(--fb);color:#B8C2E4}
+.ladder{display:flex;align-items:flex-end;gap:10px;list-style:none;margin:0;padding:0;height:122px}
+.ladder li{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px}
+.ladder i{display:block;width:100%;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#5B7CFF,#2F5CFF)}
+.ladder b{font:600 13px var(--fb);color:#fff}.ladder small{font:400 10.5px var(--fb);color:#9DB6FF}
+.l-end{display:flex;gap:14px;flex-wrap:wrap;margin-top:clamp(40px,7vh,72px)}
+.l-foot{margin:28px 0 0;font:400 12.5px var(--fb);color:#8A93B2}
+@media (prefers-reduced-motion:no-preference){.rv{opacity:0;transform:translateY(22px);animation:rv .9s cubic-bezier(.2,.7,.2,1) forwards;animation-delay:var(--d,0s)}@keyframes rv{to{opacity:1;transform:none}}}
+@media (max-width:1100px){.l-card{display:none}}
+@media (max-width:760px){
+ .l-hero h1{font-size:clamp(28px,9.2vw,60px)}
+ .l-links{display:none}.l-nav{padding:7px 8px 7px 12px}
+ .l-hero{padding-bottom:230px;margin:0}
+ .l-strip{grid-template-columns:1fr 1fr}.l-strip>div{padding:10px 12px;border-right:0;border-bottom:1px solid var(--glass-line)}
+ .l-strip>div:nth-child(3),.l-strip>div:nth-child(4){border-bottom:0}.l-strip .ic{width:34px;height:34px}.l-strip b{font-size:20px}
+ .l-pill{font-size:14px}.l-ghost{font-size:14px}
+}
+
+/* ---------- app surfaces ---------- */
+body{background:radial-gradient(900px 420px at 70% -120px,#1a35a255,transparent),radial-gradient(600px 300px at 0% 100%,#10206655,transparent),var(--bg);background-attachment:fixed}
+.card{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),var(--card);border:1px solid rgba(255,255,255,.08);border-radius:24px;box-shadow:0 24px 50px -32px #000,inset 0 1px 0 rgba(255,255,255,.05)}
+.stat b{font:700 clamp(30px,2.6vw,42px)/1 var(--fd);letter-spacing:-.045em;margin-bottom:6px}
+h2{font:700 clamp(22px,2.2vw,30px)/1.1 var(--fd);letter-spacing:-.035em}
+h2 em,.hero h2 em{color:#8FAAFF}
+.btn{border-radius:999px;padding:10px 20px;transition:transform .15s,box-shadow .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 8px 24px -10px #2F5CFFcc}
+.btn.ghost{background:rgba(255,255,255,.07);color:#DCE5FF;border:1px solid rgba(255,255,255,.1)}
+.hero{position:relative;overflow:hidden;border-radius:28px;border:1px solid rgba(255,255,255,.12);background:radial-gradient(420px 220px at 85% 10%,#3E6BFF88,transparent 70%),linear-gradient(120deg,#1B3FCC,#10226a 65%,#0A0F22)}
+.hero h2{font:italic 400 clamp(32px,3.6vw,52px)/1 var(--fs);letter-spacing:-.01em;color:#fff}
+.seg{border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+.seg button{border-radius:12px;transition:background .15s,color .15s}
+.seg button:hover{color:#fff}
+.seg button.on{background:var(--pri);color:#fff;box-shadow:0 6px 18px -8px #2F5CFFcc}
+header .brand{display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;text-align:left;cursor:pointer;color:#fff;font:700 20px var(--fd);letter-spacing:-.03em}
+header .brand small{display:block;font:400 11px/1.3 var(--fb);color:var(--muted);letter-spacing:0}
+header .brand span.t{display:block}
+.course{border-radius:24px}
+.opt{border-radius:16px}
+@media (min-width:980px){header{background:rgba(8,10,18,.82);backdrop-filter:blur(14px)}}
+@media (max-width:979px){header .brand small{display:none}}
+
 </style>
 <header><div class="bar">
- <div class="brand">Learnova<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
+ <button class="brand" data-home aria-label="Learnova home"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#2F5CFF"/><ellipse cx="16" cy="16" rx="11" ry="4.5" fill="none" stroke="#fff" stroke-width="1.4" transform="rotate(-30 16 16)"/><circle cx="16" cy="16" r="3" fill="#fff"/><circle cx="25" cy="10.5" r="2" fill="#fff"/></svg><span class="t">Learnova<small>Learn Smarter. Understand Deeper. Remember Longer.</small></span></button>
  <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
  <div class="seg" id="tabs"></div>
 </div></header>
@@ -146,7 +243,7 @@ function targetDifficulty(p,recent){
 }
 /* MIS and RULES are generated from backend/app/core/rules_data.py by demo/build.py (single source of truth). */
 const MIS={"R_UP_I_UP": {"c": "ohms_law", "label": "Believes current rises when resistance rises", "fix": "Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A."}, "CURRENT_USED_UP": {"c": "electric_current", "label": "Thinks current is used up as it passes through a component", "fix": "Show ammeters before and after a bulb reading equal; energy, not charge, is transferred."}, "PARALLEL_ADDS": {"c": "parallel_combination", "label": "Adds resistances directly in a parallel combination", "fix": "Derive 1/Rp = 1/R1 + 1/R2; Rp is smaller than the smallest branch."}, "SERIES_SPLITS_I": {"c": "series_combination", "label": "Thinks current divides between resistors in series", "fix": "Current is identical in a series loop; the voltage divides."}, "POWER_I_ONLY": {"c": "electric_power", "label": "Uses an incorrect relation for electric power", "fix": "Start from P = VI, then combine with Ohm’s law to get I²R and V²/R."}, "RESIST_LENGTH_INV": {"c": "resistance_factors", "label": "Believes longer wires have lower resistance", "fix": "R = ρL/A: doubling the length doubles R. Use a long narrow pipe as an analogy."}, "PD_IS_CURRENT": {"c": "electric_current", "label": "Confuses potential difference with current", "fix": "Current is charge per second; potential difference is energy per coulomb."}, "CONV_CURRENT_DIR": {"c": "electric_circuit", "label": "Reverses the direction of conventional current", "fix": "Conventional current runs from the positive terminal round to the negative; electrons drift the other way."}, "HEAT_I_LINEAR": {"c": "heating_effect", "label": "Thinks heat is proportional to current instead of current squared", "fix": "H = I²Rt: doubling I gives four times the heat. Try I = 1 A and 2 A."}};
-const RULES_DATA=[{"tag": "R_UP_I_UP", "concept": "ohms_law", "label": "Believes current rises when resistance rises", "fix": "Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A.", "patterns": ["\\b(resistance|r)\\b.{0,40}\\b(increas\\w*|higher|more|bigger|greater|larger|goes up|rises?)\\b.{0,60}\\bcurrent\\b.{0,30}\\b(increas\\w*|higher|more|bigger|greater|larger|rises?|goes up)\\b", "\\bcurrent\\b.{0,30}\\b(increas\\w*|rises?|goes up|higher|bigger|more)\\b.{0,40}\\b(resistance|r)\\b.{0,30}\\b(increas\\w*|higher|more|bigger|greater|goes up)", "\\b(more|higher|greater|bigger|increased?)\\s+(resistance|r)\\b.{0,30}\\b(more|higher|greater|bigger)\\s+current\\b"]}, {"tag": "CURRENT_USED_UP", "concept": "electric_current", "label": "Thinks current is used up as it passes through a component", "fix": "Show ammeters before and after a bulb reading equal; energy, not charge, is transferred.", "patterns": ["\\b(current|charge)\\b.{0,40}\\b(used up|use up|uses up|consumed|consumes|gets less|lost|disappear\\w*|eaten|eats)\\b", "\\b(uses?|used|eats?|consumes?|absorbs?)\\b( up)?( some of| most of| all of)?( the| some)? current", "used up by the (bulb|resistor)"]}, {"tag": "PARALLEL_ADDS", "concept": "parallel_combination", "label": "Adds resistances directly in a parallel combination", "fix": "Derive 1/Rp = 1/R1 + 1/R2; Rp is smaller than the smallest branch.", "patterns": ["parallel\\b.{0,60}\\b(add|sum|total of)\\b", "\\badd(ed|ing)?\\b.{0,60}parallel"], "unless": ["reciprocal", "1\\s*/\\s*r"]}, {"tag": "SERIES_SPLITS_I", "concept": "series_combination", "label": "Thinks current divides between resistors in series", "fix": "Current is identical in a series loop; the voltage divides.", "patterns": ["series\\b.{0,60}\\bcurrent\\b.{0,40}\\b(divid\\w*|split\\w*|shar\\w*)", "\\bcurrent\\b.{0,50}\\b(divid\\w*|split\\w*|shar\\w*)\\b.{0,50}\\bseries"], "unless": ["\\b(same|equal|constant)\\b.{0,30}current", "current.{0,30}\\b(same|equal|constant)\\b"]}, {"tag": "POWER_I_ONLY", "concept": "electric_power", "label": "Uses an incorrect relation for electric power", "fix": "Start from P = VI, then combine with Ohm’s law to get I²R and V²/R.", "patterns": ["\\bpower\\b.{0,15}(=|is|equals)\\s*(the )?(v\\s*/\\s*i|i\\s*/\\s*v|current (divided by|over) voltage|voltage (divided by|over) current)", "\\bp\\s*=\\s*(v\\s*/\\s*i|i\\s*/\\s*v)", "power depends only on"]}, {"tag": "RESIST_LENGTH_INV", "concept": "resistance_factors", "label": "Believes longer wires have lower resistance", "fix": "R = ρL/A: doubling the length doubles R. Use a long narrow pipe as an analogy.", "patterns": ["(longer|length)\\b.{0,50}\\b(less|lower|decreas\\w*|smaller|reduc\\w*)\\b.{0,30}resist", "(longer|length)\\b.{0,30}resist\\w*.{0,20}\\b(decreas\\w*|less|lower|smaller)", "\\bshort(er)?\\b.{0,40}\\b(more|higher|greater|larger|bigger)\\b.{0,20}resist"]}, {"tag": "PD_IS_CURRENT", "concept": "electric_current", "label": "Confuses potential difference with current", "fix": "Current is charge per second; potential difference is energy per coulomb.", "patterns": ["\\b(voltage|potential difference|pd)\\b.{0,20}\\b(is|means|equals|=)\\b.{0,30}\\b(current|flow of charge|rate of flow)"]}, {"tag": "CONV_CURRENT_DIR", "concept": "electric_circuit", "label": "Reverses the direction of conventional current", "fix": "Conventional current runs from the positive terminal round to the negative; electrons drift the other way.", "patterns": ["\\bcurrent\\b.{0,50}\\b(from|flows? from|goes from|runs)\\b.{0,15}\\bnegative\\b.{0,25}\\bto\\b.{0,15}\\bpositive", "\\bcurrent\\b.{0,30}\\bnegative\\b.{0,25}\\bto\\b.{0,15}\\bpositive"], "unless": ["\\belectron\\w* (flow|move|drift|travel|go|current)\\b"]}, {"tag": "HEAT_I_LINEAR", "concept": "heating_effect", "label": "Thinks heat is proportional to current instead of current squared", "fix": "H = I²Rt: doubling I gives four times the heat. Try I = 1 A and 2 A.", "patterns": ["heat\\b.{0,40}proportional to (the )?(current|i)\\b(?!\\s*(squared|\\^2|²))", "\\bcurrent\\b.{0,30}\\b(doubled?|doubles|twice|tripled)\\b.{0,40}\\bheat\\b.{0,25}\\b(doubled?|doubles|twice|tripled)\\b", "\\bheat\\b.{0,30}\\b(doubled?|doubles|twice)\\b.{0,40}\\bcurrent\\b"], "unless": ["squared|\\^2|²|four times|4 times"]}];
+const RULES_DATA=[{"tag": "R_UP_I_UP", "concept": "ohms_law", "label": "Believes current rises when resistance rises", "fix": "Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A.", "patterns": ["\\b(resistance|r)\\b.{0,40}\\b(increas\\w*|higher|more|bigger|greater|larger|goes up|rises?)\\b.{0,60}\\bcurrent\\b.{0,30}\\b(increas\\w*|higher|more|bigger|greater|larger|rises?|goes up)\\b", "\\bcurrent\\b.{0,30}\\b(increas\\w*|rises?|goes up|higher|bigger|more)\\b.{0,40}\\b(resistance|r)\\b.{0,30}\\b(increas\\w*|higher|more|bigger|greater|goes up)", "\\b(more|higher|greater|bigger|increased?)\\s+(resistance|r)\\b.{0,30}\\b(more|higher|greater|bigger)\\s+current\\b", "\\bcurrent\\b.{0,20}\\b(increas\\w*|rises?|goes up|is higher)\\b.{0,12}\\b(because|as|since|when)\\b.{0,40}\\b(resistance|r)\\b"], "unless": ["resistance\\b.{0,25}\\b(decreas\\w*|lower\\w*|less|reduc\\w*|drops?|falls?|smaller)"]}, {"tag": "CURRENT_USED_UP", "concept": "electric_current", "label": "Thinks current is used up as it passes through a component", "fix": "Show ammeters before and after a bulb reading equal; energy, not charge, is transferred.", "patterns": ["\\b(current|charge)\\b.{0,40}\\b(used up|use up|uses up|consumed|consumes|gets less|lost|disappear\\w*|eaten|eats)\\b", "\\b(uses?|used|eats?|consumes?|absorbs?)\\b( up)?( some of| most of| all of)?( the| some)? current", "used up by the (bulb|resistor)"]}, {"tag": "PARALLEL_ADDS", "concept": "parallel_combination", "label": "Adds resistances directly in a parallel combination", "fix": "Derive 1/Rp = 1/R1 + 1/R2; Rp is smaller than the smallest branch.", "patterns": ["parallel\\b.{0,60}\\b(add|sum|total of)\\b", "\\badd(ed|ing)?\\b.{0,60}parallel"], "unless": ["reciprocal", "1\\s*/\\s*r"]}, {"tag": "SERIES_SPLITS_I", "concept": "series_combination", "label": "Thinks current divides between resistors in series", "fix": "Current is identical in a series loop; the voltage divides.", "patterns": ["series\\b.{0,60}\\bcurrent\\b.{0,40}\\b(divid\\w*|split\\w*|shar\\w*)", "\\bcurrent\\b.{0,50}\\b(divid\\w*|split\\w*|shar\\w*)\\b.{0,50}\\bseries"], "unless": ["\\b(same|equal|constant)\\b.{0,30}current", "current.{0,30}\\b(same|equal|constant)\\b"]}, {"tag": "POWER_I_ONLY", "concept": "electric_power", "label": "Uses an incorrect relation for electric power", "fix": "Start from P = VI, then combine with Ohm’s law to get I²R and V²/R.", "patterns": ["\\bpower\\b.{0,15}(=|is|equals)\\s*(the )?(v\\s*/\\s*i|i\\s*/\\s*v|current (divided by|over) voltage|voltage (divided by|over) current)", "\\bp\\s*=\\s*(v\\s*/\\s*i|i\\s*/\\s*v)", "power depends only on"]}, {"tag": "RESIST_LENGTH_INV", "concept": "resistance_factors", "label": "Believes longer wires have lower resistance", "fix": "R = ρL/A: doubling the length doubles R. Use a long narrow pipe as an analogy.", "patterns": ["(longer|length)\\b.{0,50}\\b(less|lower|decreas\\w*|smaller|reduc\\w*)\\b.{0,30}resist", "(longer|length)\\b.{0,30}resist\\w*.{0,20}\\b(decreas\\w*|less|lower|smaller)", "\\bshort(er)?\\b.{0,40}\\b(more|higher|greater|larger|bigger)\\b.{0,20}resist"]}, {"tag": "PD_IS_CURRENT", "concept": "electric_current", "label": "Confuses potential difference with current", "fix": "Current is charge per second; potential difference is energy per coulomb.", "patterns": ["\\b(voltage|potential difference|pd)\\b.{0,20}\\b(is|means|equals|=)\\b.{0,30}\\b(current|flow of charge|rate of flow)"]}, {"tag": "CONV_CURRENT_DIR", "concept": "electric_circuit", "label": "Reverses the direction of conventional current", "fix": "Conventional current runs from the positive terminal round to the negative; electrons drift the other way.", "patterns": ["\\bcurrent\\b.{0,50}\\b(from|flows? from|goes from|runs)\\b.{0,15}\\bnegative\\b.{0,25}\\bto\\b.{0,15}\\bpositive", "\\bcurrent\\b.{0,30}\\bnegative\\b.{0,25}\\bto\\b.{0,15}\\bpositive"], "unless": ["\\belectron\\w* (flow|move|drift|travel|go|current)\\b"]}, {"tag": "HEAT_I_LINEAR", "concept": "heating_effect", "label": "Thinks heat is proportional to current instead of current squared", "fix": "H = I²Rt: doubling I gives four times the heat. Try I = 1 A and 2 A.", "patterns": ["heat\\b.{0,40}proportional to (the )?(current|i)\\b(?!\\s*(squared|\\^2|²))", "\\bcurrent\\b.{0,30}\\b(doubled?|doubles|twice|tripled)\\b.{0,40}\\bheat\\b.{0,25}\\b(doubled?|doubles|twice|tripled)\\b", "\\bheat\\b.{0,30}\\b(doubled?|doubles|twice)\\b.{0,40}\\bcurrent\\b"], "unless": ["squared|\\^2|²|four times|4 times"]}];
 const NEG=/\b(not|never|no|isn't|doesn't|don't|wasn't)\b|n't/;
 function matchRule(r,t){
   if((r.unless||[]).some(u=>new RegExp(u).test(t))) return false;
@@ -976,5 +1073,138 @@ const App=document.addEventListener('click',e=>{
 });
 function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
 document.addEventListener('change',e=>{if(e.target.id==='roll'){S.roll=e.target.value.replace(/[^\w-]/g,'').slice(0,12);save();}});
+/* ===== Landing screen: cinematic hero + live engine demos ===== */
+const LAND={on:false,raf:0,ptr:null,t:0,cleanup:null};
+const IC=p=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICONS={
+ graph:IC('<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7l3 9M16 7l-3 9"/>'),
+ quiz:IC('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/>'),
+ play:IC('<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/>'),
+ scan:IC('<circle cx="11" cy="11" r="6"/><path d="M20 20l-4-4"/>')};
+const ARROW='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const MARK='<svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#2F5CFF"/><ellipse cx="16" cy="16" rx="11" ry="4.5" fill="none" stroke="#fff" stroke-width="1.4" transform="rotate(-30 16 16)"/><circle cx="16" cy="16" r="3" fill="#fff"/><circle cx="25" cy="10.5" r="2" fill="#fff"/></svg>';
+
+/* live examples: every number below comes from the same engine the app uses */
+function landExamples(){
+  let st={p:.30,att:0,cor:0,conf:0};const seq=[[false,3],[false,3],[true,3],[true,3],[true,4]],pts=[st.p];
+  seq.forEach(([ok,d])=>{st=bktUpdate(st,ok,d,.85);pts.push(st.p);});
+  const text='Current increases because resistance blocks the voltage.';
+  const an=analyse('ohms_law',false,text.toLowerCase());
+  let rv={reps:0,ease:2.3,interval:0},t=0,ladder=[];
+  for(let i=0;i<5;i++){const r=srsSchedule(rv,1,0,3,false);rv=r.rev;ladder.push(Math.round(rv.interval));}
+  return {pts,seq,text,an,ladder};
+}
+function sparkSVG(pts,w=250,h=70){
+  const xy=pts.map((v,i)=>[6+i*(w-12)/(pts.length-1),h-6-v*(h-12)]);
+  const d=xy.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" style="display:block;width:100%;height:auto" role="img" aria-label="Mastery after each of five answers"><path d="${d} L${xy[xy.length-1][0]} ${h-6} L6 ${h-6}Z" fill="url(#lg)" opacity=".5"/><defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F5CFF" stop-opacity=".55"/><stop offset="1" stop-color="#2F5CFF" stop-opacity="0"/></linearGradient></defs><path d="${d}" fill="none" stroke="#7C9CFF" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>${xy.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.4" fill="${i&&!ex_ok(i)?'#FF5C6C':'#7C9CFF'}"/>`).join('')}</svg>`;
+}
+let EX_SEQ=[];const ex_ok=i=>EX_SEQ[i-1]?EX_SEQ[i-1][0]:true;
+
+function landHTML(){
+  const ex=landExamples();EX_SEQ=ex.seq;
+  const nid=nextConceptId(),nc=CBY[nid],st=cs(nid),p=curP(nid),has=st.att>0;
+  const stat=[[ICONS.graph,CONCEPTS.length,'Concepts mapped'],[ICONS.quiz,QS.length,'Practice questions'],[ICONS.play,Object.keys(LESSONS).length,'Video lessons'],[ICONS.scan,RULES_DATA.length,'Misconception patterns']];
+  const mis=ex.an.tag?MIS[ex.an.tag]:null;
+  return `<canvas id="lcv" aria-hidden="true"></canvas>
+  <div class="l-first">
+   <nav class="l-nav" aria-label="Main"><button class="l-logo" data-l="top" aria-label="Learnova home">${MARK}<span>Learnova</span></button>
+    <div class="l-links"><button data-l="student">Student</button><button data-l="teacher">Teacher</button><button data-l="lessons">Lessons</button><button data-l="how">How it works</button></div>
+    <button class="l-pill sm" data-l="start">Start learning ${ARROW}</button></nav>
+   <section class="l-hero">
+    <p class="l-eye rv" style="--d:.05s"><i></i>Class 10 Physics <b>/</b> Electricity</p>
+    <h1><span class="rv" style="--d:.15s">Learn <em>Smarter.</em></span><span class="rv" style="--d:.28s">Understand Deeper.</span><span class="rv" style="--d:.41s">Remember <em>Longer.</em></span></h1>
+    <p class="l-sub rv" style="--d:.55s">An exam-prep tutor that models what you actually understand, reads your reasoning to catch misconceptions, and brings each concept back just before you forget it.</p>
+    <div class="l-cta rv" style="--d:.68s"><button class="l-pill" data-l="start">Start learning <span class="ar">${ARROW}</span></button><button class="l-ghost" data-l="watch"><span class="pl" aria-hidden="true">▶</span> Watch the lesson</button></div>
+   </section>
+   <aside class="l-card glass" aria-label="Continue learning"><p class="l-k">${has?'Continue where you left off':'Your first concept'}</p><h3>${esc(nc.n)}</h3>
+    <div class="bar2"><i style="width:${has?Math.round(p*100):0}%"></i></div><p class="l-m">${has?Math.round(p*100)+'% mastery · '+st.cor+'/'+st.att+' correct':'Not assessed yet · level '+nc.d+' of 5'}</p>
+    <button class="l-pill sm full" data-l="practise" data-id="${nid}">Practise ${ARROW}</button></aside>
+   <div class="l-strip glass" role="list">${stat.map(([i,n,l])=>`<div role="listitem"><span class="ic">${i}</span><b>${n}</b><small>${l}</small></div>`).join('')}</div>
+  </div>
+  <section class="l-how" id="l-how"><p class="l-eye"><i></i>Under the hood</p>
+   <h2>Built to <em>understand</em> you, not just score you.</h2>
+   <p class="l-sub2">The three cards below are computed live by the same engine that runs the app, using example inputs. Nothing here is a screenshot.</p>
+   <div class="l-cards">
+    <article class="glass"><p class="l-k">Mastery model</p><div class="big">${Math.round(ex.pts[ex.pts.length-1]*100)}<small>%</small></div>${sparkSVG(ex.pts)}
+     <p class="l-m">Five example answers: two misses, then three correct. Mastery climbs as evidence builds, and a single miss never zeroes it.</p></article>
+    <article class="glass"><p class="l-k">Misconception detection</p><blockquote>“${esc(ex.text)}”</blockquote>
+     <div class="chipl">${mis?`<b>${esc(mis.label)}</b><span>${Math.round(ex.an.conf*100)}% confidence · a prediction, reviewed by a teacher when unsure</span>`:'<b>No pattern matched</b>'}</div>
+     <p class="l-m">${mis?esc(mis.fix):''}</p></article>
+    <article class="glass"><p class="l-k">Spaced revision</p><div class="big">${ex.ladder[ex.ladder.length-1]}<small> days</small></div>
+     <ol class="ladder">${ex.ladder.map((d,i)=>`<li><i style="height:${14+Math.min(80,d*2.4)}px"></i><b>${d}d</b><small>review ${i+1}</small></li>`).join('')}</ol>
+     <p class="l-m">If every review goes well, gaps between reviews stretch. A miss or an open misconception pulls the next review closer.</p></article>
+   </div>
+   <div class="l-end"><button class="l-pill" data-l="student">Open the student view <span class="ar">${ARROW}</span></button><button class="l-ghost" data-l="teacher">Open the teacher view</button></div>
+   <p class="l-foot">Demo data stays in your browser. The class heatmap is sample data; only your own roll number is live.</p>
+  </section>`;
+}
+
+/* ---------- electric-field background ---------- */
+function landField(cv,still){
+  const ctx=cv.getContext('2d'),dpr=Math.min(1.5,window.devicePixelRatio||1);let W=0,H=0,ps=[];const L=16;
+  const fit=()=>{W=cv.clientWidth;H=cv.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);};
+  fit();const N=W<700?320:820;
+  const src=t=>{const m=W<700;return [
+    {x:W*(m?.5:.68)+Math.sin(t*.22)*W*.05,y:H*(m?.3:.40)+Math.cos(t*.3)*H*.06,q:1},
+    {x:W*(m?.8:.88)+Math.cos(t*.19)*W*.03,y:H*(m?.55:.62)+Math.sin(t*.26)*H*.07,q:-1},
+    {x:W*(m?.25:.5)+Math.cos(t*.17)*W*.04,y:H*(m?.7:.74)+Math.sin(t*.21)*H*.05,q:-.8}]
+    .concat(LAND.ptr?[{x:LAND.ptr.x,y:LAND.ptr.y,q:-1.5}]:[]);};
+  const spawn=(q,c)=>{const pos=c.filter(s=>s.q>0)[0]||c[0],a=Math.random()*6.283,r=14+Math.random()*10;
+    q.x=new Float32Array(L).fill(pos.x+Math.cos(a)*r);q.y=new Float32Array(L).fill(pos.y+Math.sin(a)*r);q.age=Math.random()*40|0;q.life=420+Math.random()*460|0;};
+  const c0=src(0);for(let i=0;i<N;i++){const q={};spawn(q,c0);q.age=Math.random()*q.life|0;ps.push(q);}
+  const step=(dt,c)=>{for(const q of ps){let ex=0,ey=0,dead=false;const px=q.x[L-1],py=q.y[L-1];
+    for(const s of c){const dx=px-s.x,dy=py-s.y,r2=dx*dx+dy*dy+60,r=Math.sqrt(r2),k=s.q*1400/(r2*r);ex+=dx*k;ey+=dy*k;if(s.q<0&&r<14)dead=true;}
+    const m=Math.hypot(ex,ey)||1,sp=105+Math.min(120,m*1200);q.x.copyWithin(0,1);q.y.copyWithin(0,1);q.x[L-1]=px+ex/m*sp*dt;q.y[L-1]=py+ey/m*sp*dt;q.age++;
+    if(dead||q.age>q.life||q.x[L-1]<-30||q.x[L-1]>W+30||q.y[L-1]<-30||q.y[L-1]>H+30)spawn(q,c);}};
+  const draw=c=>{ctx.clearRect(0,0,W,H);
+    for(const pass of [[0,.16],[L-6,.5]]){ctx.beginPath();for(const q of ps){const f=Math.min(1,q.age/30,(q.life-q.age)/40);if(f<=0)continue;ctx.moveTo(q.x[pass[0]],q.y[pass[0]]);for(let i=pass[0]+1;i<L;i++)ctx.lineTo(q.x[i],q.y[i]);}
+      ctx.strokeStyle=`rgba(150,185,255,${pass[1]})`;ctx.lineWidth=1;ctx.stroke();}
+    for(const s of c.slice(0,3)){const neg=s.q<0,col=neg?'47,92,255':'200,220,255',g=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,58);g.addColorStop(0,`rgba(${col},1)`);g.addColorStop(.3,`rgba(${col},.4)`);g.addColorStop(1,`rgba(${col},0)`);
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(s.x,s.y,58,0,6.283);ctx.fill();ctx.fillStyle=neg?'#fff':'#05060B';ctx.font='700 14px Inter,system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(neg?'−':'+',s.x,s.y+1);}};
+  if(still){for(let i=0;i<150;i++)step(.016,src(0));draw(src(0));return ()=>{};}
+  let last=0;const loop=ts=>{if(!LAND.on)return;const dt=Math.min(.05,(ts-(last||ts))/1000);last=ts;LAND.t+=dt;
+    if(!document.hidden){const c=src(LAND.t);step(dt,c);draw(c);}LAND.raf=requestAnimationFrame(loop);};
+  const onR=()=>{fit();};addEventListener('resize',onR);LAND.raf=requestAnimationFrame(loop);
+  return ()=>{cancelAnimationFrame(LAND.raf);removeEventListener('resize',onR);};
+}
+
+function showLanding(){
+  const el=document.getElementById('land');LAND.on=true;LAND.ptr=null;if(LAND.cleanup)LAND.cleanup();
+  el.innerHTML=landHTML();el.style.display='block';el.scrollTop=0;document.body.style.overflow='hidden';
+  const still=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  LAND.cleanup=landField(document.getElementById('lcv'),still);
+  const first=el.querySelector('.l-first');
+  first.onpointermove=e=>{const r=document.getElementById('lcv').getBoundingClientRect();LAND.ptr={x:e.clientX-r.left,y:e.clientY-r.top};};
+  first.onpointerleave=()=>{LAND.ptr=null;};
+}
+function hideLanding(){
+  LAND.on=false;if(LAND.cleanup){LAND.cleanup();LAND.cleanup=null;}
+  const el=document.getElementById('land');el.style.display='none';document.body.style.overflow='';
+  try{sessionStorage.setItem('learnova-landing','1');}catch(e){}window.scrollTo(0,0);
+}
+function landGo(a,id){
+  const el=document.getElementById('land');
+  if(a==='top'){el.scrollTo({top:0,behavior:'smooth'});return;}
+  if(a==='how'){document.getElementById('l-how').scrollIntoView({behavior:'smooth'});return;}
+  hideLanding();ses=null;
+  if(a==='student'){role='student';tab='dashboard';}
+  else if(a==='teacher'){role='teacher';tab='class';}
+  else if(a==='lessons'){role='student';tab='syllabus';syl.open=null;}
+  else if(a==='start'){role='student';tab=S.diagDone?'dashboard':'diag';}
+  else if(a==='watch'){role='student';tab='syllabus';syl.open='electric_charge';resetPlayer();}
+  else if(a==='practise'){role='student';tab='learn';startPractice(id);}
+  render();
+}
+(function(){
+  const el=document.createElement('div');el.id='land';el.setAttribute('role','region');el.setAttribute('aria-label','Learnova introduction');el.style.display='none';document.body.appendChild(el);
+  el.addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(b)landGo(b.dataset.l,b.dataset.id);});
+  document.addEventListener('click',e=>{if(e.target.closest('[data-home]'))showLanding();});
+  let seen=false;try{seen=sessionStorage.getItem('learnova-landing')==='1';}catch(e){}
+  if(!seen)showLanding();
+})();
+
 render();
 </script>
+
+</html>

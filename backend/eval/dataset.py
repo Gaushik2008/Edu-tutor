@@ -9,6 +9,8 @@ DEV = [
  ("ohms_law", False, "when resistance is higher the current is higher since more resistance pushes more current", "R_UP_I_UP"),
  ("ohms_law", False, "I think current rises as resistance goes up", "R_UP_I_UP"),
  ("ohms_law", True, "I = V/R so more R means less current", None),
+ ("ohms_law", False, "Current increases because resistance blocks the voltage", "R_UP_I_UP"),
+ ("ohms_law", True, "Current increases because resistance decreases", None),
  ("ohms_law", False, "V = IR so I = V/R = 10/5 = 3 A, I made an arithmetic slip", None),
  ("ohms_law", False, "idk", None),
  ("electric_current", False, "The bulb uses up some of the current so less current comes out", "CURRENT_USED_UP"),

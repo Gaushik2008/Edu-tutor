@@ -34,7 +34,8 @@ The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questio
 | Spaced-repetition scheduler (SM-2 style) | Done, unit-tested (Python) |
 | Adaptive difficulty and next-concept choice | Done, unit-tested (Python) |
 | Reasoning-based misconception analyser (rule-based) with LLM-output validator | Done, unit-tested (Python) |
-| Interactive single-file demo (student and teacher views) | Done; logic smoke-tested in Node, **not yet tested in a browser** |
+| Interactive single-file demo (student and teacher views) | Done; 13 checks pass in headless Chromium (desktop and 390 px mobile). Not tested in Safari, Firefox or on real phones |
+| Landing screen (electric-field hero, live engine examples) | Done, see [section 2](#landing-screen) |
 | Syllabus tab with video lessons for all 12 concepts | Done (in-page animation, not an MP4); Hindi for Electric Charge only |
 | Backend service layer: auth (scrypt, signed tokens), role-based access, answers, mastery, misconceptions, SRS, teacher heatmap, review queue, assignments | Done on **SQLite**, 23 tests, standard library only |
 | FastAPI HTTP wrapper (`backend/app/main.py`) | Written, **never run** (FastAPI could not be installed in the development session; syntax-checked only) |
@@ -74,6 +75,14 @@ Open `index.html` (or the live link). Progress is saved in the browser's `localS
 | **Assignments** | Pick concepts, a difficulty and a deadline. Assignments are recorded locally only. |
 
 > **The class is sample data.** Roll 101 to 106 on the heatmap are hand-written illustrative values; the interface no longer tags them as samples, so this note is the disclosure. Only the row for **your own roll number** (set on the Dashboard) reflects real activity from your own browser session.
+
+### Landing screen
+
+The first screen (shown once per browser session; the logo in the sidebar brings it back) follows a cinematic product-landing style: a full-viewport hero with a large headline mixing a bold sans with an italic serif accent, a floating pill navigation bar, pill buttons with an arrow badge, and a glass strip of facts along the bottom. The background is a live **electric-field simulation**: tracer particles flow along the field lines of two moving negative charges and one positive charge, and your pointer acts as an extra negative charge. With *reduced motion* enabled it renders one still frame.
+
+Everything on it is real: the strip counts are read from the data (12 concepts, 39 questions, 12 lessons, 9 misconception patterns), the "Continue" card shows your own next concept and mastery, and the three "Under the hood" cards are **computed live by the same engine functions the app uses**, from example inputs: a five-answer mastery curve, a misconception prediction for "Current increases because resistance blocks the voltage", and a five-step revision ladder. (This card exposed a real gap: the rules originally missed that exact phrasing, so a rule was added and the evaluation re-run.)
+
+The design language (palette, type pairing, pill controls, glass surfaces, motion) is summarised in `docs/DESIGN.md`.
 
 ---
 
@@ -139,11 +148,11 @@ When a misconception is detected it is recorded (with the student's own reasonin
 
 Everything here is reproducible. Nothing was tuned on the holdout set.
 
-**Misconception detection** (`python backend/eval/evaluate_misconceptions.py`). 90 invented student explanations, hand-labelled with the misconception they show (or none). A prediction is correct only if the tag matches exactly.
+**Misconception detection** (`python backend/eval/evaluate_misconceptions.py`). 92 invented student explanations, hand-labelled with the misconception they show (or none). A prediction is correct only if the tag matches exactly.
 
 | Set | Role | Precision | Recall | F1 |
 |---|---|---|---|---|
-| Dev (30) | rules were written from these | 1.00 | 1.00 | 1.00 |
+| Dev (32) | rules were written from these | 1.00 | 1.00 | 1.00 |
 | Test (30) | written before tuning, **but its misses were seen**, so treat as contaminated | 1.00 | 0.95 | 0.97 |
 | **Holdout (30)** | written after tuning, informal phrasing and typos, never used to tune | **1.00** | **0.50** | **0.67** |
 
@@ -219,6 +228,8 @@ About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 
 │   ├── src/lesson.css         Styles for the above
 │   ├── build.py               Bundles the source into index.html (+ docs/, root)
 │   └── index.html             Built output
+├── demo/tests/e2e_browser.py  Real-browser checks (Playwright; not in CI)
+├── docs/DESIGN.md             Design language used by the landing screen and app
 ├── backend/
 │   ├── app/core/
 │   │   ├── bkt.py             Mastery model (BKT, decay, bands)
@@ -300,7 +311,7 @@ The Python engine in `backend/app/core/` is written to drop into this backend un
 - **No administrator role** and no real teacher accounts. The teacher view uses a fixed sample class plus your own row.
 - **No AI model has been called.** The Claude integration is tested only against a fake provider. In the demo, detection, feedback and the tutor are rule-based, and the tutor answers from the syllabus notes and your history, not open-ended questions.
 - **Rule-based detection misses about half of unfamiliar phrasings** (holdout recall 0.50, precision 1.00, on 30 invented rows). Predictions carry a confidence score and uncertain ones go to the review queue.
-- **Not browser-tested.** The demo's logic and every view's rendering were exercised in Node with a stubbed page, but layout, the graph and the animations have not been checked across real browsers and screen sizes.
+- **Browser coverage is narrow.** `demo/tests/e2e_browser.py` drives headless Chromium at 1440 px and 390 px wide (landing, navigation, the lesson player, no horizontal overflow, reduced motion). Safari, Firefox, real phones and screen readers have not been tested, and the page is not formally accessibility-audited.
 - **No interface tests.** The JavaScript engine is parity-tested against Python, but the screens themselves have no automated tests.
 - **Evaluation data is invented**, not collected from real students, and small (30 rows per set).
 - **The service layer uses SQLite**, not PostgreSQL, and has not been load-tested.

@@ -9,8 +9,11 @@ s = s.replace("/*@@MIS@@*/{}", json.dumps({r["tag"]: {"c": r["concept"], "label"
 s = s.replace("/*@@RULES@@*/[]", json.dumps(RULES, ensure_ascii=False))
 s = s.replace("/*@@LESSON_CSS@@*/", (d / "src/lesson.css").read_text())
 s = s.replace("/*@@LESSON_JS@@*/", (d / "src/lesson.js").read_text() + "\n" + (d / "src/lessons2.js").read_text())
+s = s.replace("/*@@LANDING_CSS@@*/", (d / "src/landing.css").read_text())
+s = s.replace("/*@@LANDING_JS@@*/", (d / "src/landing.js").read_text())
 (d / "index.html").write_text(s)
 (d.parent / "docs").mkdir(exist_ok=True)
-(d.parent / "docs" / "index.html").write_text(s)
-(d.parent / "index.html").write_text(s)  # root copy: Pages serving the repo root
+PAGES = "<!doctype html>\n<html lang=\"en\">\n" + s + "\n</html>\n"  # standards-mode copy for GitHub Pages
+(d.parent / "docs" / "index.html").write_text(PAGES)
+(d.parent / "index.html").write_text(PAGES)  # root copy: Pages serving the repo root
 print("built", len(s), "bytes")
