@@ -9,7 +9,7 @@ const DOT=(c,x,y,r,fill,lab,lc)=>{c.beginPath();c.arc(x,y,r,0,6.2832);c.fillStyl
 const ARR=(c,x1,y1,x2,y2,col,wd)=>{c.strokeStyle=col;c.fillStyle=col;c.lineWidth=wd||3;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();const a=Math.atan2(y2-y1,x2-x1);c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-10*Math.cos(a-.4),y2-10*Math.sin(a-.4));c.lineTo(x2-10*Math.cos(a+.4),y2-10*Math.sin(a+.4));c.closePath();c.fill();};
 const FADE=(c,a)=>{c.globalAlpha=Math.max(0,Math.min(1,a));};
 
-const SCENES=[
+let SCENES=[
 {t:'A balloon sticks to the wall',d:14,n:['Rub a balloon on a woollen sweater and it can stick to a wall.','The rubbing moves tiny charged particles, electrons, from the sweater onto the balloon.','The balloon is now charged, and a charged object pulls on neutral things nearby.'],
  draw(c,u,k){
   const s=seg(u,0,.4),m=seg(u,.45,.8);
@@ -90,8 +90,11 @@ const HI=[
  ['ताँबे जैसी धातु में कुछ इलेक्ट्रॉन स्वतंत्र होते हैं, इसलिए आवेश बह सकता है। यह चालक है।','प्लास्टिक या रबर में इलेक्ट्रॉन अपने परमाणुओं से बँधे रहते हैं, इसलिए आवेश आसानी से नहीं बहता। यह विद्युतरोधी है।'],
  ['जब आवेश किसी बिंदु से होकर बहता है, तो उसे विद्युत धारा कहते हैं।','यदि 4 सेकंड में 12 कूलॉम आवेश गुज़रे, तो धारा Q भाग t यानी 3 ऐम्पियर होती है।','यही अगला अध्याय है: विद्युत धारा।'],
  ['पदार्थ में आवेश होता है: प्रोटॉन धनात्मक और इलेक्ट्रॉन ऋणात्मक होते हैं।','समान आवेश एक-दूसरे को दूर धकेलते हैं और विपरीत आवेश आकर्षित करते हैं। रगड़ने से इलेक्ट्रॉन स्थानांतरित होते हैं और कुल आवेश संरक्षित रहता है।','आवेश को कूलॉम में मापते हैं, और बहता हुआ आवेश धारा है।']];
-const narr=i=>P.lang==='hi'?HI[i]:SCENES[i].n;
-const CHECK={2:38,3:39,4:2};
+const HI_BY={electric_charge:HI};   // Hindi narration exists only for the lessons listed here
+const narr=i=>(P.lang==='hi'&&HI_BY[LID])?HI_BY[LID][i]:SCENES[i].n;
+let CHECK={2:38,3:39,4:2};
+const LESSONS={electric_charge:{scenes:SCENES,checks:CHECK}};let LID='electric_charge';
+function setLesson(id){LID=id;SCENES=LESSONS[id].scenes;CHECK=LESSONS[id].checks;}
 const P={lang:'en',i:0,t:0,playing:false,speed:1,cap:true,voice:false,raf:0,last:0,clock:0,check:null,checks:{},shown:-1};
 const totalDur=()=>SCENES.reduce((a,s)=>a+s.d,0), startOf=i=>SCENES.slice(0,i).reduce((a,s)=>a+s.d,0);
 const mmss=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
@@ -108,25 +111,25 @@ function calHTML(){
   <div class="card" style="margin-top:14px"><h3>Up next</h3>${nx.length?`<ul class="plain">${nx.map(x=>`<li>${esc(x.c.n)} <span class="muted">· ${fmtDay(x.due)}</span></li>`).join('')}</ul>`:'<p class="muted">Answer a few questions and revisions will appear here.</p>'}</div>`;
 }
 function vSyll(){
-  if(syl.open==='electric_charge') return vLesson();
+  if(syl.open&&LESSONS[syl.open]) return vLesson();
   if(syl.open){const c=CBY[syl.open];return `<p><button class="btn ghost" data-back>← Syllabus</button></p>${conceptPanel(syl.open)}<p class="muted">A video lesson for this concept is not available yet. Practice and notes are.</p>`;}
   const tints=['--pri','--acc','--sec'];
-  const cards=CONCEPTS.filter(c=>{const b=bandOf(curP(c.id),cs(c.id).att);return syl.filter==='all'||(syl.filter==='video'&&c.id==='electric_charge')||(syl.filter==='weak'&&b==='weak')||(syl.filter==='new'&&b==='not_assessed');}).map((c,i)=>{
-    const st=cs(c.id),p=curP(c.id),vid=c.id==='electric_charge',done=S.lessons[c.id]&&S.lessons[c.id].done;
+  const cards=CONCEPTS.filter(c=>{const b=bandOf(curP(c.id),cs(c.id).att);return syl.filter==='all'||(syl.filter==='video'&&LESSONS[c.id])||(syl.filter==='weak'&&b==='weak')||(syl.filter==='new'&&b==='not_assessed');}).map((c,i)=>{
+    const st=cs(c.id),p=curP(c.id),vid=!!LESSONS[c.id],dur=vid?LESSONS[c.id].scenes.reduce((a,x)=>a+x.d,0):0,done=S.lessons[c.id]&&S.lessons[c.id].done;
     return `<div class="course" style="background:linear-gradient(135deg,color-mix(in srgb,var(${tints[i%3]}) 16%,var(--card)),var(--card))">
       <div style="min-width:0;flex:1"><h3>${esc(c.n)}</h3><p class="muted" style="margin:0 0 8px;font-size:12px">${esc(c.desc.split('. ')[0])}.</p>
       <div class="bar2"><i style="width:${st.att?Math.round(p*100):0}%"></i></div>
-      <p style="margin:6px 0 0;font-size:12px"><b>${vid?'Video lesson · 2 min'+(done?' · watched':''):'Notes + practice'}</b> <span class="muted">· ${st.att?Math.round(p*100)+'% mastery':'not assessed'} · level ${c.d}/5</span></p></div>
+      <p style="margin:6px 0 0;font-size:12px"><b>${vid?'Video lesson · '+(dur>=90?Math.round(dur/60)+' min':dur+' s')+(done?' · watched':''):'Notes + practice'}</b> <span class="muted">· ${st.att?Math.round(p*100)+'% mastery':'not assessed'} · level ${c.d}/5</span></p></div>
       <button class="go" data-syl="${c.id}" aria-label="Open ${esc(c.n)}">→</button></div>`;}).join('');
   const chips=[['all','All'],['video','Video lessons'],['weak','Weak'],['new','Not started']].map(([k,l])=>`<button class="chip ${syl.filter===k?'on':''}" data-fil="${k}">${l}</button>`).join('');
   return `<h2>Syllabus · Class 10 Physics, Electricity</h2><div class="row" style="margin-bottom:12px"><span class="muted">Filter by</span>${chips}</div>
    <div class="sylgrid"><div style="display:grid;gap:12px;min-width:0">${cards||'<p class="muted">No concepts match this filter.</p>'}</div><div>${calHTML()}</div></div>`;
 }
 function vLesson(){
-  const done=S.lessons.electric_charge&&S.lessons.electric_charge.done;
+  const done=S.lessons[LID]&&S.lessons[LID].done,nck=Object.keys(CHECK).length;
   return `<div id="lv"><p><button class="btn ghost" data-back>← Syllabus</button></p>
-  <h2 style="margin-top:6px">Electric Charge · video lesson</h2>
-  <p class="muted">${SCENES.length} scenes · about ${Math.round(totalDur()/60)} minutes · 3 checkpoints that feed your mastery${done?' · you have watched this':''}</p>
+  <h2 style="margin-top:6px">${esc(CBY[LID].n)} · video lesson</h2>
+  <p class="muted">${SCENES.length} scenes · ${mmss(totalDur())} · ${nck} checkpoints that feed your mastery${done?' · you have watched this':''}</p>
   <div class="grid lvgrid"><div class="card" style="padding:12px;min-width:0">
    <canvas id="cv" style="width:100%;display:block;border-radius:12px;background:var(--card)" aria-label="Lesson animation"></canvas>
    <div id="cap" class="capbar" aria-live="polite"></div><div id="ck"></div>
@@ -136,11 +139,11 @@ function vLesson(){
     <select id="lg" aria-label="Caption language"><option value="en">English</option><option value="hi">हिन्दी</option></select><label class="chk"><input type="checkbox" id="cc" checked> Captions</label><label class="chk"><input type="checkbox" id="vc"> Voice</label>
     <span id="tm" class="muted" style="margin-left:auto">0:00</span></div></div>
    <div class="card"><h3>Scenes</h3><div id="sl"></div></div></div>
-  <h2>Try it: charge lab</h2><div class="card"><canvas id="lab" style="width:100%;display:block;background:var(--card);border-radius:12px"></canvas>
+  ${LID==='ohms_law'?ohmLabHTML():LID!=='electric_charge'?'':`<h2>Try it: charge lab</h2><div class="card"><canvas id="lab" style="width:100%;display:block;background:var(--card);border-radius:12px"></canvas>
    <div class="row" style="margin-top:8px"><button class="btn ghost" id="s1"></button><button class="btn ghost" id="s2"></button>
    <label class="chk">Size A <input type="range" id="qa" min="1" max="3" value="2"></label><label class="chk">Size B <input type="range" id="qb" min="1" max="3" value="2"></label>
    <label class="chk">Distance <input type="range" id="dd" min="1" max="10" value="4"></label></div><p id="labtxt" style="margin:8px 0 0"></p>
-   <p class="muted" style="font-size:12px;margin:4px 0 0">The distance rule (force falls to a quarter when the distance doubles) is Coulomb’s law, a step beyond the Class 10 syllabus.</p></div>
+   <p class="muted" style="font-size:12px;margin:4px 0 0">The distance rule (force falls to a quarter when the distance doubles) is Coulomb’s law, a step beyond the Class 10 syllabus.</p></div>`}
   <h2>Sources</h2><div class="card"><p style="margin:0">Aligned to the Electricity chapter of NCERT Class 10 Science (Chapter 11 in the current edition, Chapter 12 in earlier ones). Narration and diagrams here are original and paraphrased, not copied. For the full treatment read the chapter itself, or see worked solutions such as <a href="https://school.careers360.com/ncert/ncert-solutions-class-10-science-chapter-12-electricity" target="_blank" rel="noopener">Careers360</a> and <a href="https://vedantu.com/ncert-solutions/ncert-solutions-class-10-science-chapter-12-electricity" target="_blank" rel="noopener">Vedantu</a>.</p></div></div>`;
 }
 function initPlayer(){
@@ -151,8 +154,8 @@ function initPlayer(){
   const speak=()=>{if(!P.voice||!window.speechSynthesis)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(narr(P.i).join(' '));u.lang=P.lang==='hi'?'hi-IN':'en-IN';u.rate=P.speed;speechSynthesis.speak(u);}catch(e){}};
   const list=()=>{$('sl').innerHTML=SCENES.map((s,i)=>`<button class="scn ${i===P.i?'on':''}" data-scene="${i}"><span>${i+1}. ${esc(s.t)}</span><span class="muted">${mmss(startOf(i))}${CHECK[i]!==undefined?(P.checks[i]?' ✓':' ?'):''}</span></button>`).join('');};
   const seekTo=sec=>{sec=Math.max(0,Math.min(totalDur()-.01,sec));let i=0;while(i<SCENES.length-1&&sec>=startOf(i+1))i++;P.i=i;P.t=sec-startOf(i);P.check=null;$('ck').innerHTML='';P.shown=-1;speak();};
-  const next=()=>{if(P.i<SCENES.length-1){P.i++;P.t=0;speak();}else{P.playing=false;try{speechSynthesis.cancel();}catch(e){}S.lessons.electric_charge={done:true,t:now()};save();
-    $('ck').innerHTML=`<div class="fb"><b>Lesson complete.</b> Your checkpoint answers are already counted in your mastery of Electric Charge.<div class="row" style="margin-top:8px"><button class="btn" data-learn="electric_charge">Practise this concept</button><button class="btn ghost" id="rp">Watch again</button></div></div>`;$('rp').onclick=()=>{seekTo(0);P.checks={};P.playing=true;};}};
+  const next=()=>{if(P.i<SCENES.length-1){P.i++;P.t=0;speak();}else{P.playing=false;try{speechSynthesis.cancel();}catch(e){}S.lessons[LID]={done:true,t:now()};save();
+    $('ck').innerHTML=`<div class="fb"><b>Lesson complete.</b> Your checkpoint answers are already counted in your mastery of ${esc(CBY[LID].n)}.<div class="row" style="margin-top:8px"><button class="btn" data-learn="${LID}">Practise this concept</button><button class="btn ghost" id="rp">Watch again</button></div></div>`;$('rp').onclick=()=>{seekTo(0);P.checks={};P.playing=true;};}};
   const openCheck=i=>{P.check=i;P.playing=false;try{speechSynthesis.cancel();}catch(e){}
     const q=QS.find(x=>x.id===CHECK[i]);let ch=null;
     const inp=q.t==='mcq'?q.o.map((o,j)=>`<button class="opt" data-copt="${j}">${esc(o)}</button>`).join(''):`<input type="text" id="cans" inputmode="decimal" placeholder="Your answer">`;
@@ -175,8 +178,17 @@ function initPlayer(){
   $('spd').onchange=e=>{P.speed=+e.target.value;};$('cc').onchange=e=>{P.cap=e.target.checked;};$('lg').onchange=e=>{P.lang=e.target.value;if(P.voice&&P.playing)speak();};$('vc').onchange=e=>{P.voice=e.target.checked;if(P.voice&&P.playing)speak();else try{speechSynthesis.cancel();}catch(x){}};
   $('scr').oninput=e=>seekTo(+e.target.value/10);
   $('sl').onclick=e=>{const b=e.target.closest('[data-scene]');if(b){seekTo(startOf(+b.dataset.scene));list();}};
-  $('spd').value=String(P.speed);$('lg').value=P.lang;$('cc').checked=P.cap;$('vc').checked=P.voice;
-  list();P.last=0;P.raf=requestAnimationFrame(tick);initLab();
+  $('spd').value=String(P.speed);$('lg').value=P.lang;$('lg').style.display=HI_BY[LID]?'':'none';if(!HI_BY[LID])P.lang='en';$('cc').checked=P.cap;$('vc').checked=P.voice;
+  list();P.last=0;P.raf=requestAnimationFrame(tick);(LID==='ohms_law'?initOhm:initLab)();
+}
+function ohmLabHTML(){return `<h2>Try it: Ohm’s law lab</h2><div class="card"><canvas id="lab" style="width:100%;display:block;background:var(--card);border-radius:12px"></canvas>
+  <div class="row" style="margin-top:8px"><label class="chk">Voltage <input type="range" id="ov" min="1" max="12" value="6"></label><label class="chk">Resistance <input type="range" id="or" min="1" max="12" value="3"></label></div><p id="labtxt" style="margin:8px 0 0"></p></div>`;}
+function initOhm(){
+  const cv=document.getElementById('lab');if(!cv)return;const $=id=>document.getElementById(id),W=640,H=200,dpr=window.devicePixelRatio||1,w=cv.clientWidth||640;cv.width=Math.round(w*dpr);cv.height=Math.round(w*dpr*H/W);cv.style.height=(w*H/W)+'px';const c=cv.getContext('2d');
+  const run=()=>{const k=th(),V=+$('ov').value,R=+$('or').value,I=V/R;c.setTransform(cv.width/W,0,0,cv.width/W,0,0);c.globalAlpha=1;c.fillStyle=k.card;c.fillRect(0,0,W,H);
+    c.fillStyle=k.pri;c.fillRect(60,150-Math.min(120,I*12),90,Math.min(120,I*12));TX(c,`I = ${I.toFixed(2)} A`,105,170,13,k.fg);c.fillStyle=k.warn;c.fillRect(200,150-V*10,90,V*10);TX(c,`V = ${V} V`,245,170,13,k.fg);c.fillStyle=k.acc;c.fillRect(340,150-R*10,90,R*10);TX(c,`R = ${R} Ω`,385,170,13,k.fg);
+    TX(c,'I = V / R',540,90,24,k.pri,'center',700);$('labtxt').textContent=`With V = ${V} V and R = ${R} Ω, I = ${V} / ${R} = ${I.toFixed(2)} A. Raise R and the current falls; raise V and it rises.`;};
+  ['ov','or'].forEach(i=>{$(i).oninput=run;});run();
 }
 function initLab(){
   const cv=document.getElementById('lab');if(!cv)return;const $=id=>document.getElementById(id),L={s1:1,s2:-1};
@@ -194,7 +206,7 @@ function initLab(){
 }
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-syl],[data-fil],[data-back]');if(!t)return;
-  if(t.dataset.syl){tab='syllabus';syl.open=t.dataset.syl;if(syl.open==='electric_charge')resetPlayer();render();window.scrollTo(0,0);}
+  if(t.dataset.syl){tab='syllabus';syl.open=t.dataset.syl;if(LESSONS[syl.open]){setLesson(syl.open);resetPlayer();}render();window.scrollTo(0,0);}
   else if(t.dataset.fil){syl.filter=t.dataset.fil;render();}
   else if(t.dataset.back!==undefined){syl.open=null;try{speechSynthesis.cancel();}catch(x){}render();}
 });

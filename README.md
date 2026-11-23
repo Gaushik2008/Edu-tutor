@@ -1,10 +1,10 @@
-# AdaptiveLearn AI (`edu-tutor`)
+# Learnova (`edu-tutor`)
 
 > **Learn Smarter. Understand Deeper. Remember Longer.**
 
 An adaptive exam-preparation platform that models what each student *understands*, not just whether they got a question right. It tracks mastery per concept, reads the student's written reasoning to spot likely misconceptions, adapts question difficulty, schedules spaced-repetition revision, and gives teachers a class-wide view of knowledge gaps.
 
-The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questions, one video lesson).
+The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questions, 12 animated video lessons).
 
 **Live demo:** https://gaushik2008.github.io/Edu-tutor/ (GitHub Pages; the page is `index.html` at the repo root).
 
@@ -16,7 +16,7 @@ The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questio
 2. [What the demo does](#2-what-the-demo-does)
 3. [How it works: the algorithms](#3-how-it-works-the-algorithms)
 4. [The syllabus](#4-the-syllabus)
-5. [Electric Charge video lesson](#5-electric-charge-video-lesson)
+5. [Video lessons](#5-video-lessons)
 6. [Repository layout](#6-repository-layout)
 7. [Run, build and test](#7-run-build-and-test)
 8. [Planned full-stack architecture](#8-planned-full-stack-architecture)
@@ -35,7 +35,7 @@ The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questio
 | Adaptive difficulty and next-concept choice | Done, unit-tested (Python) |
 | Reasoning-based misconception analyser (rule-based) with LLM-output validator | Done, unit-tested (Python) |
 | Interactive single-file demo (student and teacher views) | Done; logic smoke-tested in Node, **not yet tested in a browser** |
-| Syllabus tab and Electric Charge video lesson | Done (in-page animation, not an MP4) |
+| Syllabus tab with video lessons for all 12 concepts | Done (in-page animation, not an MP4); Hindi for Electric Charge only |
 | Backend service layer: auth (scrypt, signed tokens), role-based access, answers, mastery, misconceptions, SRS, teacher heatmap, review queue, assignments | Done on **SQLite**, 23 tests, standard library only |
 | FastAPI HTTP wrapper (`backend/app/main.py`) | Written, **never run** (FastAPI could not be installed in the development session; syntax-checked only) |
 | PostgreSQL, SQLAlchemy, Alembic migrations | **Not started** (the service uses SQLite) |
@@ -51,7 +51,7 @@ The demo is a self-contained showcase of the learner-model ideas running in the 
 
 ## 2. What the demo does
 
-Open `index.html` (or the live link). Progress is saved in the browser's `localStorage`, so there is no account and nothing is sent anywhere. Use **Load demo student** on the Dashboard for a student with history (23 simulated answers run through the real engine, so every screen has data), or **Reset my demo data** to start over.
+Open `index.html` (or the live link). Progress is saved in the browser's `localStorage`, so there is no account and nothing is sent anywhere. Use **Load demo student** on the Dashboard (it keeps your roll number) for a student with history (23 simulated answers run through the real engine, so every screen has data), or **Reset my demo data** to start over.
 
 ### Student view
 
@@ -68,12 +68,12 @@ Open `index.html` (or the live link). Progress is saved in the browser's `localS
 
 | Tab | What it provides |
 |---|---|
-| **Class heatmap** | Students by concept, coloured green / yellow / red / grey, with class averages, the hardest concepts, students needing attention and assessment completion. |
+| **Class heatmap** | Roll numbers by concept, coloured green / yellow / red / grey, with class averages, the hardest concepts, students needing attention and assessment completion. |
 | **Misconceptions** | Misconceptions ranked by how many students show them, with the concept, an example of reasoning and a recommended teaching intervention. |
 | **Review queue** | Uncertain predictions (confidence under 80%) wait for a teacher to confirm or dismiss. Three labelled sample items show phrasings the rules cannot catch; your own uncertain predictions appear here too. |
 | **Assignments** | Pick concepts, a difficulty and a deadline. Assignments are recorded locally only. |
 
-> **The class is sample data.** Six heatmap rows ("Sample student A" to "F") are hand-written illustrative values, labelled as samples. Only the row named **You (live)** reflects real activity from your own browser session.
+> **The class is sample data.** Roll 101 to 106 on the heatmap are hand-written illustrative values; the interface no longer tags them as samples, so this note is the disclosure. Only the row for **your own roll number** (set on the Dashboard) reflects real activity from your own browser session.
 
 ---
 
@@ -183,9 +183,9 @@ Electric Charge ─► Electric Current ─┬─► Electric Circuit
 
 ---
 
-## 5. Electric Charge video lesson
+## 5. Video lessons
 
-Found under **Syllabus → Electric Charge**. It is an animated, interactive lesson drawn in the page (canvas), not a rendered MP4 file.
+Every one of the 12 concepts has an animated, interactive lesson under **Syllabus** (`demo/src/lesson.js` for Electric Charge, `demo/src/lessons2.js` for the rest), drawn in the page on a canvas, not a rendered MP4 file. Each has checkpoint questions that feed the learner model. The walk-through below describes **Electric Charge**, the first and most developed lesson. Ohm’s Law also has a small voltage/resistance lab.
 
 | Scene | Topic |
 |---|---|
@@ -198,7 +198,7 @@ Found under **Syllabus → Electric Charge**. It is an animated, interactive les
 | 7 | From charge to current, `I = Q / t` |
 | 8 | Recap |
 
-About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 1× / 1.5× speed, captions on or off, **English or Hindi captions and narration** (on-screen diagram labels stay English), optional spoken narration (uses the browser's speech feature, which some viewers do not support), and a scene list for jumping around.
+About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 1× / 1.5× speed, captions on or off, **English or Hindi captions and narration** (on-screen diagram labels stay English), optional spoken narration (uses the browser's speech feature, which some viewers do not support). **Hindi captions and narration exist only for Electric Charge**; the language picker is hidden on the other lessons, and a scene list for jumping around.
 
 **Three checkpoints** pause the video and ask a question. Your answers go through the same learner model as practice questions, so watching the lesson changes your mastery and revision schedule.
 
@@ -214,7 +214,8 @@ About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 
 ├── docs/index.html            Identical copy (so Pages can also serve /docs)
 ├── demo/
 │   ├── index.src.html         Demo source: styles, engine port, views, questions
-│   ├── src/lesson.js          Syllabus tab and video lesson player
+│   ├── src/lesson.js          Syllabus tab, lesson player, Electric Charge lesson, Hindi captions
+│   ├── src/lessons2.js        Lessons for the other 11 concepts
 │   ├── src/lesson.css         Styles for the above
 │   ├── build.py               Bundles the source into index.html (+ docs/, root)
 │   └── index.html             Built output
@@ -306,7 +307,7 @@ The Python engine in `backend/app/core/` is written to drop into this backend un
 - **CI has not been observed running** on GitHub yet.
 - **The "video" is an animation in the page**, not a downloadable video file, and spoken narration depends on the viewer's browser.
 - **Assignments are not delivered** to students in the demo.
-- **One syllabus and one lesson.** Only Class 10 Electricity exists, and only Electric Charge has a video.
+- **One syllabus.** Only Class 10 Electricity exists. All 12 concepts have a lesson, but only Electric Charge has Hindi narration, and the quality of the later lessons has not been reviewed against a textbook.
 
 ---
 
@@ -328,7 +329,8 @@ The Python engine in `backend/app/core/` is written to drop into this backend un
 - [ ] LLM question generation with validation
 - [ ] React + TypeScript frontend with React Flow concept graph
 - [ ] Teacher assignments with student delivery and completion tracking
-- [ ] More video lessons (one per concept)
+- [x] Video lessons for all 12 concepts
+- [ ] Hindi (and other languages) for the remaining lessons
 - [ ] Administrator tools: users, syllabuses, question bank, provider settings
 - [ ] Continuous integration and deployment
 
@@ -341,3 +343,13 @@ The syllabus is aligned to the Electricity chapter of **NCERT Class 10 Science**
 Worked solutions for that chapter, for further reading:
 [Careers360](https://school.careers360.com/ncert/ncert-solutions-class-10-science-chapter-12-electricity) ·
 [Vedantu](https://vedantu.com/ncert-solutions/ncert-solutions-class-10-science-chapter-12-electricity)
+
+
+---
+
+## Update: all-concept video lessons, roll numbers, new UI, OpenAI tutor
+
+- **Video lessons:** all 12 concepts now have an animated in-page lesson with checkpoint questions (`demo/src/lessons2.js`). They are canvas animations, not MP4 files. Ohm's Law also has a small lab.
+- **Roll numbers:** the teacher heatmap shows roll numbers (Roll 101 to 106 are sample data). Students set their own on the Dashboard.
+- **Look:** the dark midnight-black and cobalt theme (restored after a light-theme trial) with responsive layouts for phone, laptop and desktop.
+- **AI tutor:** the page has no API key and no key field. A key in a public static page would be exposed to everyone, so AI answers need a small backend proxy that holds the key. The tutor currently answers from the syllabus notes.

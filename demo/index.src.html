@@ -1,8 +1,8 @@
-<title>AdaptiveLearn AI</title>
+<title>Learnova</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
 <style>
-/* Midnight black + electric cobalt, one committed dark look. Layout: sticky top bar, tabbed workspace; graph and heatmap scroll inside their own panels. */
+/* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
 :root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
 --fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
@@ -25,8 +25,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px soli
 .grid{display:grid;gap:14px}
 .g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
 .g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0;}
 .stat b{display:block;font:700 26px var(--fd)}
+.hero{display:flex;gap:18px;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;background:linear-gradient(120deg,#1B3FCC,#13286b 70%,#0D1019);border:1px solid var(--line);color:#fff;border-radius:22px;padding:22px 24px;margin:16px 0 14px}.hero h2,.hero .muted,.hero label{color:#fff}.hero input{width:150px;background:var(--bg);border-color:#ffffff40;color:var(--fg)}
 .stat span{color:var(--muted);font-size:12px}
 h2{font-size:20px;margin:22px 0 10px}h3{font-size:15px;margin-bottom:8px}
 .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;color:#fff}
@@ -36,6 +37,7 @@ h2{font-size:20px;margin:22px 0 10px}h3{font-size:15px;margin-bottom:8px}
 svg text{font-family:var(--fb)}
 .node{cursor:pointer}.node rect{stroke-width:2}
 table{border-collapse:collapse;width:100%;font-size:12px}
+th{color:var(--muted);font-weight:600}
 th,td{padding:5px 6px;text-align:center;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
 .cell{display:block;width:46px;height:28px;border-radius:6px;margin:auto;line-height:28px;color:#fff;font-weight:600;font-size:11px}
@@ -55,9 +57,39 @@ ul.plain li:last-child{border:0}
 .bar2 i{display:block;height:100%;background:var(--pri)}
 @media (prefers-reduced-motion:no-preference){.bar2 i{transition:width .4s}}
 /*@@LESSON_CSS@@*/
+/* mobile */
+@media (max-width:979px){
+ .bar{gap:8px}.brand small{display:none}
+ .seg#tabs{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none;order:3;width:100%}
+ .seg#tabs button{white-space:nowrap;flex:none}
+}
+@media (max-width:640px){
+ body{font-size:13.5px}h2{font-size:18px}
+ .g4{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}
+ .hero{padding:16px}.hero input{width:100%}.hero>div:last-child{width:100%}
+ .card{padding:14px}.stat b{font-size:22px}
+ .course{padding:12px}.row{gap:8px}
+}
+/* laptop 980-1279: compact sidebar */
+@media (min-width:980px){
+ body{padding-left:236px;padding-right:20px}
+ body::before{display:none}
+ header{position:fixed;left:0;top:0;bottom:0;width:212px;margin:0;padding:20px 12px;border-right:1px solid var(--line);border-bottom:0;overflow-y:auto}
+ .bar{flex-direction:column;align-items:stretch;gap:16px;max-width:none}
+ .brand{margin:0}.seg{flex-direction:column}.seg button{text-align:left;padding:8px 11px}
+ .wrap{max-width:none;margin:0}
+}
+/* desktop 1280+: wide sidebar, roomier content */
+@media (min-width:1280px){
+ body{padding-left:292px;padding-right:36px}
+ header{width:256px;padding:26px 16px}
+ .wrap{max-width:1180px;margin:0 auto}
+ .g4{grid-template-columns:repeat(4,1fr)}
+}
+@media (min-width:1700px){.wrap{max-width:1360px}}
 </style>
 <header><div class="bar">
- <div class="brand">AdaptiveLearn AI<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
+ <div class="brand">Learnova<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
  <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
  <div class="seg" id="tabs"></div>
 </div></header>
@@ -178,7 +210,7 @@ const QS=[
 
 /* ============ State ============ */
 const KEY='adaptivelearn-demo-v1';
-const fresh=()=>({concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[],lessons:{},rv:{}});
+const fresh=()=>({roll:'',concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[],lessons:{},rv:{}});
 let S=fresh();
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
@@ -191,12 +223,12 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 
 /* ============ Sample class (clearly labelled, not real students) ============ */
 const SAMPLE=[
- ['Sample student A',[.9,.85,.8,.85,.75,.7,.6,.55,.5,.45,.4,.3],['HEAT_I_LINEAR']],
- ['Sample student B',[.7,.6,.5,.65,.35,.3,.25,.3,.2,.2,null,null],['R_UP_I_UP','CURRENT_USED_UP']],
- ['Sample student C',[.85,.8,.7,.75,.6,.55,.5,.25,.2,.55,.5,.45],['PARALLEL_ADDS']],
- ['Sample student D',[.5,.4,.45,.5,.2,.25,.3,null,null,null,null,null],['R_UP_I_UP','CURRENT_USED_UP','PD_IS_CURRENT']],
- ['Sample student E',[.95,.9,.9,.9,.85,.8,.75,.7,.65,.7,.6,.55],[]],
- ['Sample student F',[.6,.55,.4,.5,.3,.35,.4,.3,.25,.25,.2,.15],['PARALLEL_ADDS','R_UP_I_UP','HEAT_I_LINEAR']],
+ ['Roll 101',[.9,.85,.8,.85,.75,.7,.6,.55,.5,.45,.4,.3],['HEAT_I_LINEAR']],
+ ['Roll 102',[.7,.6,.5,.65,.35,.3,.25,.3,.2,.2,null,null],['R_UP_I_UP','CURRENT_USED_UP']],
+ ['Roll 103',[.85,.8,.7,.75,.6,.55,.5,.25,.2,.55,.5,.45],['PARALLEL_ADDS']],
+ ['Roll 104',[.5,.4,.45,.5,.2,.25,.3,null,null,null,null,null],['R_UP_I_UP','CURRENT_USED_UP','PD_IS_CURRENT']],
+ ['Roll 105',[.95,.9,.9,.9,.85,.8,.75,.7,.65,.7,.6,.55],[]],
+ ['Roll 106',[.6,.55,.4,.5,.3,.35,.4,.3,.25,.25,.2,.15],['PARALLEL_ADDS','R_UP_I_UP','HEAT_I_LINEAR']],
 ];
 const EXAMPLE_REASON={R_UP_I_UP:'“Resistance blocks the voltage so more resistance means more current.”',CURRENT_USED_UP:'“The bulb uses up some current, so less comes out the other side.”',PARALLEL_ADDS:'“Just add the resistors, like in series.”',PD_IS_CURRENT:'“Voltage is how much current there is.”',HEAT_I_LINEAR:'“Double the current, double the heat.”'};
 /* concept order in SAMPLE arrays follows CONCEPTS order */
@@ -255,9 +287,9 @@ function renderChrome(){
 }
 function render(){
   renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,review:vReview,assign:vAssign}[tab];
-  document.getElementById('app').innerHTML=`<div class="notice">Demo build. Progress is stored in this browser only. The Teacher class below is <b>sample data</b>; the “You” row is your own live activity. Sign-in, the database and the AI provider live in the backend (see the repository).</div>`+f();
+  document.getElementById('app').innerHTML=``+f();
   if(tab==='learn'||tab==='diag') bindQuestion();
-  if(tab==='syllabus'&&syl.open==='electric_charge') initPlayer();
+  if(tab==='syllabus'&&syl.open&&LESSONS[syl.open]) initPlayer();
 }
 const spark=(vals,w=120,h=32,col='var(--pri)')=>{
   if(vals.length<2) return `<span class="muted">not enough data</span>`;
@@ -275,7 +307,8 @@ function vDash(){
   const roll=S.log.map((_,i)=>{const w=S.log.slice(Math.max(0,i-4),i+1);return w.filter(l=>l.ok).length/w.length;});
   const due=dueList().filter(x=>x.due<=now()),nc=CBY[nextConceptId()];
   const total=CONCEPTS.length;
-  return `<h2>Welcome back</h2>${S.demo?'<div class="notice">Demo student: ${S.log.length} answers across 8 concepts were simulated through the real engine so every screen has history. Reset to start fresh.</div>':''}
+  return `<div class="hero"><div><h2 style="margin:0">Welcome back${S.roll?`, Roll ${esc(S.roll)}`:''}</h2><p class="muted" style="margin:4px 0 0">Class 10 Physics · Electricity</p></div>
+   <div><label for="roll" style="margin-top:0">Your roll number</label><input type="text" id="roll" maxlength="12" placeholder="e.g. 107" value="${esc(S.roll||'')}"></div></div>
   <div class="grid g4">
    <div class="card stat"><b>${o===null?'—':Math.round(o*100)+'%'}</b><span>Overall mastery (assessed concepts)</span></div>
    <div class="card stat"><b>${bands.mastered}/${total}</b><span>Concepts mastered</span></div>
@@ -346,8 +379,14 @@ function fbHTML(){
   <div class="row"><button class="btn" data-next>${ses.mode==='diag'&&ses.idx+1>=ses.queue.length?'See my report':'Next question'}</button></div>
   ${tutorHTML(q.c)}</div>`;
 }
+const AIK='adaptivelearn-openai';
+const aiGet=()=>{try{return JSON.parse(localStorage.getItem(AIK))||{};}catch(e){return {};}};
+async function aiAsk(cid,q){const a=aiGet(),c=CBY[cid],ms=openMis(cid);
+  const sys=`You are a patient Class 10 physics tutor (NCERT Electricity). Answer in under 120 words, simply, with one worked number if useful. Concept: ${c.n}. Notes: ${c.desc}. ${ms.length?'The student may hold this misconception: '+ms[0].label+'. Gently address it.':''}`;
+  const r=await fetch('https://api.openai.com/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+a.key},body:JSON.stringify({model:a.model||'gpt-4o-mini',temperature:.3,max_tokens:300,messages:[{role:'system',content:sys},{role:'user',content:q}]})});
+  const j=await r.json();if(!r.ok)throw new Error((j.error&&j.error.message)||('HTTP '+r.status));return j.choices[0].message.content.trim();}
 function tutorHTML(cid){
-  return `<h3 style="margin-top:16px">Ask the tutor about ${esc(CBY[cid].n)}</h3><div class="row"><input type="text" id="ask" placeholder="e.g. Why does current fall when resistance rises?" style="flex:1;min-width:180px"><button class="btn ghost" data-ask>Ask</button></div><div id="tutor">${S.ask.length?esc(S.ask[S.ask.length-1]):''}</div><p class="muted" style="font-size:12px">Offline tutor: answers come from the syllabus notes and your history. Connect an AI provider on the backend for open-ended answers.</p>`;
+  return `<h3 style="margin-top:16px">Ask the tutor about ${esc(CBY[cid].n)}</h3><div class="row"><input type="text" id="ask" placeholder="e.g. Why does current fall when resistance rises?" style="flex:1;min-width:180px"><button class="btn ghost" data-ask>Ask</button></div><div id="tutor">${S.ask.length?esc(S.ask[S.ask.length-1]):''}</div><p class="muted" style="font-size:12px">The tutor answers from the syllabus notes and your history.</p>`;
 }
 function vLearn(){
   if(!ses||ses.mode==='diag') startPractice();
@@ -393,7 +432,7 @@ function vRev(){
 
 function classRows(){
   const rows=SAMPLE.map(([n,ps,mt])=>({n,ps,mt,sample:true}));
-  rows.push({n:'You (live)',ps:CONCEPTS.map(c=>cs(c.id).att?curP(c.id):null),mt:openMis().map(m=>m.tag),sample:false});
+  rows.push({n:S.roll?`Roll ${S.roll} (you)`:'You (set roll no.)',ps:CONCEPTS.map(c=>cs(c.id).att?curP(c.id):null),mt:openMis().map(m=>m.tag),sample:false});
   return rows;
 }
 function cellCol(p){return p===null?'var(--grey)':p>=.8?'var(--ok)':p>=.5?'var(--warn)':'var(--bad)';}
@@ -407,16 +446,16 @@ function vClass(){
   const attn=rows.filter(r=>{const a=sAvg(r);return a!==null&&a<.45;});
   const done=rows.filter(r=>r.ps.every(x=>x!==null)).length;
   return `<h2>Class overview</h2><div class="grid g4">
-   <div class="card stat"><b>${n}</b><span>Students (6 sample + you)</span></div>
+   <div class="card stat"><b>${n}</b><span>Roll numbers in class</span></div>
    <div class="card stat"><b>${Math.round(classAvg*100)}%</b><span>Average mastery</span></div>
    <div class="card stat"><b>${attn.length}</b><span>Need attention (avg under 45%)</span></div>
    <div class="card stat"><b>${Math.round(done/n*100)}%</b><span>Fully assessed</span></div></div>
    <p><b>Hardest concepts:</b> ${hard.map(h=>`${esc(h.c.n)} (${Math.round(h.avg*100)}%, ${h.weak} weak)`).join(' · ')}</p>
-   <p><b>Students requiring attention:</b> ${attn.length?attn.map(r=>esc(r.n)).join(', '):'none'}</p>
-   <div class="card"><div class="scroll"><table><thead><tr><th>Student</th>${CONCEPTS.map(c=>`<th style="white-space:normal;min-width:62px;font-size:10px">${esc(c.n)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>
-   ${rows.map(r=>`<tr><td>${esc(r.n)}${r.sample?' <span class="muted">(sample)</span>':''}</td>${r.ps.map(p=>`<td><span class="cell" style="background:${cellCol(p)}" title="${p===null?'not assessed':Math.round(p*100)+'%'}">${p===null?'–':Math.round(p*100)}</span></td>`).join('')}<td><b>${sAvg(r)===null?'–':Math.round(sAvg(r)*100)}</b></td></tr>`).join('')}
+   <p><b>Roll numbers needing attention:</b> ${attn.length?attn.map(r=>esc(r.n)).join(', '):'none'}</p>
+   <div class="card"><div class="scroll"><table><thead><tr><th>Roll no.</th>${CONCEPTS.map(c=>`<th style="white-space:normal;min-width:62px;font-size:10px">${esc(c.n)}</th>`).join('')}<th>Avg</th></tr></thead><tbody>
+   ${rows.map(r=>`<tr><td>${esc(r.n)}</td>${r.ps.map(p=>`<td><span class="cell" style="background:${cellCol(p)}" title="${p===null?'not assessed':Math.round(p*100)+'%'}">${p===null?'–':Math.round(p*100)}</span></td>`).join('')}<td><b>${sAvg(r)===null?'–':Math.round(sAvg(r)*100)}</b></td></tr>`).join('')}
    <tr><td><b>Class average</b></td>${colAvg.map(c=>`<td><b>${c.avg===null?'–':Math.round(c.avg*100)}</b></td>`).join('')}<td></td></tr></tbody></table></div>
-   <p class="muted" style="font-size:12px">Green 80+ strong · Yellow 50–79 developing · Red under 50 weak · Grey not assessed.</p></div>`;
+   <p class="row" style="font-size:12px;gap:16px">${[['ok','Green 80+ strong'],['warn','Amber 50–79 developing'],['bad','Red under 50 weak'],['grey','Grey not assessed']].map(([c,l])=>`<span><i style="display:inline-block;width:12px;height:12px;border-radius:4px;background:var(--${c});margin-right:6px;vertical-align:-1px"></i>${l}</span>`).join('')}</p></div>`;
 }
 function vMiscon(){
   const rows=classRows(),map={};
@@ -424,24 +463,24 @@ function vMiscon(){
   const list=Object.entries(map).sort((a,b)=>b[1].length-a[1].length);
   const mine=Object.fromEntries(S.mis.map(m=>[m.tag,m]));
   return `<h2>Common misconceptions</h2><p class="muted">Predictions from reasoning with confidence scores. Review before acting.</p>
-  <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} students · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
+  <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} roll numbers · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
 }
 const SAMPLE_REVIEW=[
- {id:'s1',who:'Sample student B',c:'ohms_law',tag:'R_UP_I_UP',text:'bigger resistor means bigger current will go thru it',conf:.62},
- {id:'s2',who:'Sample student D',c:'electric_current',tag:'CURRENT_USED_UP',text:'current is finished in the bulb that is why it glows',conf:.55},
- {id:'s3',who:'Sample student F',c:'parallel_combination',tag:'PARALLEL_ADDS',text:'equivalent of resistors in parallel = R1 + R2',conf:.58}];
+ {id:'s1',who:'Roll 102',c:'ohms_law',tag:'R_UP_I_UP',text:'bigger resistor means bigger current will go thru it',conf:.62},
+ {id:'s2',who:'Roll 104',c:'electric_current',tag:'CURRENT_USED_UP',text:'current is finished in the bulb that is why it glows',conf:.55},
+ {id:'s3',who:'Roll 106',c:'parallel_combination',tag:'PARALLEL_ADDS',text:'equivalent of resistors in parallel = R1 + R2',conf:.58}];
 function vReview(){
   S.rv=S.rv||{};
   const live=S.mis.filter(m=>!m.resolved&&!m.rev&&m.conf<.8).map(m=>({id:'m'+m.id,who:'You (live)',c:m.c,tag:m.tag,text:m.reasoning,conf:m.conf,live:true}));
   const items=[...live,...SAMPLE_REVIEW.filter(x=>!S.rv[x.id])];
-  return `<h2>Review queue</h2><p class="muted">Predictions the system is not sure about. Confirm to keep the misconception on the student’s record, or dismiss it. The three sample items are phrasings the pattern rules cannot catch, which is where an AI model’s suggestion would be sent for your decision.</p>
-  <div class="grid g2">${items.length?items.map(x=>`<div class="card"><div class="row"><b>${esc(x.who)}</b><span class="muted">${esc(CBY[x.c].n)}</span>${x.live?'':'<span class="pill" style="background:var(--grey)">sample</span>'}</div>
+  return `<h2>Review queue</h2><p class="muted">Predictions the system is not sure about. Confirm to keep the misconception on the student’s record, or dismiss it. The items from other roll numbers are sample data showing phrasings the pattern rules cannot catch, which is where an AI model’s suggestion would be sent for your decision.</p>
+  <div class="grid g2">${items.length?items.map(x=>`<div class="card"><div class="row"><b>${esc(x.who)}</b><span class="muted">${esc(CBY[x.c].n)}</span></div>
    <p>“${esc(x.text)}”</p><p><b>Suggested:</b> ${esc(MIS[x.tag].label)} <span class="muted">· confidence ${Math.round(x.conf*100)}%</span></p>
    <div class="row"><button class="btn" data-rv="${x.id}" data-d="confirmed">Confirm</button><button class="btn ghost" data-rv="${x.id}" data-d="dismissed">Dismiss</button></div></div>`).join(''):'<p class="muted">Nothing waiting for review.</p>'}</div>
-  <p class="muted">Decided: ${Object.keys(S.rv).length} sample · confirmed ${Object.values(S.rv).filter(v=>v==='confirmed').length}, dismissed ${Object.values(S.rv).filter(v=>v==='dismissed').length}</p>`;
+  <p class="muted">Decided: ${Object.keys(S.rv).length} · confirmed ${Object.values(S.rv).filter(v=>v==='confirmed').length}, dismissed ${Object.values(S.rv).filter(v=>v==='dismissed').length}</p>`;
 }
 function loadDemo(){
-  S=fresh(); S.demo=true; S.skew=-14; let seed=7; const rnd=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+  const rl=S.roll; S=fresh(); S.roll=rl; S.demo=true; S.skew=-14; let seed=7; const rnd=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
   const skill={electric_charge:.9,electric_current:.6,electric_circuit:.8,potential_difference:.7,ohms_law:.35,resistance:.4,series_combination:.6,parallel_combination:.3};
   const reasons={R_UP_I_UP:'current increases because resistance increases and blocks the voltage',CURRENT_USED_UP:'the bulb uses up some of the current'};
   for(const cid of Object.keys(skill)) for(const q of QS.filter(x=>x.c===cid).slice(0,3)){
@@ -457,7 +496,7 @@ function vAssign(){
   return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
   <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
   <label for="adue">Deadline</label><input type="date" id="adue">
-  <p><button class="btn" data-assign>Assign to whole class</button></p></div>
+  <p class="row"><button class="btn" data-assign>Assign to whole class</button><button class="btn ghost" data-autoassign>Suggest from class weak spots</button></p></div>
   <h2>Assigned</h2><div class="card">${S.assign.length?`<ul class="plain">${S.assign.map(a=>`<li>${a.cs.map(x=>esc(CBY[x].n)).join(', ')} · level ${a.d} · due ${esc(a.due||'no deadline')}</li>`).join('')}</ul>`:'<p class="muted">No assignments yet.</p>'}<p class="muted" style="font-size:12px">In this demo assignments are recorded locally. Student delivery and completion tracking are part of the backend.</p></div>`;
 }
 
@@ -475,7 +514,7 @@ const App=document.addEventListener('click',e=>{
   if(D.opt!==undefined){ses.chosen=D.opt;render();return;}
   if(D.demo!==undefined){loadDemo();ses=null;selNode=null;render();return;}
   if(D.rv){S.rv=S.rv||{};if(D.rv[0]==='m'){const m=S.mis.find(x=>'m'+x.id===D.rv);if(m){m.rev=D.d;if(D.d==='dismissed')m.resolved=true;}}else S.rv[D.rv]=D.d;save();render();return;}
-  if(D.reset!==undefined){S=fresh();save();ses=null;selNode=null;render();return;}
+  if(D.reset!==undefined){const rl=S.roll;S=fresh();S.roll=rl;save();ses=null;selNode=null;render();return;}
   if(D.rediag!==undefined){S.diagDone=false;ses=null;render();return;}
   if(D.skew){S.skew=D.skew==='-999'?0:S.skew+Number(D.skew);save();render();return;}
   if(D.submit!==undefined){
@@ -493,16 +532,20 @@ const App=document.addEventListener('click',e=>{
   }
   if(D.ask!==undefined){
     const v=(document.getElementById('ask').value||'').toLowerCase(),c=CBY[ses.q.c];
+    if(aiGet().key){const box=document.getElementById('tutor');box.textContent='Thinking…';aiAsk(c.id,document.getElementById('ask').value||('Explain '+c.n)).then(t=>{S.ask.push(t);save();box.textContent=t;}).catch(e=>{box.textContent='OpenAI error: '+e.message+'. Check your key on the Dashboard.';});return;}
     let r=`${c.desc} `; const ms=openMis(c.id); if(ms.length) r+=`Because you have a possible mix-up here (${ms[0].label.toLowerCase()}), try this: ${ms[0].fix} `;
     else if(cs(c.id).att) r+=`You are at ${Math.round(curP(c.id)*100)}% on this concept. `;
     if(/why|how/.test(v)&&c.id==='ohms_law') r+='Think of resistance as narrowing a pipe: the same push (voltage) moves less flow (current) through it.';
     S.ask.push(r); save(); document.getElementById('tutor').textContent=r; return;
   }
+  if(D.autoassign!==undefined){const rows=classRows();const w=CONCEPTS.map((c,i)=>({c,n:rows.filter(r=>r.ps[i]!==null&&r.ps[i]<.5).length})).filter(x=>x.n).sort((a,b)=>b.n-a.n).slice(0,3);
+    if(w.length){const d=new Date(Date.now()+7*864e5).toISOString().slice(0,10);S.assign.push({cs:w.map(x=>x.c.id),d:2,due:d});save();render();}return;}
   if(D.assign!==undefined){
     const cs_=[...document.querySelectorAll('input[name=ac]:checked')].map(x=>x.value); if(!cs_.length){return;}
     S.assign.push({cs:cs_,d:+document.getElementById('adif').value||2,due:document.getElementById('adue').value}); save(); render();return;
   }
 });
 function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
+document.addEventListener('change',e=>{if(e.target.id==='roll'){S.roll=e.target.value.replace(/[^\w-]/g,'').slice(0,12);save();}});
 render();
 </script>
