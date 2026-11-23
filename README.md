@@ -353,3 +353,9 @@ Worked solutions for that chapter, for further reading:
 - **Roll numbers:** the teacher heatmap shows roll numbers (Roll 101 to 106 are sample data). Students set their own on the Dashboard.
 - **Look:** the dark midnight-black and cobalt theme (restored after a light-theme trial) with responsive layouts for phone, laptop and desktop.
 - **AI tutor:** the page has no API key and no key field. A key in a public static page would be exposed to everyone, so AI answers need a small backend proxy that holds the key. The tutor currently answers from the syllabus notes.
+
+## Landing page (cinematic UI)
+
+The site now opens on a landing screen: a generative canvas hero that draws the electric field lines of a + and a − charge (the − charge follows your pointer), glass cards, pill buttons and a live teacher-heatmap preview. It pauses when off-screen and respects `prefers-reduced-motion`. Click **Open the app** or any feature to enter the app; the brand link returns home. Routing is hash-based (`#home`, `#app`).
+
+Source: `demo/src/landing.js` and `demo/src/landing.css`, injected by `demo/build.py`. The class and heatmap shown are sample data. The hero is drawn in code, so it needs no video or image files.

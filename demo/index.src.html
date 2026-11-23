@@ -1,10 +1,10 @@
 <title>Learnova</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <style>
 /* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
 :root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
---fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
+--fd:'Inter Tight','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
 body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
@@ -57,6 +57,7 @@ ul.plain li:last-child{border:0}
 .bar2 i{display:block;height:100%;background:var(--pri)}
 @media (prefers-reduced-motion:no-preference){.bar2 i{transition:width .4s}}
 /*@@LESSON_CSS@@*/
+/*@@LANDING_CSS@@*/
 /* mobile */
 @media (max-width:979px){
  .bar{gap:8px}.brand small{display:none}
@@ -93,6 +94,7 @@ ul.plain li:last-child{border:0}
  <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
  <div class="seg" id="tabs"></div>
 </div></header>
+<div id="home"></div>
 <div class="wrap" id="app"></div>
 
 <script>
@@ -501,6 +503,7 @@ function vAssign(){
 }
 
 /*@@LESSON_JS@@*/
+/*@@LANDING_JS@@*/
 /* ============ Events ============ */
 function bindQuestion(){}
 const App=document.addEventListener('click',e=>{
@@ -547,5 +550,5 @@ const App=document.addEventListener('click',e=>{
 });
 function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
 document.addEventListener('change',e=>{if(e.target.id==='roll'){S.roll=e.target.value.replace(/[^\w-]/g,'').slice(0,12);save();}});
-render();
+render();initLanding();
 </script>

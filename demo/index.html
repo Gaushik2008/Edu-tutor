@@ -1,10 +1,10 @@
 <title>Learnova</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <style>
 /* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
 :root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
---fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
+--fd:'Inter Tight','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
 body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
@@ -75,6 +75,86 @@ ul.plain li:last-child{border:0}
 .chk{display:inline-flex;align-items:center;gap:6px;margin:0;font-size:12px;color:var(--fg)}
 select{background:var(--bg);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:6px;font:13px var(--fb)}
 
+/* ===== Cinematic landing + app polish. Midnight black, electric cobalt, glass surfaces. ===== */
+:root{--fs:'Instrument Serif',Georgia,'Times New Roman',serif;--glass:linear-gradient(180deg,#ffffff14,#ffffff07);--glass-line:#ffffff1f;--glow:#4C86FF}
+body[data-screen="home"]{padding:0}
+body[data-screen="home"] header,body[data-screen="home"] #app,body[data-screen="home"]::before{display:none}
+body[data-screen="app"] #home{display:none}
+#home{overflow-x:clip}
+.lp-hero{position:relative;min-height:clamp(640px,92vh,880px);display:flex;flex-direction:column;justify-content:space-between;background:radial-gradient(900px 520px at 78% 30%,#14307a55,transparent 70%),#04050A;isolation:isolate}
+.lp-hero canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
+.lp-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#04050Aee 0%,#04050Ab8 38%,#04050A00 68%),linear-gradient(0deg,#04050Acc,transparent 28%)}
+.lp-in{width:100%;max-width:1320px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.lp-nav{display:flex;align-items:center;gap:20px;padding-block:22px}
+.lp-logo{display:flex;align-items:center;gap:10px;font:700 17px var(--fd);letter-spacing:-.01em;color:var(--fg);background:none;border:0;cursor:pointer;padding:0}
+.lp-logo i{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#9DB6FF,var(--pri) 60%,#1B3FCC);box-shadow:0 0 18px #2F5CFF99}
+.lp-links{display:flex;gap:26px;margin-inline:auto}
+.lp-links button,.lp-links a{background:none;border:0;color:#cfd6f0;font:500 11px var(--fb);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;text-decoration:none;padding:6px 2px;border-bottom:1px solid transparent}
+.lp-links button:hover,.lp-links a:hover{color:#fff;border-color:var(--sec)}
+.lp-pill,.lp-btn{display:inline-flex;align-items:center;gap:12px;border-radius:99px;font:600 13px var(--fb);cursor:pointer;border:1px solid var(--glass-line);color:#fff;background:#ffffff10;backdrop-filter:blur(10px);padding:9px 10px 9px 18px}
+.lp-pill i,.lp-btn i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--pri);transition:transform .25s}
+.lp-pill:hover i,.lp-btn:hover i{transform:translateX(3px)}
+.lp-btn{background:#fff;color:#05060B;border-color:#fff;font-size:14px;padding:10px 10px 10px 22px}
+.lp-btn i{background:#05060B;color:#fff}
+.lp-ghost{display:inline-flex;align-items:center;gap:10px;background:none;border:0;color:#e6ebff;font:500 14px var(--fb);cursor:pointer;padding:6px}
+.lp-ghost span{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;border:1px solid var(--glass-line);background:#ffffff10;font-size:11px;padding-left:2px}
+.lp-body{display:flex;gap:40px;align-items:flex-end;justify-content:space-between;padding-block:24px 30px;flex-wrap:wrap}
+.lp-copy{max-width:720px;min-width:0}
+.lp-eye{display:flex;align-items:center;gap:12px;font:500 11px var(--fb);letter-spacing:.2em;text-transform:uppercase;color:#b8c3ee;margin:0 0 18px}
+.lp-eye::after{content:"";width:64px;height:1px;background:var(--sec)}
+.lp-copy h1{font:700 clamp(54px,9.6vw,148px)/.92 var(--fd);letter-spacing:-.045em;color:#fff;text-wrap:balance;margin:0;text-shadow:0 0 60px #2F5CFF55}
+.lp-copy h1 em{font:italic 400 1.04em/.9 var(--fs);letter-spacing:-.02em;color:#9DB6FF}
+.lp-sub{max-width:520px;color:#c6cde6;font-size:clamp(14px,1.3vw,16.5px);line-height:1.6;margin:22px 0 26px}
+.lp-cta{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.lp-card{width:min(360px,100%);background:var(--glass);border:1px solid var(--glass-line);border-radius:26px;padding:20px;backdrop-filter:blur(20px);box-shadow:0 30px 80px #0008;min-width:0}
+.lp-card .tag{display:inline-block;font:600 10px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:#cfd6f0;border:1px solid var(--glass-line);border-radius:99px;padding:3px 9px}
+.lp-card h3{font:600 15px/1.35 var(--fd);margin:12px 0 10px;color:#fff}
+.lp-quote{font:italic 400 19px/1.3 var(--fs);color:#e4e9ff;border-left:2px solid var(--sec);padding-left:12px;margin:0 0 12px}
+.lp-flag{background:#E56B7022;border:1px solid #FF5C6C66;border-radius:14px;padding:10px 12px;font-size:12.5px;color:#ffd7db}
+.lp-flag b{display:block;color:#fff;font-size:13px}
+.lp-card p.n{font-size:12.5px;color:#aab3d4;margin:10px 0 12px}
+.lp-strip{margin-bottom:max(20px,env(safe-area-inset-bottom,0px))}
+.lp-strip .lp-in>div{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));background:var(--glass);border:1px solid var(--glass-line);border-radius:22px;backdrop-filter:blur(18px);overflow:hidden}
+.lp-strip button{display:flex;align-items:center;gap:12px;text-align:left;background:none;border:0;border-right:1px solid var(--glass-line);color:#e6ebff;font:500 13px var(--fb);padding:16px 18px;cursor:pointer}
+.lp-strip button:last-child{border-right:0}
+.lp-strip button:hover{background:#ffffff0d}
+.lp-strip svg{flex:none;width:22px;height:22px;stroke:var(--sec);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lp-strip small{display:block;color:#9aa4c8;font-size:11px;font-weight:400}
+.lp-sec{padding-block:clamp(56px,9vw,110px);background:#04050A}
+.lp-sec h2{font:700 clamp(32px,5vw,64px)/1 var(--fd);letter-spacing:-.04em;margin:0 0 34px;max-width:880px;text-wrap:balance}
+.lp-sec h2 em{font:italic 400 1.05em/1 var(--fs);letter-spacing:-.02em;color:#9DB6FF}
+.lp-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.lp-step{background:var(--glass);border:1px solid var(--glass-line);border-radius:24px;padding:24px;min-width:0}
+.lp-step b{display:block;font:italic 400 64px/1 var(--fs);color:#9DB6FF;margin-bottom:10px}
+.lp-step h3{font:600 19px var(--fd);margin:0 0 6px}
+.lp-step p{color:#aab3d4;margin:0;font-size:14px}
+.lp-heat{display:grid;gap:5px;margin:0 0 22px;overflow-x:auto}
+.lp-heat div{display:grid;grid-template-columns:78px repeat(12,minmax(20px,1fr));gap:5px;align-items:center;font-size:11px;color:#9aa4c8;min-width:360px}
+.lp-heat i{height:24px;border-radius:7px;display:block}
+.lp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:8px}
+.lp-stats div{border-top:1px solid var(--glass-line);padding-top:16px}
+.lp-stats b{display:block;font:700 clamp(40px,5vw,68px)/1 var(--fd);letter-spacing:-.04em}
+.lp-stats span{color:#aab3d4;font-size:13.5px}
+.lp-foot{border-top:1px solid var(--glass-line);padding-block:26px;color:#8e97b8;font-size:12.5px;display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+.lp-foot a{color:#b8c3ee}
+.lp-scroll{position:absolute;left:max(20px,env(safe-area-inset-left,0px));bottom:100px;font:500 10px var(--fb);letter-spacing:.2em;text-transform:uppercase;color:#8e97b8;writing-mode:vertical-rl;display:none}
+@media (min-width:1100px){.lp-scroll{display:block}}
+@media (max-width:760px){.lp-shade{background:linear-gradient(180deg,#04050Ab0,#04050A70 38%,#04050Ad8 100%)}.lp-links{display:none}.lp-nav{justify-content:space-between}.lp-card{order:2}.lp-body{padding-top:70px}}
+@media (prefers-reduced-motion:reduce){.lp-pill i,.lp-btn i{transition:none}}
+/* ---- app polish: glass surfaces, pill buttons, display type ---- */
+body[data-screen="app"]{background:radial-gradient(900px 420px at 70% -120px,#173a9a55,transparent) no-repeat,var(--bg)}
+.card,.course{background:var(--glass),var(--card);border-color:var(--glass-line);backdrop-filter:blur(14px)}
+header{background:linear-gradient(180deg,#ffffff0d,#ffffff05),#080A12}
+.brand{font-family:var(--fd);letter-spacing:-.02em}
+.btn{border-radius:99px;padding:10px 18px}
+.chip{border-radius:99px}
+.seg{border-radius:16px}.seg button{border-radius:12px}
+@media (min-width:980px){.seg{background:transparent;padding:0}.seg button{border-radius:12px}.seg button.on{background:#ffffff12;box-shadow:none}}
+@media (max-width:979px){.seg,.seg button{border-radius:99px}}
+h2{font-family:var(--fd);letter-spacing:-.03em}
+.hero{background:radial-gradient(500px 220px at 85% 0,#2F5CFF66,transparent),linear-gradient(120deg,#1B3FCC,#0f2060 70%,#0a0d1a);border-color:var(--glass-line)}
+.hero h2{font-size:clamp(26px,3vw,38px)}
+
 /* mobile */
 @media (max-width:979px){
  .bar{gap:8px}.brand small{display:none}
@@ -111,6 +191,7 @@ select{background:var(--bg);color:var(--fg);border:2px solid var(--line);border-
  <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
  <div class="seg" id="tabs"></div>
 </div></header>
+<div id="home"></div>
 <div class="wrap" id="app"></div>
 
 <script>
@@ -930,6 +1011,101 @@ L2.electrical_energy={scenes:[
 ],checks:{1:34,2:35,4:36}};
 Object.assign(LESSONS,L2);
 
+/* ===== Cinematic landing screen: generative electric-field hero, glass cards, live teacher heatmap ===== */
+const ICON={
+ diag:'<svg viewBox="0 0 24 24"><path d="M9 4h6l1 2h3v14H5V6h3z"/><path d="M9 13l2 2 4-4"/></svg>',
+ graph:'<svg viewBox="0 0 24 24"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7 7l4 9M17 7l-4 9M7 6h10"/></svg>',
+ mis:'<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5M11 8.5v3M11 13.5v.1"/></svg>',
+ rev:'<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M20 4v5h-5M4 20v-5h5"/></svg>'};
+function setScreen(name){
+  document.body.dataset.screen=name;
+  try{if(location.hash.slice(1)!==name)history.replaceState(null,'','#'+name);}catch(e){}
+  if(name==='home'){buildHome();window.scrollTo(0,0);}else stopField();
+}
+function goApp(r,t){role=r;tab=t;ses=null;setScreen('app');render();window.scrollTo(0,0);}
+function homeHTML(){
+  const rows=classRows(),heat=rows.slice(-4).map(r=>`<div><span>${esc(r.n.length>11?r.n.slice(0,10)+'…':r.n)}</span>${r.ps.map(p=>`<i style="background:${cellCol(p)};opacity:${p===null?.5:.9}"></i>`).join('')}</div>`).join('');
+  return `<section class="lp-hero" id="lp-hero"><canvas id="lp-cv" aria-hidden="true"></canvas><div class="lp-shade"></div>
+  <div class="lp-in"><nav class="lp-nav"><button class="lp-logo" data-lp="home"><i></i>Learnova</button>
+   <div class="lp-links"><button data-lp="syllabus">Learn</button><button data-lp="graph">Concepts</button><button data-lp="teacher">Teachers</button><a href="https://github.com/Gaushik2008/Edu-tutor#35-evidence-what-was-measured" target="_blank" rel="noopener">Evidence</a></div>
+   <button class="lp-pill" data-lp="dashboard">Open the app <i>→</i></button></nav></div>
+  <div class="lp-in lp-body"><div class="lp-copy"><p class="lp-eye">Class 10 physics · Electricity</p>
+    <h1>Know what<br>you <em>know.</em></h1>
+    <p class="lp-sub">Learnova reads your reasoning, finds the misconception behind a wrong answer, and schedules the exact revision you need. Learn smarter, understand deeper, remember longer.</p>
+    <div class="lp-cta"><button class="lp-btn" data-lp="diag">Start the diagnostic <i>→</i></button><button class="lp-ghost" data-lp="lesson"><span>▶</span>Watch a lesson</button></div></div>
+   <aside class="lp-card" aria-label="Example of how an answer is read"><span class="tag">Example</span>
+    <h3>Voltage stays constant and resistance increases. What happens to the current?</h3>
+    <p class="lp-quote">“Current increases because resistance blocks the voltage.”</p>
+    <div class="lp-flag"><b>Possible misconception · 85% confidence</b>Believes current rises when resistance rises</div>
+    <p class="n">Next, a 10 V question at 2 Ω then 5 Ω that targets exactly this.</p>
+    <button class="lp-pill" data-lp="try">Try this question <i>→</i></button></aside></div>
+  <div class="lp-strip"><div class="lp-in"><div>
+   <button data-lp="diag">${ICON.diag}<span>Diagnostic<small>Find your starting point</small></span></button>
+   <button data-lp="graph">${ICON.graph}<span>Concept graph<small>See what depends on what</small></span></button>
+   <button data-lp="learn">${ICON.mis}<span>Misconception detection<small>From your own reasoning</small></span></button>
+   <button data-lp="revision">${ICON.rev}<span>Spaced revision<small>Scheduled by performance</small></span></button></div></div></div>
+  <div class="lp-scroll">Scroll</div></section>
+  <section class="lp-sec"><div class="lp-in"><h2>From one wrong answer to the <em>next right one.</em></h2>
+   <div class="lp-steps"><div class="lp-step"><b>1</b><h3>It reads your reasoning</h3><p>You explain your answer in your own words. The system looks at the steps, not only the final number.</p></div>
+    <div class="lp-step"><b>2</b><h3>It names the misconception</h3><p>A likely mix-up is recorded with a confidence score. Unsure cases go to a teacher instead of being treated as fact.</p></div>
+    <div class="lp-step"><b>3</b><h3>It schedules what is next</h3><p>A question aimed at the mix-up comes first, then a revision date that adapts to how you actually perform.</p></div></div></div></section>
+  <section class="lp-sec" style="padding-top:0"><div class="lp-in"><h2>Teachers see where the class is <em>stuck.</em></h2>
+   <div class="lp-heat" role="img" aria-label="Class mastery heatmap preview">${heat}</div>
+   <button class="lp-pill" data-lp="teacher">Open the teacher view <i>→</i></button>
+   <div class="lp-stats" style="margin-top:46px"><div><b>0</b><span>false alarms across 90 labelled explanations, with the pattern rules alone</span></div>
+    <div><b>50%</b><span>of unfamiliar phrasings those rules catch on their own. The rest go to a teacher or an AI model.</span></div>
+    <div><b>12</b><span>concepts in Class 10 Electricity, each with an animated lesson and checkpoint questions</span></div></div></div></section>
+  <footer class="lp-in lp-foot"><span>Learnova · Learn Smarter. Understand Deeper. Remember Longer.</span><span>Class and heatmap shown are sample data. <a href="https://github.com/Gaushik2008/Edu-tutor" target="_blank" rel="noopener">Source and evidence on GitHub</a></span></footer>`;
+}
+function buildHome(){document.getElementById('home').innerHTML=homeHTML();startField();}
+
+/* ---- generative hero: electric field lines of a + and a − charge; the − charge follows the pointer ---- */
+const FLD={raf:0,on:false,mx:null,my:null,t:0,b:{x:0,y:0},io:null};
+const REDUCE=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function stopField(){FLD.on=false;cancelAnimationFrame(FLD.raf);if(FLD.io){FLD.io.disconnect();FLD.io=null;}}
+function startField(){
+  stopField();const cv=document.getElementById('lp-cv'),hero=document.getElementById('lp-hero');if(!cv||!hero)return;
+  const c=cv.getContext('2d');let W=0,H=0,dpr=1,A,Bq;
+  const fit=()=>{dpr=Math.min(2,window.devicePixelRatio||1);W=hero.clientWidth;H=hero.clientHeight;cv.width=W*dpr;cv.height=H*dpr;
+    const wide=W>760;A={x:wide?W*.64:W*.8,y:wide?H*.5:H*.2};Bq={x:wide?W*.9:W*.5,y:wide?H*.18:H*.44};if(!FLD.b.x){FLD.b={x:Bq.x,y:Bq.y};}};
+  fit();window.onresize=()=>{fit();if(!FLD.on)frame(0);};
+  hero.onpointermove=e=>{const r=hero.getBoundingClientRect();FLD.mx=Math.max(r.width*.45,e.clientX-r.left);FLD.my=e.clientY-r.top;};
+  hero.onpointerleave=()=>{FLD.mx=null;};
+  const E=(x,y,p,q)=>{const dx=x-p.x,dy=y-p.y,d2=dx*dx+dy*dy+60,d=Math.pow(d2,1.5);return[q*dx/d,q*dy/d];};
+  const trace=(a,b,ang)=>{const pts=[];let x=a.x+Math.cos(ang)*9,y=a.y+Math.sin(ang)*9;
+    for(let i=0;i<260;i++){const e1=E(x,y,a,1),e2=E(x,y,b,-1),ex=e1[0]+e2[0],ey=e1[1]+e2[1],m=Math.hypot(ex,ey)||1;x+=ex/m*7;y+=ey/m*7;pts.push([x,y]);
+      if(Math.hypot(x-b.x,y-b.y)<9||x<-20||x>W+20||y<-20||y>H+20)break;}return pts;};
+  const disc=(p,s,col)=>{const g=c.createRadialGradient(p.x,p.y,0,p.x,p.y,46);g.addColorStop(0,col+'cc');g.addColorStop(1,col+'00');c.fillStyle=g;c.beginPath();c.arc(p.x,p.y,46,0,6.3);c.fill();
+    c.fillStyle='#05060B';c.beginPath();c.arc(p.x,p.y,13,0,6.3);c.fill();c.strokeStyle=col;c.lineWidth=2;c.stroke();c.fillStyle='#fff';c.font='600 17px Inter,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText(s,p.x,p.y+1);};
+  const frame=ts=>{FLD.t=ts/1000;const t=FLD.t,B=FLD.b;
+    const tx=FLD.mx!==null?FLD.mx:Bq.x+(REDUCE?0:Math.sin(t*.5)*40),ty=FLD.my!==null?FLD.my:Bq.y+(REDUCE?0:Math.cos(t*.4)*30);
+    B.x+=(tx-B.x)*.06;B.y+=(ty-B.y)*.06;
+    c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);c.globalCompositeOperation='lighter';c.lineCap='round';
+    const N=W>760?30:18;
+    for(let i=0;i<N;i++){const ang=i/N*6.2832+.1,pts=trace(A,B,ang);if(pts.length<4)continue;
+      c.beginPath();c.moveTo(pts[0][0],pts[0][1]);for(const p of pts)c.lineTo(p[0],p[1]);
+      c.strokeStyle='rgba(76,134,255,.10)';c.lineWidth=6;c.stroke();c.strokeStyle='rgba(157,182,255,.40)';c.lineWidth=1.2;c.stroke();
+      if(!REDUCE){const k=Math.floor(((t*38+i*23)%(pts.length+30)));if(k<pts.length){const p=pts[k];c.fillStyle='rgba(220,232,255,.95)';c.beginPath();c.arc(p[0],p[1],2.1,0,6.3);c.fill();}}}
+    c.globalCompositeOperation='source-over';disc(A,'+','#FF5C6C');disc(B,'−','#4C86FF');
+    if(FLD.on&&!REDUCE)FLD.raf=requestAnimationFrame(frame);};
+  FLD.on=!REDUCE;
+  if('IntersectionObserver' in window){FLD.io=new IntersectionObserver(es=>{const v=es[0].isIntersecting;if(v&&!FLD.on&&!REDUCE){FLD.on=true;FLD.raf=requestAnimationFrame(frame);}else if(!v){FLD.on=false;cancelAnimationFrame(FLD.raf);}});FLD.io.observe(hero);}
+  FLD.raf=requestAnimationFrame(frame);if(REDUCE)frame(0);
+}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){FLD.on=false;cancelAnimationFrame(FLD.raf);}else if(document.body.dataset.screen==='home'&&!REDUCE){startField();}});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-lp],.brand');if(!b)return;
+  if(b.classList.contains('brand')){setScreen('home');return;}
+  const k=b.dataset.lp;
+  if(k==='home'){window.scrollTo(0,0);return;}
+  if(k==='teacher')return goApp('teacher','class');
+  if(k==='lesson'){syl.open='electric_charge';resetPlayer();return goApp('student','syllabus');}
+  if(k==='try'){role='student';tab='learn';startPractice('ohms_law');setScreen('app');render();window.scrollTo(0,0);return;}
+  goApp('student',k);
+});
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if((h==='home'||h==='app')&&document.body.dataset.screen!==h)setScreen(h);});
+function initLanding(){const h=location.hash.slice(1);setScreen(h==='app'||h==='home'?h:(S.log.length||S.roll?'app':'home'));}
+
 /* ============ Events ============ */
 function bindQuestion(){}
 const App=document.addEventListener('click',e=>{
@@ -976,5 +1152,5 @@ const App=document.addEventListener('click',e=>{
 });
 function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
 document.addEventListener('change',e=>{if(e.target.id==='roll'){S.roll=e.target.value.replace(/[^\w-]/g,'').slice(0,12);save();}});
-render();
+render();initLanding();
 </script>
