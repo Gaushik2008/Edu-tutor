@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" font-family="Inter,Arial,sans-serif" font-size="12">
+<rect width="760" height="330" fill="#0D1019"/>
+<text x="117.5" y="18" fill="#E9EDFB" text-anchor="middle" font-weight="600">Static knowledge</text>
+<line x1="30" x2="235" y1="290" y2="290" stroke="#1A2036"/><text x="24" y="294" fill="#8A93B2" text-anchor="end">50%</text>
+<line x1="30" x2="235" y1="238" y2="238" stroke="#1A2036"/><text x="24" y="242" fill="#8A93B2" text-anchor="end">60%</text>
+<line x1="30" x2="235" y1="186" y2="186" stroke="#1A2036"/><text x="24" y="190" fill="#8A93B2" text-anchor="end">70%</text>
+<line x1="30" x2="235" y1="134" y2="134" stroke="#1A2036"/><text x="24" y="138" fill="#8A93B2" text-anchor="end">80%</text>
+<line x1="30" x2="235" y1="82" y2="82" stroke="#1A2036"/><text x="24" y="86" fill="#8A93B2" text-anchor="end">90%</text>
+<line x1="30" x2="235" y1="30" y2="30" stroke="#1A2036"/><text x="24" y="34" fill="#8A93B2" text-anchor="end">100%</text>
+<polyline points="30.0,110.1 51.7,90.3 73.3,64.3 95.0,49.8 116.7,47.7 138.3,39.4 160.0,39.4 181.7,34.7 203.3,36.2 225.0,32.6" fill="none" stroke="#8A93B2" stroke-width="2.5"/>
+<polyline points="30.0,110.1 51.7,90.3 73.3,63.3 95.0,55.0 116.7,50.8 138.3,47.2 160.0,45.1 181.7,46.6 203.3,44.0 225.0,43.0" fill="none" stroke="#4C86FF" stroke-width="2.5"/>
+<text x="30" y="308" fill="#8A93B2" text-anchor="middle">1</text>
+<text x="117" y="308" fill="#8A93B2" text-anchor="middle">5</text>
+<text x="225" y="308" fill="#8A93B2" text-anchor="middle">10</text>
+<text x="117.5" y="324" fill="#8A93B2" text-anchor="middle">questions answered</text>
+<text x="372.5" y="18" fill="#E9EDFB" text-anchor="middle" font-weight="600">Model assumptions wrong</text>
+<line x1="285" x2="490" y1="290" y2="290" stroke="#1A2036"/><text x="279" y="294" fill="#8A93B2" text-anchor="end">50%</text>
+<line x1="285" x2="490" y1="238" y2="238" stroke="#1A2036"/><text x="279" y="242" fill="#8A93B2" text-anchor="end">60%</text>
+<line x1="285" x2="490" y1="186" y2="186" stroke="#1A2036"/><text x="279" y="190" fill="#8A93B2" text-anchor="end">70%</text>
+<line x1="285" x2="490" y1="134" y2="134" stroke="#1A2036"/><text x="279" y="138" fill="#8A93B2" text-anchor="end">80%</text>
+<line x1="285" x2="490" y1="82" y2="82" stroke="#1A2036"/><text x="279" y="86" fill="#8A93B2" text-anchor="end">90%</text>
+<line x1="285" x2="490" y1="30" y2="30" stroke="#1A2036"/><text x="279" y="34" fill="#8A93B2" text-anchor="end">100%</text>
+<polyline points="285.0,162.1 306.7,146.5 328.3,113.2 350.0,97.6 371.7,87.2 393.3,73.7 415.0,71.1 436.7,59.6 458.3,60.2 480.0,50.8" fill="none" stroke="#8A93B2" stroke-width="2.5"/>
+<polyline points="285.0,162.1 306.7,146.5 328.3,116.3 350.0,101.8 371.7,97.1 393.3,87.7 415.0,83.0 436.7,79.9 458.3,79.4 480.0,77.3" fill="none" stroke="#4C86FF" stroke-width="2.5"/>
+<text x="285" y="308" fill="#8A93B2" text-anchor="middle">1</text>
+<text x="372" y="308" fill="#8A93B2" text-anchor="middle">5</text>
+<text x="480" y="308" fill="#8A93B2" text-anchor="middle">10</text>
+<text x="372.5" y="324" fill="#8A93B2" text-anchor="middle">questions answered</text>
+<text x="627.5" y="18" fill="#E9EDFB" text-anchor="middle" font-weight="600">Students learn as they practise</text>
+<line x1="540" x2="745" y1="290" y2="290" stroke="#1A2036"/><text x="534" y="294" fill="#8A93B2" text-anchor="end">50%</text>
+<line x1="540" x2="745" y1="238" y2="238" stroke="#1A2036"/><text x="534" y="242" fill="#8A93B2" text-anchor="end">60%</text>
+<line x1="540" x2="745" y1="186" y2="186" stroke="#1A2036"/><text x="534" y="190" fill="#8A93B2" text-anchor="end">70%</text>
+<line x1="540" x2="745" y1="134" y2="134" stroke="#1A2036"/><text x="534" y="138" fill="#8A93B2" text-anchor="end">80%</text>
+<line x1="540" x2="745" y1="82" y2="82" stroke="#1A2036"/><text x="534" y="86" fill="#8A93B2" text-anchor="end">90%</text>
+<line x1="540" x2="745" y1="30" y2="30" stroke="#1A2036"/><text x="534" y="34" fill="#8A93B2" text-anchor="end">100%</text>
+<polyline points="540.0,130.4 561.7,151.2 583.3,111.1 605.0,133.0 626.7,103.8 648.3,121.0 670.0,98.6 691.7,110.6 713.3,91.9 735.0,103.8" fill="none" stroke="#8A93B2" stroke-width="2.5"/>
+<polyline points="540.0,130.4 561.7,151.2 583.3,112.7 605.0,109.0 626.7,96.6 648.3,83.6 670.0,78.4 691.7,71.6 713.3,65.4 735.0,61.2" fill="none" stroke="#4C86FF" stroke-width="2.5"/>
+<text x="540" y="308" fill="#8A93B2" text-anchor="middle">1</text>
+<text x="627" y="308" fill="#8A93B2" text-anchor="middle">5</text>
+<text x="735" y="308" fill="#8A93B2" text-anchor="middle">10</text>
+<text x="627.5" y="324" fill="#8A93B2" text-anchor="middle">questions answered</text>
+<text x="740" y="316" fill="#4C86FF" text-anchor="end">BKT (this project)</text><text x="740" y="330" fill="#8A93B2" text-anchor="end">Percent correct</text>
+</svg>

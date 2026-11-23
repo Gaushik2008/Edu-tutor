@@ -25,48 +25,34 @@ class Analysis:
     reasoning_quality: float = 0.5
     intervention: str | None = None
     tags: list[str] = field(default_factory=list)
+    source: str = "rules"  # 'rules' or 'llm'
 
 
-# (tag, concept_id, regex on reasoning, label, intervention)
-RULES = [
-    ("R_UP_I_UP", "ohms_law",
-     r"(resistance|r)\b.*\b(increase|higher|more)\b.*\bcurrent\b.*\b(increase|higher|more|rise)|"
-     r"current\b.*\b(increase|rise)s?\b.*(because|as)\b.*resist",
-     "Believes current rises when resistance rises",
-     "Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A."),
-    ("CURRENT_USED_UP", "electric_current",
-     r"current\b.*\b(used up|consumed|gets less|reduces after|lost)\b|used up by the (bulb|resistor)",
-     "Thinks current is used up as it passes through a component",
-     "Show ammeters before and after a bulb reading equal; energy, not charge, is transferred."),
-    ("PARALLEL_ADDS", "parallel_combination",
-     r"parallel\b.*\b(add|sum)\b.*resist|resistances? (are )?added in parallel",
-     "Adds resistances directly in a parallel combination",
-     "Derive 1/Rp = 1/R1 + 1/R2; show Rp is smaller than the smallest branch."),
-    ("SERIES_SPLITS_I", "series_combination",
-     r"series\b.*current\b.*(divide|split|share)",
-     "Thinks current divides between resistors in series",
-     "Current is identical in a series loop; voltage divides."),
-    ("POWER_I_ONLY", "electric_power",
-     r"power\b.*(=|is)\s*(v\s*/\s*i|i\s*/\s*v)|power depends only on",
-     "Uses an incorrect relation for electric power",
-     "Work from P = VI and combine with Ohm's law to get I²R and V²/R."),
-    ("RESIST_LENGTH_INV", "resistance_factors",
-     r"(longer|length)\b.*\b(less|lower|decreas)\w*\b.*resist",
-     "Believes longer wires have lower resistance",
-     "R = ρL/A: doubling length doubles resistance; compare a hose analogy."),
-]
+from .rules_data import RULES
+
+_NEG = re.compile(r"\b(not|never|no|isn't|doesn't|don't|wasn't)\b|n't")
+
+
+def _match_rule(rule: dict, text: str) -> bool:
+    if any(re.search(u, text) for u in rule.get("unless", [])):
+        return False
+    for pat in rule["patterns"]:
+        m = re.search(pat, text)
+        if m and not _NEG.search(text[max(0, m.start() - 20): m.end()]):
+            return True
+    return False
 
 
 def analyse(concept_id: str, final_correct: bool, reasoning: str) -> Analysis:
     text = (reasoning or "").strip().lower()
     words = len(re.findall(r"\w+", text))
 
-    for tag, cid, pat, label, fix in RULES:
-        if cid == concept_id and re.search(pat, text):
-            return Analysis("conceptual_misunderstanding", label,
+    for rule in RULES:
+        if rule["concept"] == concept_id and _match_rule(rule, text):
+            return Analysis("conceptual_misunderstanding", rule["label"],
                             0.85 if not final_correct else 0.7,
                             "medium" if not final_correct else "low",
-                            0.2, fix, [tag])
+                            0.2, rule["fix"], [rule["tag"]])
 
     if words < 4:
         return Analysis("insufficient_evidence", None, 0.3, "low",

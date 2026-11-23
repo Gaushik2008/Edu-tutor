@@ -1,10 +1,12 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Learnova</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <style>
 /* Midnight black + electric cobalt. Responsive: mobile top bar with scrolling tabs, laptop narrow sidebar, desktop wide sidebar. Canvas lessons read these variables, keep the names. */
 :root{--bg:#05060B;--card:#0D1019;--fg:#E9EDFB;--muted:#8A93B2;--line:#1A2036;--pri:#2F5CFF;--sec:#7C9CFF;--acc:#3FB4FF;--ok:#2FD08A;--warn:#F2B04A;--bad:#FF5C6C;--grey:#394261;--blue:#4C86FF;--soft:#0F1A40;--ink-on:#fff;color-scheme:dark;
---fd:'Space Grotesk','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
+--fd:'Inter Tight','Inter',system-ui,sans-serif;--fb:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box}
 body{background:radial-gradient(800px 360px at 50% -140px,#12286b66,transparent) no-repeat,var(--bg);color:var(--fg);font:14px/1.5 var(--fb);padding-block:0 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:10}
@@ -87,9 +89,10 @@ ul.plain li:last-child{border:0}
  .g4{grid-template-columns:repeat(4,1fr)}
 }
 @media (min-width:1700px){.wrap{max-width:1360px}}
+/*@@LANDING_CSS@@*/
 </style>
 <header><div class="bar">
- <div class="brand">Learnova<small>Learn Smarter. Understand Deeper. Remember Longer.</small></div>
+ <button class="brand" data-home aria-label="Learnova home"><svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="#2F5CFF"/><ellipse cx="16" cy="16" rx="11" ry="4.5" fill="none" stroke="#fff" stroke-width="1.4" transform="rotate(-30 16 16)"/><circle cx="16" cy="16" r="3" fill="#fff"/><circle cx="25" cy="10.5" r="2" fill="#fff"/></svg><span class="t">Learnova<small>Learn Smarter. Understand Deeper. Remember Longer.</small></span></button>
  <div class="seg" id="role"><button data-role="student" class="on">Student</button><button data-role="teacher">Teacher</button></div>
  <div class="seg" id="tabs"></div>
 </div></header>
@@ -126,28 +129,17 @@ function targetDifficulty(p,recent){
   if(l.length===3&&l.every(Boolean)) b++;
   return Math.max(1,Math.min(5,b));
 }
-const MIS={
- R_UP_I_UP:{c:'ohms_law',label:'Believes current rises when resistance rises',fix:'Use I = V/R with V = 10 V: R = 2 Ω gives 5 A, R = 5 Ω gives 2 A.'},
- CURRENT_USED_UP:{c:'electric_current',label:'Thinks current is used up as it passes through a component',fix:'Show ammeters before and after a bulb reading equal; energy, not charge, is transferred.'},
- PARALLEL_ADDS:{c:'parallel_combination',label:'Adds resistances directly in a parallel combination',fix:'Derive 1/Rp = 1/R1 + 1/R2; Rp is smaller than the smallest branch.'},
- SERIES_SPLITS_I:{c:'series_combination',label:'Thinks current divides between resistors in series',fix:'Current is identical in a series loop; the voltage divides.'},
- POWER_I_ONLY:{c:'electric_power',label:'Uses an incorrect relation for electric power',fix:'Start from P = VI, then combine with Ohm’s law to get I²R and V²/R.'},
- RESIST_LENGTH_INV:{c:'resistance_factors',label:'Believes longer wires have lower resistance',fix:'R = ρL/A: doubling the length doubles R. Use a long narrow pipe as an analogy.'},
- PD_IS_CURRENT:{c:'electric_current',label:'Confuses potential difference with current',fix:'Current is charge per second; potential difference is energy per coulomb.'},
- CONV_CURRENT_DIR:{c:'electric_circuit',label:'Reverses the direction of conventional current',fix:'Conventional current runs from the positive terminal round to the negative; electrons drift the other way.'},
- HEAT_I_LINEAR:{c:'heating_effect',label:'Thinks heat is proportional to current instead of current squared',fix:'H = I²Rt: doubling I gives four times the heat. Try I = 1 A and 2 A.'},
-};
-const RULES=[
- ['R_UP_I_UP','ohms_law',/(resistance|\br\b).*\b(increase|higher|more)\b.*\bcurrent\b.*\b(increase|higher|more|rise)|current\b.*\b(increase|rise)s?\b.*(because|as)\b.*resist/],
- ['CURRENT_USED_UP','electric_current',/current\b.*\b(used up|consumed|gets less|reduces after|lost)\b|used up by the (bulb|resistor)/],
- ['PARALLEL_ADDS','parallel_combination',/parallel\b.*\b(add|sum)\b.*resist|resistances? (are )?added in parallel/],
- ['SERIES_SPLITS_I','series_combination',/series\b.*current\b.*(divide|split|share)/],
- ['POWER_I_ONLY','electric_power',/power\b.*(=|is)\s*(v\s*\/\s*i|i\s*\/\s*v)|power depends only on/],
- ['RESIST_LENGTH_INV','resistance_factors',/(longer|length)\b.*\b(less|lower|decreas)\w*\b.*resist/],
-];
+/* MIS and RULES are generated from backend/app/core/rules_data.py by demo/build.py (single source of truth). */
+const MIS=/*@@MIS@@*/{};
+const RULES_DATA=/*@@RULES@@*/[];
+const NEG=/\b(not|never|no|isn't|doesn't|don't|wasn't)\b|n't/;
+function matchRule(r,t){
+  if((r.unless||[]).some(u=>new RegExp(u).test(t))) return false;
+  return r.patterns.some(p=>{const m=new RegExp(p).exec(t);return m&&!NEG.test(t.slice(Math.max(0,m.index-20),m.index+m[0].length));});
+}
 function analyse(cid,ok,reasoning){
   const t=(reasoning||'').trim().toLowerCase(), words=(t.match(/\w+/g)||[]).length;
-  for(const [tag,c,re] of RULES) if(c===cid&&re.test(t)) return {cat:'conceptual_misunderstanding',tag,conf:ok?.7:.85,rq:.2};
+  for(const r of RULES_DATA) if(r.concept===cid&&matchRule(r,t)) return {cat:'conceptual_misunderstanding',tag:r.tag,conf:ok?.7:.85,rq:.2};
   if(words<4) return {cat:'insufficient_evidence',tag:null,conf:.3,rq:ok?.6:.3};
   const f=/[ivrpqwt]\s*=|v\s*\/\s*r|i²|\bohm/.test(t);
   if(ok) return {cat:f?'sound_reasoning':'correct_light_reasoning',tag:null,conf:.6,rq:f?.9:.7};
@@ -221,7 +213,7 @@ const QS=[
 
 /* ============ State ============ */
 const KEY='adaptivelearn-demo-v1';
-const fresh=()=>({roll:'',concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[]});
+const fresh=()=>({roll:'',concepts:{},mis:[],log:[],secs:0,skew:0,diagDone:false,assign:[],ask:[],lessons:{},rv:{}});
 let S=fresh();
 try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(fresh(),JSON.parse(r));}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}};
@@ -291,13 +283,13 @@ function applyResult(q,r,secs){
 
 /* ============ Rendering ============ */
 let role='student',tab='dashboard',selNode=null;
-const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['assign','Assignments']]};
+const TABS={student:[['dashboard','Dashboard'],['syllabus','Syllabus'],['graph','Concept graph'],['learn','Practice'],['revision','Revision'],['diag','Diagnostic']],teacher:[['class','Class heatmap'],['miscon','Misconceptions'],['review','Review queue'],['assign','Assignments']]};
 function renderChrome(){
   document.querySelectorAll('#role button').forEach(b=>b.classList.toggle('on',b.dataset.role===role));
   document.getElementById('tabs').innerHTML=TABS[role].map(([k,l])=>`<button data-tab="${k}" class="${k===tab?'on':''}">${l}</button>`).join('');
 }
 function render(){
-  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,assign:vAssign}[tab];
+  renderChrome(); const f={dashboard:vDash,syllabus:vSyll,graph:vGraph,learn:vLearn,revision:vRev,diag:vDiag,class:vClass,miscon:vMiscon,review:vReview,assign:vAssign}[tab];
   document.getElementById('app').innerHTML=``+f();
   if(tab==='learn'||tab==='diag') bindQuestion();
   if(tab==='syllabus'&&syl.open&&LESSONS[syl.open]) initPlayer();
@@ -342,7 +334,7 @@ function vDash(){
     </ul></div>
   </div>
   <h2>Recent activity</h2><div class="card">${S.log.length?`<ul class="plain">${S.log.slice(-8).reverse().map(l=>`<li>${fmtDay(l.t)} · ${esc(CBY[l.c].n)} · ${l.ok?'correct':'incorrect'} · mastery ${l.delta>=0?'+':''}${l.delta.toFixed(1)} pts${l.mis?` · <span class="muted">possible misconception: ${esc(l.mis)}</span>`:''}</li>`).join('')}</ul>`:'<p class="muted">No activity yet. Your answers will appear here.</p>'}</div>
-  <p><button class="btn ghost" data-reset>Reset my demo data</button></p>`;
+  <p><button class="btn" data-demo>Load demo student</button> <button class="btn ghost" data-reset>Reset my demo data</button></p>`;
 }
 
 function vGraph(){
@@ -476,6 +468,33 @@ function vMiscon(){
   return `<h2>Common misconceptions</h2><p class="muted">Predictions from reasoning with confidence scores. Review before acting.</p>
   <div class="grid g2">${list.map(([t,rs])=>{const m=MIS[t];return `<div class="card"><h3>${esc(m.label)}</h3><p><b>${rs.length}</b> of ${rows.length} roll numbers · concept: ${esc(CBY[m.c].n)}</p><p class="muted">Example reasoning (anonymised, sample): ${esc(mine[t]?'“'+mine[t].reasoning+'”':EXAMPLE_REASON[t]||'—')}</p><p><b>Teaching intervention:</b> ${esc(m.fix)}</p></div>`;}).join('')}</div>`;
 }
+const SAMPLE_REVIEW=[
+ {id:'s1',who:'Roll 102',c:'ohms_law',tag:'R_UP_I_UP',text:'bigger resistor means bigger current will go thru it',conf:.62},
+ {id:'s2',who:'Roll 104',c:'electric_current',tag:'CURRENT_USED_UP',text:'current is finished in the bulb that is why it glows',conf:.55},
+ {id:'s3',who:'Roll 106',c:'parallel_combination',tag:'PARALLEL_ADDS',text:'equivalent of resistors in parallel = R1 + R2',conf:.58}];
+function vReview(){
+  S.rv=S.rv||{};
+  const live=S.mis.filter(m=>!m.resolved&&!m.rev&&m.conf<.8).map(m=>({id:'m'+m.id,who:'You (live)',c:m.c,tag:m.tag,text:m.reasoning,conf:m.conf,live:true}));
+  const items=[...live,...SAMPLE_REVIEW.filter(x=>!S.rv[x.id])];
+  return `<h2>Review queue</h2><p class="muted">Predictions the system is not sure about. Confirm to keep the misconception on the student’s record, or dismiss it. The items from other roll numbers are sample data showing phrasings the pattern rules cannot catch, which is where an AI model’s suggestion would be sent for your decision.</p>
+  <div class="grid g2">${items.length?items.map(x=>`<div class="card"><div class="row"><b>${esc(x.who)}</b><span class="muted">${esc(CBY[x.c].n)}</span></div>
+   <p>“${esc(x.text)}”</p><p><b>Suggested:</b> ${esc(MIS[x.tag].label)} <span class="muted">· confidence ${Math.round(x.conf*100)}%</span></p>
+   <div class="row"><button class="btn" data-rv="${x.id}" data-d="confirmed">Confirm</button><button class="btn ghost" data-rv="${x.id}" data-d="dismissed">Dismiss</button></div></div>`).join(''):'<p class="muted">Nothing waiting for review.</p>'}</div>
+  <p class="muted">Decided: ${Object.keys(S.rv).length} · confirmed ${Object.values(S.rv).filter(v=>v==='confirmed').length}, dismissed ${Object.values(S.rv).filter(v=>v==='dismissed').length}</p>`;
+}
+function loadDemo(){
+  const rl=S.roll; S=fresh(); S.roll=rl; S.demo=true; S.skew=-14; let seed=7; const rnd=()=>{seed=seed*16807%2147483647;return seed/2147483647;};
+  const skill={electric_charge:.9,electric_current:.6,electric_circuit:.8,potential_difference:.7,ohms_law:.35,resistance:.4,series_combination:.6,parallel_combination:.3};
+  const reasons={R_UP_I_UP:'current increases because resistance increases and blocks the voltage',CURRENT_USED_UP:'the bulb uses up some of the current'};
+  for(const cid of Object.keys(skill)) for(const q of QS.filter(x=>x.c===cid).slice(0,3)){
+    const good=rnd()<skill[cid]; let val;
+    if(q.t==='mcq'){const w=Object.keys(q.m||{});val=good?String(q.a):(w.length?w[0]:String((q.a+1)%q.o.length));}
+    else if(q.t==='num') val=good?String(q.a):String(q.a*1.7+1); else val=good?q.a[0]:'not sure';
+    const why=good?'I = V/R':(reasons[Object.values(q.m||{})[0]]||'');
+    const r=evaluate(q,val,why); r.reasoning=why; applyResult(q,r,40); S.skew+=.4;
+  }
+  S.skew=0; save();
+}
 function vAssign(){
   return `<h2>Targeted assignment</h2><div class="card"><label>Concepts</label>${CONCEPTS.map(c=>`<label style="display:inline-block;margin:3px 10px 3px 0;font-weight:500;color:var(--fg)"><input type="checkbox" name="ac" value="${c.id}"> ${esc(c.n)}</label>`).join('')}
   <label for="adif">Difficulty (1–5)</label><input type="number" id="adif" min="1" max="5" value="2">
@@ -496,6 +515,8 @@ const App=document.addEventListener('click',e=>{
   if(D.node){selNode=D.node;render();return;}
   if(D.learn){tab='learn';startPractice(D.learn);render();return;}
   if(D.opt!==undefined){ses.chosen=D.opt;render();return;}
+  if(D.demo!==undefined){loadDemo();ses=null;selNode=null;render();return;}
+  if(D.rv){S.rv=S.rv||{};if(D.rv[0]==='m'){const m=S.mis.find(x=>'m'+x.id===D.rv);if(m){m.rev=D.d;if(D.d==='dismissed')m.resolved=true;}}else S.rv[D.rv]=D.d;save();render();return;}
   if(D.reset!==undefined){const rl=S.roll;S=fresh();S.roll=rl;save();ses=null;selNode=null;render();return;}
   if(D.rediag!==undefined){S.diagDone=false;ses=null;render();return;}
   if(D.skew){S.skew=D.skew==='-999'?0:S.skew+Number(D.skew);save();render();return;}
@@ -529,5 +550,6 @@ const App=document.addEventListener('click',e=>{
 });
 function alert_(q){const b=document.querySelector('[data-submit]');if(b&&!document.getElementById('err')){b.insertAdjacentHTML('afterend','<span id="err" style="color:var(--bad);margin-left:10px">Choose or type an answer first.</span>');}}
 document.addEventListener('change',e=>{if(e.target.id==='roll'){S.roll=e.target.value.replace(/[^\w-]/g,'').slice(0,12);save();}});
+/*@@LANDING_JS@@*/
 render();
 </script>

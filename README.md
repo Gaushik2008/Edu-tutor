@@ -16,7 +16,7 @@ The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questio
 2. [What the demo does](#2-what-the-demo-does)
 3. [How it works: the algorithms](#3-how-it-works-the-algorithms)
 4. [The syllabus](#4-the-syllabus)
-5. [Electric Charge video lesson](#5-electric-charge-video-lesson)
+5. [Video lessons](#5-video-lessons)
 6. [Repository layout](#6-repository-layout)
 7. [Run, build and test](#7-run-build-and-test)
 8. [Planned full-stack architecture](#8-planned-full-stack-architecture)
@@ -34,12 +34,17 @@ The first syllabus is **Class 10 Physics: Electricity** (12 concepts, 39 questio
 | Spaced-repetition scheduler (SM-2 style) | Done, unit-tested (Python) |
 | Adaptive difficulty and next-concept choice | Done, unit-tested (Python) |
 | Reasoning-based misconception analyser (rule-based) with LLM-output validator | Done, unit-tested (Python) |
-| Interactive single-file demo (student and teacher views) | Done; logic smoke-tested in Node, **not yet tested in a browser** |
-| Syllabus tab and Electric Charge video lesson | Done (in-page animation, not an MP4) |
-| FastAPI backend, PostgreSQL, authentication | **Not started** |
-| LLM provider integration (Claude API) | **Not started** (rule-based fallback only) |
+| Interactive single-file demo (student and teacher views) | Done; 13 checks pass in headless Chromium (desktop and 390 px mobile). Not tested in Safari, Firefox or on real phones |
+| Landing screen (electric-field hero, live engine examples) | Done, see [section 2](#landing-screen) |
+| Syllabus tab with video lessons for all 12 concepts | Done (in-page animation, not an MP4); Hindi for Electric Charge only |
+| Backend service layer: auth (scrypt, signed tokens), role-based access, answers, mastery, misconceptions, SRS, teacher heatmap, review queue, assignments | Done on **SQLite**, 23 tests, standard library only |
+| FastAPI HTTP wrapper (`backend/app/main.py`) | Written, **never run** (FastAPI could not be installed in the development session; syntax-checked only) |
+| PostgreSQL, SQLAlchemy, Alembic migrations | **Not started** (the service uses SQLite) |
+| Claude API integration with validation and rule fallback | Code and tests done against a **fake provider**; **never called a real model** |
+| Evaluation of misconception detection and mastery model | Done, see [3.5](#35-evidence-what-was-measured) |
+| JS/Python parity tests, CI workflow | Done (CI workflow written, not yet seen running on GitHub) |
 | React + TypeScript + Tailwind + React Flow frontend | **Not started** (the demo is vanilla JS) |
-| JavaScript tests, frontend tests, CI | **Not started** |
+| Frontend component tests | **Not started** |
 
 The demo is a self-contained showcase of the learner-model ideas running in the browser. The production stack described in [section 8](#8-planned-full-stack-architecture) is a plan, not working code.
 
@@ -47,7 +52,7 @@ The demo is a self-contained showcase of the learner-model ideas running in the 
 
 ## 2. What the demo does
 
-Open `index.html` (or the live link). Progress is saved in the browser's `localStorage`, so there is no account and nothing is sent anywhere. Use **Reset my demo data** on the Dashboard to start over.
+Open `index.html` (or the live link). Progress is saved in the browser's `localStorage`, so there is no account and nothing is sent anywhere. Use **Load demo student** on the Dashboard (it keeps your roll number) for a student with history (23 simulated answers run through the real engine, so every screen has data), or **Reset my demo data** to start over.
 
 ### Student view
 
@@ -64,11 +69,20 @@ Open `index.html` (or the live link). Progress is saved in the browser's `localS
 
 | Tab | What it provides |
 |---|---|
-| **Class heatmap** | Students by concept, coloured green / yellow / red / grey, with class averages, the hardest concepts, students needing attention and assessment completion. |
+| **Class heatmap** | Roll numbers by concept, coloured green / yellow / red / grey, with class averages, the hardest concepts, students needing attention and assessment completion. |
 | **Misconceptions** | Misconceptions ranked by how many students show them, with the concept, an example of reasoning and a recommended teaching intervention. |
+| **Review queue** | Uncertain predictions (confidence under 80%) wait for a teacher to confirm or dismiss. Three labelled sample items show phrasings the rules cannot catch; your own uncertain predictions appear here too. |
 | **Assignments** | Pick concepts, a difficulty and a deadline. Assignments are recorded locally only. |
 
-> **The class is sample data.** Six heatmap rows ("Sample student A" to "F") are hand-written illustrative values, labelled as samples. Only the row named **You (live)** reflects real activity from your own browser session.
+> **The class is sample data.** Roll 101 to 106 on the heatmap are hand-written illustrative values; the interface no longer tags them as samples, so this note is the disclosure. Only the row for **your own roll number** (set on the Dashboard) reflects real activity from your own browser session.
+
+### Landing screen
+
+The first screen (shown once per browser session; the logo in the sidebar brings it back) follows a cinematic product-landing style: a full-viewport hero with a large headline mixing a bold sans with an italic serif accent, a floating pill navigation bar, pill buttons with an arrow badge, and a glass strip of facts along the bottom. The background is a live **electric-field simulation**: tracer particles flow along the field lines of two moving negative charges and one positive charge, and your pointer acts as an extra negative charge. With *reduced motion* enabled it renders one still frame.
+
+Everything on it is real: the strip counts are read from the data (12 concepts, 39 questions, 12 lessons, 9 misconception patterns), the "Continue" card shows your own next concept and mastery, and the three "Under the hood" cards are **computed live by the same engine functions the app uses**, from example inputs: a five-answer mastery curve, a misconception prediction for "Current increases because resistance blocks the voltage", and a five-step revision ladder. (This card exposed a real gap: the rules originally missed that exact phrasing, so a rule was added and the evaluation re-run.)
+
+The design language (palette, type pairing, pill controls, glass surfaces, motion) is summarised in `docs/DESIGN.md`.
 
 ---
 
@@ -130,6 +144,36 @@ The demo knows nine misconception tags: resistance/current direction, current "u
 
 When a misconception is detected it is recorded (with the student's own reasoning), the next question targets it, and the concept's revision interval is shortened. Two consecutive correct answers with no misconception resolve it.
 
+### 3.5 Evidence: what was measured
+
+Everything here is reproducible. Nothing was tuned on the holdout set.
+
+**Misconception detection** (`python backend/eval/evaluate_misconceptions.py`). 92 invented student explanations, hand-labelled with the misconception they show (or none). A prediction is correct only if the tag matches exactly.
+
+| Set | Role | Precision | Recall | F1 |
+|---|---|---|---|---|
+| Dev (32) | rules were written from these | 1.00 | 1.00 | 1.00 |
+| Test (30) | written before tuning, **but its misses were seen**, so treat as contaminated | 1.00 | 0.95 | 0.97 |
+| **Holdout (30)** | written after tuning, informal phrasing and typos, never used to tune | **1.00** | **0.50** | **0.67** |
+
+Reading: the rules almost never flag a misconception wrongly (no false positives on any set, including correct explanations that share keywords), but they **miss about half of unfamiliar phrasings** (for example "the lamp takes some current away"). The first, untuned version scored recall 0.55 on dev and 0.20 on test. This gap is the case for the AI layer. The holdout set is small, the rows are invented rather than collected from students, and the figure should be read as a rough guide only.
+
+**The AI layer is not yet measured.** `python backend/eval/evaluate_misconceptions.py --provider anthropic` (needs `ANTHROPIC_API_KEY`) runs the same sets through the rules-then-model pipeline. It has not been run, so no figure is claimed.
+
+**Mastery model vs percent-correct** (`python backend/eval/simulate_mastery.py`, chart in `backend/eval/mastery_simulation.svg`). 4,000 simulated students per world, each with a hidden "knows / doesn't know" state per concept. Accuracy is how often "mastery ≥ 0.5" (BKT) or "percent correct > 0.5" matches the hidden state; Brier score measures probability quality (lower is better).
+
+| World | After | Accuracy: BKT / % correct | Brier: BKT / % correct |
+|---|---|---|---|
+| Knowledge fixed, model assumptions correct | 3 answers | 0.936 / 0.934 | 0.051 / 0.068 |
+| | 10 answers | 0.975 / **0.995** | **0.018** / 0.039 |
+| Knowledge fixed, model assumptions wrong | 10 answers | 0.909 / **0.960** | **0.064** / 0.082 |
+| Students learn while practising | 5 answers | 0.872 / 0.858 | 0.104 / 0.110 |
+| | 10 answers | **0.940** / 0.858 | **0.049** / 0.094 |
+
+Reading: BKT gives **better-calibrated probabilities** in every world at 10 answers, and clearly better tracking when students are *learning*, which is the realistic case. When knowledge is fixed, simple percent-correct classifies as well or slightly better after many answers, because BKT's learning step keeps nudging estimates upward. The simulation does not exercise BKT's other features (difficulty, reasoning quality, forgetting), and simulated students are not real ones.
+
+**JS/Python parity** (`node demo/parity.test.js`). The demo's JavaScript is checked against the Python engine on 450 generated vectors (mastery, scheduling, difficulty and misconception tags). The misconception rules live in one file, `backend/app/core/rules_data.py`, and `demo/build.py` injects them into the page.
+
 ---
 
 ## 4. The syllabus
@@ -148,9 +192,9 @@ Electric Charge ─► Electric Current ─┬─► Electric Circuit
 
 ---
 
-## 5. Electric Charge video lesson
+## 5. Video lessons
 
-Found under **Syllabus → Electric Charge**. It is an animated, interactive lesson drawn in the page (canvas), not a rendered MP4 file.
+Every one of the 12 concepts has an animated, interactive lesson under **Syllabus** (`demo/src/lesson.js` for Electric Charge, `demo/src/lessons2.js` for the rest), drawn in the page on a canvas, not a rendered MP4 file. Each has checkpoint questions that feed the learner model. The walk-through below describes **Electric Charge**, the first and most developed lesson. Ohm’s Law also has a small voltage/resistance lab.
 
 | Scene | Topic |
 |---|---|
@@ -163,7 +207,7 @@ Found under **Syllabus → Electric Charge**. It is an animated, interactive les
 | 7 | From charge to current, `I = Q / t` |
 | 8 | Recap |
 
-About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 1× / 1.5× speed, captions on or off, optional spoken narration (uses the browser's speech feature, which some viewers do not support), and a scene list for jumping around.
+About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 1× / 1.5× speed, captions on or off, **English or Hindi captions and narration** (on-screen diagram labels stay English), optional spoken narration (uses the browser's speech feature, which some viewers do not support). **Hindi captions and narration exist only for Electric Charge**; the language picker is hidden on the other lessons, and a scene list for jumping around.
 
 **Three checkpoints** pause the video and ask a question. Your answers go through the same learner model as practice questions, so watching the lesson changes your mastery and revision schedule.
 
@@ -179,17 +223,29 @@ About two minutes in total. Controls: play / pause, restart, seek bar, 0.75× / 
 ├── docs/index.html            Identical copy (so Pages can also serve /docs)
 ├── demo/
 │   ├── index.src.html         Demo source: styles, engine port, views, questions
-│   ├── src/lesson.js          Syllabus tab and video lesson player
+│   ├── src/lesson.js          Syllabus tab, lesson player, Electric Charge lesson, Hindi captions
+│   ├── src/lessons2.js        Lessons for the other 11 concepts
 │   ├── src/lesson.css         Styles for the above
 │   ├── build.py               Bundles the source into index.html (+ docs/, root)
 │   └── index.html             Built output
+├── demo/tests/e2e_browser.py  Real-browser checks (Playwright; not in CI)
+├── docs/DESIGN.md             Design language used by the landing screen and app
 ├── backend/
 │   ├── app/core/
 │   │   ├── bkt.py             Mastery model (BKT, decay, bands)
 │   │   ├── srs.py             Revision scheduler
 │   │   ├── adaptive.py        Difficulty and next-concept selection
-│   │   └── misconception.py   Reasoning analyser and LLM-output validator
-│   └── tests/test_core.py     18 unit tests
+│   │   ├── rules_data.py      Misconception rules (single source for Python and the demo)
+│   │   ├── misconception.py   Rule-based analyser and LLM-output validator
+│   │   └── llm.py             Claude provider, prompt, validation, rules-first hybrid
+│   ├── app/service.py         Auth, authorization, answers, mastery, teacher analytics (SQLite)
+│   ├── app/main.py            FastAPI wrapper (never run; see status)
+│   ├── app/data/syllabus.json Concepts and questions (exported from the demo by demo/export_syllabus.js)
+│   ├── eval/                  Labelled data, evaluators, simulation, results
+│   ├── tests/                 test_core.py (18), test_service.py (23), parity vectors
+│   ├── requirements.txt, .env.example
+├── .github/workflows/ci.yml   Python tests, build check, parity, evaluation
+├── LICENSE                    MIT
 └── .nojekyll                  Tells GitHub Pages to serve files as they are
 ```
 
@@ -214,7 +270,18 @@ cd backend
 python -m pytest -q
 ```
 
-Expected: `18 passed`. The tests cover: correct answers raising and wrong answers lowering mastery, harder questions counting as stronger evidence, weak reasoning damping a correct answer, a wrong answer never raising mastery, repeated questions being weaker evidence, the 0.98 cap, confidence growth, forgetting, mastery bands, the revision ladder and reset, the misconception interval cap, the difficulty rules, prerequisite-aware concept choice, the example misconception, and rejection of invalid LLM output.
+Expected: `41 passed` (18 engine tests, 23 service tests). The service tests cover registration and login, password hashing, token tampering and expiry, no answer key in questions, mastery and revision updates through the database, misconception recording and resolution, **teacher access limited to their own class**, review queue decisions, assignment validation, the LLM path with a fake provider (including five kinds of invalid model output), and the demo seed. The engine tests cover: correct answers raising and wrong answers lowering mastery, harder questions counting as stronger evidence, weak reasoning damping a correct answer, a wrong answer never raising mastery, repeated questions being weaker evidence, the 0.98 cap, confidence growth, forgetting, mastery bands, the revision ladder and reset, the misconception interval cap, the difficulty rules, prerequisite-aware concept choice, the example misconception, and rejection of invalid LLM output.
+
+**Other checks.**
+
+```bash
+node demo/parity.test.js                          # JS port vs Python engine
+python backend/eval/evaluate_misconceptions.py    # precision / recall
+python backend/eval/simulate_mastery.py           # BKT vs percent-correct
+node demo/export_syllabus.js                      # refresh backend/app/data/syllabus.json
+```
+
+**Run the API (not yet verified).** `pip install -r backend/requirements.txt`, copy `backend/.env.example` to `backend/.env`, then `uvicorn app.main:app --app-dir backend --reload`. Set `DEMO_MODE=1` and call `POST /api/demo/seed` for a sample class (teacher@demo.example / demo-password; all sample records are flagged `is_sample`). Without `ANTHROPIC_API_KEY` the rule-based analyser is used.
 
 **Publish with GitHub Pages.** Repository **Settings → Pages**, source **Deploy from a branch**, branch `main`, folder `/ (root)` (or `/docs`).
 
@@ -222,7 +289,7 @@ Expected: `18 passed`. The tests cover: correct answers raising and wrong answer
 
 ## 8. Planned full-stack architecture
 
-> **This section is a plan. None of it is implemented yet.**
+> **Partly implemented.** The service layer (SQLite), authentication, role checks and the LLM provider layer exist and are tested; the FastAPI wrapper is untested; PostgreSQL, SQLAlchemy, Alembic and the React frontend are still plans.
 
 **Stack.** React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Recharts, React Flow and Framer Motion on the front end. FastAPI, Pydantic, SQLAlchemy and Alembic on the back end, with PostgreSQL. Claude API (or another configurable provider) behind the backend only, with the rule-based fallback kept for use without an API key. API keys are never exposed to the browser.
 
@@ -240,16 +307,18 @@ The Python engine in `backend/app/core/` is written to drop into this backend un
 
 ## 9. Known limitations
 
-- **No accounts, no database.** The demo stores progress in the browser only. Clearing site data erases it, and it is not shared between devices.
+- **The web demo has no accounts or database.** It stores progress in the browser only. The tested service layer provides accounts and a database but is not connected to the demo page.
 - **No administrator role** and no real teacher accounts. The teacher view uses a fixed sample class plus your own row.
-- **No AI model is connected.** Misconception detection, feedback and the tutor are rule-based. The tutor answers from the syllabus notes and your history, not open-ended questions.
-- **Rule-based detection is narrow.** It recognises the specific patterns listed above and will miss others. Predictions carry a confidence score and should be reviewed.
-- **Not browser-tested.** The demo's logic and every view's rendering were exercised in Node with a stubbed page, but layout, the graph and the animations have not been checked across real browsers and screen sizes.
-- **Tests cover the Python engine only.** The JavaScript port and the interface have no committed tests, so the two implementations could drift apart.
+- **No AI model has been called.** The Claude integration is tested only against a fake provider. In the demo, detection, feedback and the tutor are rule-based, and the tutor answers from the syllabus notes and your history, not open-ended questions.
+- **Rule-based detection misses about half of unfamiliar phrasings** (holdout recall 0.50, precision 1.00, on 30 invented rows). Predictions carry a confidence score and uncertain ones go to the review queue.
+- **Browser coverage is narrow.** `demo/tests/e2e_browser.py` drives headless Chromium at 1440 px and 390 px wide (landing, navigation, the lesson player, no horizontal overflow, reduced motion). Safari, Firefox, real phones and screen readers have not been tested, and the page is not formally accessibility-audited.
+- **No interface tests.** The JavaScript engine is parity-tested against Python, but the screens themselves have no automated tests.
+- **Evaluation data is invented**, not collected from real students, and small (30 rows per set).
+- **The service layer uses SQLite**, not PostgreSQL, and has not been load-tested.
+- **CI has not been observed running** on GitHub yet.
 - **The "video" is an animation in the page**, not a downloadable video file, and spoken narration depends on the viewer's browser.
 - **Assignments are not delivered** to students in the demo.
-- **One syllabus and one lesson.** Only Class 10 Electricity exists, and only Electric Charge has a video.
-- **No licence has been chosen yet.**
+- **One syllabus.** Only Class 10 Electricity exists. All 12 concepts have a lesson, but only Electric Charge has Hindi narration, and the quality of the later lessons has not been reviewed against a textbook.
 
 ---
 
@@ -261,13 +330,18 @@ The Python engine in `backend/app/core/` is written to drop into this backend un
 - [x] Interactive demo (student and teacher views)
 - [x] Syllabus tab and Electric Charge video lesson
 - [ ] Browser testing across devices; fix layout issues found
-- [ ] JavaScript tests for the demo engine; keep it in step with the Python engine
-- [ ] FastAPI backend and PostgreSQL schema with migrations
-- [ ] Authentication and role-based access
-- [ ] Claude API integration for question generation and reasoning analysis, with the fallback retained
+- [x] JS/Python parity tests; CI workflow
+- [x] Service layer with authentication, role-based access and teacher authorization (SQLite)
+- [x] Misconception evaluation and mastery simulation
+- [ ] Run and test the FastAPI wrapper; connect the demo page to the API
+- [ ] PostgreSQL schema with Alembic migrations
+- [ ] Run the evaluator against a real model and publish the hybrid numbers
+- [ ] Collect real (consented) student explanations to replace the invented evaluation set
+- [ ] LLM question generation with validation
 - [ ] React + TypeScript frontend with React Flow concept graph
 - [ ] Teacher assignments with student delivery and completion tracking
-- [ ] More video lessons (one per concept)
+- [x] Video lessons for all 12 concepts
+- [ ] Hindi (and other languages) for the remaining lessons
 - [ ] Administrator tools: users, syllabuses, question bank, provider settings
 - [ ] Continuous integration and deployment
 
@@ -288,5 +362,5 @@ Worked solutions for that chapter, for further reading:
 
 - **Video lessons:** all 12 concepts now have an animated in-page lesson with checkpoint questions (`demo/src/lessons2.js`). They are canvas animations, not MP4 files. Ohm's Law also has a small lab.
 - **Roll numbers:** the teacher heatmap shows roll numbers (Roll 101 to 106 are sample data). Students set their own on the Dashboard.
-- **New look:** light "paper and teal" theme with a left sidebar on desktop.
+- **Look:** the dark midnight-black and cobalt theme (restored after a light-theme trial) with responsive layouts for phone, laptop and desktop.
 - **AI tutor:** the page has no API key and no key field. A key in a public static page would be exposed to everyone, so AI answers need a small backend proxy that holds the key. The tutor currently answers from the syllabus notes.
