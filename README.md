@@ -1,5 +1,7 @@
 # Learnova (`edu-tutor`)
 
+Agentic AI Hackathon 2026 | Product Space
+
 > **Learn Smarter. Understand Deeper. Remember Longer.**
 
 An adaptive exam-preparation platform that models what each student *understands*, not just whether they got a question right. It tracks mastery per concept, reads the student's written reasoning to spot likely misconceptions, adapts question difficulty, schedules spaced-repetition revision, and gives teachers a class-wide view of knowledge gaps.
